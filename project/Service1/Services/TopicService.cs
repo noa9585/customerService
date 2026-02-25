@@ -87,11 +87,6 @@ namespace Service1.Services
             _repository.DeleteItem(id);
         }
 
-        // הערה: ב-Interface הגדרת GetByTopicId, מימשתי כאן לוגיקה בסיסית של סינון
-        public List<TopicDto> GetByTopicId(int topicId)
-        {
-            // אם הכוונה הייתה לסנן לפי ID מסוים ברשימה:
-            return GetAll().Where(x => x.IDTopics == topicId).ToList();
-        }
+      
     }
 }

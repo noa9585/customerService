@@ -8,7 +8,6 @@ namespace Service1.Interface
 {
     public interface ITopicService
     {
-        List<TopicDto> GetByTopicId(int dayTripId);
         List<TopicDto> GetAll();
         TopicDto GetById(int id);
         TopicDto AddTopic(string name,double avrage,int priority);

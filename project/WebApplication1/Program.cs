@@ -13,7 +13,6 @@ builder.Services.AddControllers();
 
 // רישום ה-DbContext לחיבור למסד הנתונים
 builder.Services.AddDbContext<Database>();
-// השורה החסרה:
 builder.Services.AddScoped<IContext, Database>();
 
 // רישום ה-Repository - מקשר בין ה-Interface למימוש שלו
