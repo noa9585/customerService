@@ -28,7 +28,7 @@ namespace DataContext
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=SQL;Database=DBCustomerService1;Trusted_Connection=True;TrustServerCertificate=True");
+            optionsBuilder.UseSqlServer("Server=YAEL;Database=DBCustomerService;Trusted_Connection=True;TrustServerCertificate=True");
         }
     }
 }

@@ -36,6 +36,7 @@ namespace DataContext.Migrations
                     NameRepr = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EmailRepr = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordRepr = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ScoreForMonth = table.Column<int>(type: "int", nullable: false),
                     entryHourRepr = table.Column<TimeOnly>(type: "time", nullable: false),
                     exitHourRepr = table.Column<TimeOnly>(type: "time", nullable: false),
                     StatusRepr = table.Column<bool>(type: "bit", nullable: false)

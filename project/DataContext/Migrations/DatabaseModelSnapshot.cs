@@ -157,6 +157,9 @@ namespace DataContext.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ScoreForMonth")
+                        .HasColumnType("int");
+
                     b.Property<bool>("StatusRepr")
                         .HasColumnType("bit");
 

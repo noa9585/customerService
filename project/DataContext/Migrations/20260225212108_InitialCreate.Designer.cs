@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataContext.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20260218105537_InitialCreate")]
+    [Migration("20260225212108_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -159,6 +159,9 @@ namespace DataContext.Migrations
                     b.Property<string>("PasswordRepr")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ScoreForMonth")
+                        .HasColumnType("int");
 
                     b.Property<bool>("StatusRepr")
                         .HasColumnType("bit");

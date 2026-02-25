@@ -38,6 +38,7 @@ namespace Repository.Repositories
         {
             var representative = GetById(id);
             representative.IDRepresentative = item.IDRepresentative;
+            representative.ScoreForMonth = item.ScoreForMonth;
             representative.NameRepr = item.NameRepr;
             representative.EmailRepr = item.EmailRepr;
             representative.PasswordRepr = item.PasswordRepr;
