@@ -21,7 +21,7 @@ namespace Service1.Services
             // מיפוי מרשימת ישויות לרשימת DTO
             return customers.Select(t => new CustomerChatDto
             {
-
+                IDCustomers = t.IDCustomers,
                 NameCust = t.NameCust,
                 EmailCust = t.EmailCust,
             }).ToList();
@@ -34,7 +34,7 @@ namespace Service1.Services
 
             return new CustomerChatDto
             {
-
+                IDCustomers= t.IDCustomers,
                 NameCust = t.NameCust,
                 EmailCust = t.EmailCust,
             };

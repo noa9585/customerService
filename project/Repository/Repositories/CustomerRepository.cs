@@ -18,14 +18,14 @@ namespace Repository.Repositories
 
         public Customer AddItem(Customer item)
         {
-            _context.Customers.ToList().Add(item);
+            _context.Customers.Add(item);
 
             _context.save();
             return item;
         }
         public void DeleteItem(int id)
         {
-            _context.Customers.ToList().Remove(GetById(id));
+            _context.Customers.Remove(GetById(id));
             _context.save();
         }
         public List<Customer> GetAll()

@@ -20,6 +20,10 @@ builder.Services.AddScoped<IRepository<Topic>, TopicRepository>();
 // רישום ה-Service - מקשר בין ה-Interface למימוש הלוגיקה
 builder.Services.AddScoped<ITopicService, TopicService>();
 
+builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
+// רישום ה-Service - מקשר בין ה-Interface למימוש הלוגיקה
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+
 
 // רישום ה-Repository - מקשר בין ה-Interface למימוש שלו
 builder.Services.AddScoped<IRepository<Representative>, RepresentativeRepository>();
