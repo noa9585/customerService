@@ -17,10 +17,14 @@ builder.Services.AddScoped<IContext, Database>();
 
 // רישום ה-Repository - מקשר בין ה-Interface למימוש שלו
 builder.Services.AddScoped<IRepository<Topic>, TopicRepository>();
-
 // רישום ה-Service - מקשר בין ה-Interface למימוש הלוגיקה
 builder.Services.AddScoped<ITopicService, TopicService>();
 
+
+// רישום ה-Repository - מקשר בין ה-Interface למימוש שלו
+builder.Services.AddScoped<IRepository<Representative>, RepresentativeRepository>();
+// רישום ה-Service - מקשר בין ה-Interface למימוש הלוגיקה
+builder.Services.AddScoped<IRepresentativeService, RepresentativeService>();
 // הגדרות Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

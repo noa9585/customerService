@@ -2,7 +2,7 @@
 using Service1.Interface;
 using Service1.Dto.TopicDto;
 
-namespace YourProject.Controllers
+namespace WebApplication1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
