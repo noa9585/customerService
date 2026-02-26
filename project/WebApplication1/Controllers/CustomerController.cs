@@ -8,7 +8,7 @@ namespace YourProject.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        private readonly ICustomerService _topicService;
+        private readonly ICustomerService _customerService;
 
         public CustomerController(ICustomerService customerService)
         {
@@ -24,40 +24,40 @@ namespace YourProject.Controllers
 
         // שליפת נושא לפי ID
         [HttpGet("{id}")]
-        public ActionResult<TopicDto> GetById(int id)
+        public ActionResult<CustomerChatDto> GetById(int id)
         {
             var customer = _customerService.GetById(id);
             if (customer == null)
             {
-                return NotFound($"Topic with ID {id} not found.");
+                return NotFound($"Customer with ID {id} not found.");
             }
             return Ok(customer);
         }
 
-        // הוספת נושא חדש
+        // הוספת לקוח חדש
         [HttpPost]
-        public ActionResult<CustomerChatDto> Add([FromBody] CustomerChatDto customerChatDto)
+        public ActionResult<CustomerChatDto> Add([FromBody] CustomerRegisterDto customerRegisterDto)
         {
-            if (customerChatDto == null)
+            if (customerRegisterDto == null)
             {
                 return BadRequest();
             }
 
-            var newCustomer = _cu.AddTopic(topicDto.NameTopic, topicDto.AverageTreatTime, topicDto.priorityTopics);
-            return CreatedAtAction(nameof(GetById), new { id = newTopic.IDTopics }, newTopic);
+            var newCustomer = _customerService.AddCustomer(customerRegisterDto.NameCust, customerRegisterDto.EmailCust, customerRegisterDto.PasswordCust);
+            return CreatedAtAction(nameof(GetById), new { id = newCustomer.IDCustomers }, newCustomer);
         }
 
         // עדכון נושא קיים
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] TopicAddDto topicDto)
+        public IActionResult Update(int id, [FromBody] CustomerRegisterDto customerRegisterDto)
         {
-            var existing = _topicService.GetById(id);
+            var existing = _customerService.GetById(id);
             if (existing == null)
             {
                 return NotFound();
             }
 
-            _topicService.UpdateTopic(id, topicDto.NameTopic, topicDto.AverageTreatTime, topicDto.priorityTopics);
+            _customerService.UpdateCustomer(id, customerRegisterDto.NameCust, customerRegisterDto.EmailCust, customerRegisterDto.PasswordCust);
             return NoContent();
         }
 
@@ -71,7 +71,7 @@ namespace YourProject.Controllers
                 return NotFound();
             }
 
-            _customerService.(id);
+            _customerService.DeleteCustomer(id);
             return NoContent();
         }
     }

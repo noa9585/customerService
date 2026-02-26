@@ -12,7 +12,7 @@ namespace Service1.Interface
         List<CustomerChatDto> GetAll();
         CustomerChatDto GetById(int id);
         CustomerChatDto AddCustomer(string name, string email, string password);
-        void UpdateCustomer(string name, string email);
+        void UpdateCustomer(int id,string name, string email,string password);
         void DeleteCustomer(int id);
     }
 }
