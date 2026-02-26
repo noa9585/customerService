@@ -9,5 +9,10 @@ namespace Service1.Interface
 {
     public interface ICustomerService
     {
+        List<CustomerChatDto> GetAll();
+        CustomerChatDto GetById(int id);
+        CustomerChatDto AddCustomer(string name, string email, string password);
+        void UpdateCustomer(string name, string email);
+        void DeleteCustomer(int id);
     }
 }
