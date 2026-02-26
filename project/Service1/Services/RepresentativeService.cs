@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Repository.Entities;
+using Repository.interfaces; // וודאי שזה השם המדויק של ה-Namespace
+using Service1.Dto.RepresentativeDto;
+using Service1.Dto.TopicDto;
+using Service1.Interface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Repository.Entities;
-using Service1.Interface;
-using Repository.interfaces; // וודאי שזה השם המדויק של ה-Namespace
-using Service1.Dto.RepresentativeDto;
 namespace Service1.Services
 {
     public class RepresentativeService : IRepresentativeService
@@ -26,10 +27,12 @@ namespace Service1.Services
             // מיפוי מרשימת ישויות לרשימת DTO
             return representatives.Select(r => new RepresentativeChatDto
             {
+                IDRepresentative = r.IDRepresentative,
                 EmailRepr = r.EmailRepr,
                 NameRepr = r.NameRepr
             }).ToList();
         }
+    
 
         public RepresentativeChatDto GetById(int id)
         {
@@ -38,6 +41,7 @@ namespace Service1.Services
 
             return new RepresentativeChatDto
             {
+                IDRepresentative=r.IDRepresentative,
                 EmailRepr = r.EmailRepr,
                 NameRepr = r.NameRepr
             };
@@ -57,9 +61,10 @@ namespace Service1.Services
             };
 
             var savedRepresentative = _repository.AddItem(newRepresentative);
-
+            Console.WriteLine(savedRepresentative.IDRepresentative);
             return new RepresentativeChatDto
             {
+                IDRepresentative=savedRepresentative.IDRepresentative,
                 EmailRepr = savedRepresentative.EmailRepr,
                 NameRepr = savedRepresentative.NameRepr
             };

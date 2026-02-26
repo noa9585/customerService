@@ -12,15 +12,16 @@ namespace Repository.Repositories
         }
         public Representative AddItem(Representative item)
         {
-            _context.Representatives.ToList().Add(item);
+            _context.Representatives.Add(item);
 
             _context.save();
             return item;
         }
 
+
         public void DeleteItem(int id)
         {
-            _context.Representatives.ToList().Remove(GetById(id));
+            _context.Representatives.Remove(GetById(id));
             _context.save();
         }
 
