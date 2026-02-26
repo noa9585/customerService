@@ -15,7 +15,7 @@ namespace Service1.Services
         private readonly IRepository<Representative> _repository;
 
         // הזרקת ה-Repository דרך הבנאי
-        public TopicService(IRepository<Representative> repository)
+        public RepresentativeService(IRepository<Representative> repository)
         {
             _repository = repository;
         }
