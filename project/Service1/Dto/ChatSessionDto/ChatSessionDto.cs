@@ -23,14 +23,8 @@ namespace Service1.Dto.ChatSessionDto
 
         public SessionStatus statusChat { get; set; } // מצב השיחה
         public bool status { get; set; }
-        [ForeignKey("IDRepresentative")]
         public int? IDRepresentative { get; set; }
-        public virtual Representative Representative { get; set; }
-        [ForeignKey("IDCustomer")]
         public int IDCustomer { get; set; }
-        public virtual Customer Customer { get; set; }
-        [ForeignKey("IDTopic")]
         public int IDTopic { get; set; }
-        public virtual Topic Topic { get; set; }
     }
 }

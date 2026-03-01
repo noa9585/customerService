@@ -17,9 +17,7 @@ namespace Service1.Dto.ChatSessionDto
 
         public SessionStatus statusChat { get; set; } // מצב השיחה
         public bool status { get; set; }
-        [ForeignKey("IDRepresentative")]
         public int? IDRepresentative { get; set; }
-        public virtual Representative Representative { get; set; }
 
     }
 }
