@@ -59,10 +59,11 @@ namespace Service1.Services
             };
         }
 
-        public RepresentativeRegisterDto AddRepresentative(string name, string email, string passward)
+        public RepresentativeDto AddRepresentative(string name, string email, string passward)
         {
             var newRepresentative = new Representative
             {
+                
                 NameRepr = name,
                 EmailRepr = email,
                 PasswordRepr = passward,
@@ -76,8 +77,9 @@ namespace Service1.Services
 
             var savedRepresentative = _repository.AddItem(newRepresentative);
             Console.WriteLine(savedRepresentative.IDRepresentative);
-            return new RepresentativeRegisterDto
+            return new RepresentativeDto
             {
+                IDRepresentative=savedRepresentative.IDRepresentative,
                 EmailRepr = savedRepresentative.EmailRepr,
                 NameRepr = savedRepresentative.NameRepr,
                 PasswordRepr= savedRepresentative.PasswordRepr,
