@@ -18,7 +18,7 @@ namespace Repository.Repositories
         public ChatMessage AddItem(ChatMessage item)
 
         {
-            _context.ChatMessages.ToList().Add(item);
+            _context.ChatMessages.Add(item);
 
             _context.save();
             return item;
@@ -26,7 +26,7 @@ namespace Repository.Repositories
 
         public void DeleteItem(int id)
         {
-            _context.ChatMessages.ToList().Remove(GetById(id));
+            _context.ChatMessages.Remove(GetById(id));
             _context.save();
         }
 

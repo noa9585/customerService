@@ -12,7 +12,7 @@ namespace Service1.Dto.ChatMessageDto
     {
         public string Message { get; set; } // תוכן ההודעה
         public DateTime Timestamp { get; set; } // תאריך ושעת שליחת ההודעה
-        public int IDSend { get; set; } // מזהה שולח
+      //  public int IDSend { get; set; } // מזהה שולח
         public string MessageType { get; set; } // סוג ההודעה (לקוח או נציג)
     }
 }
