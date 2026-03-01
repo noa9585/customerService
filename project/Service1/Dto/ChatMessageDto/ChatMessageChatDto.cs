@@ -10,6 +10,7 @@ namespace Service1.Dto.ChatMessageDto
 {
     public class ChatMessageChatDto
     {
+
         public string Message { get; set; } // תוכן ההודעה
         public int IDSession {  get; set; }//קישור לשיחה
         public DateTime Timestamp { get; set; } // תאריך ושעת שליחת ההודעה

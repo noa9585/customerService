@@ -20,14 +20,16 @@ namespace Service1.Services
             _sessionRepository = sessionRepository;
         }
 
-        public List<ChatMessageChatDto> GetAll()
+        public List<ChatMessageDto> GetAll()
         {
             var messages = _repository.GetAll();
-            return messages.Select(m => new ChatMessageChatDto
+            return messages.Select(m => new ChatMessageDto
             {
+                MessageID = m.MessageID,
                 Message = m.Message,
                 Timestamp = m.Timestamp,
                 IDSend = m.IDSend,
+                IDSession = m.IDSession,
                 MessageType = m.MessageType
             }).ToList();
         }
@@ -42,7 +44,9 @@ namespace Service1.Services
                 Message = m.Message,
                 Timestamp = m.Timestamp,
                 IDSend = m.IDSend,
-                MessageType = m.MessageType
+                MessageType = m.MessageType,
+                IDSession = m.IDSession
+                
             };
         }
 

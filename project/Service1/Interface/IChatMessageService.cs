@@ -7,7 +7,7 @@ namespace Service1.Interface
 {
     public interface IChatMessageService
     {
-        List<ChatMessageChatDto> GetAll();
+        List<ChatMessageDto> GetAll();
         ChatMessageChatDto GetById(int id);
 
         // הוספה: מחזיר את האובייקט שנוצר

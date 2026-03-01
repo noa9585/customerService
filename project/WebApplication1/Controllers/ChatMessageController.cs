@@ -19,7 +19,7 @@ namespace YourProject.Controllers
 
         // 1. שליפת כל ההודעות
         [HttpGet]
-        public ActionResult<IEnumerable<ChatMessageChatDto>> GetAll()
+        public ActionResult<IEnumerable<ChatMessageDto>> GetAll()
         {
             return Ok(_chatMessageService.GetAll());
         }
