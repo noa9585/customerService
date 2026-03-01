@@ -21,33 +21,45 @@ namespace Service1.Services
             _repository = repository;
         }
 
-        public List<RepresentativeChatDto> GetAll()
+        public List<RepresentativeDto> GetAll()
         {
             var representatives = _repository.GetAll();
             // מיפוי מרשימת ישויות לרשימת DTO
-            return representatives.Select(r => new RepresentativeChatDto
+            return representatives.Select(r => new RepresentativeDto
             {
                 IDRepresentative = r.IDRepresentative,
                 EmailRepr = r.EmailRepr,
-                NameRepr = r.NameRepr
+                NameRepr = r.NameRepr,
+                entryHourRepr = r.entryHourRepr,
+                exitHourRepr = r.exitHourRepr,
+                IsBusy = r.IsBusy,
+                IsOnline = r.IsOnline,
+                ScoreForMonth = r.ScoreForMonth,
+                StatusRepr = r.StatusRepr                
             }).ToList();
         }
     
 
-        public RepresentativeChatDto GetById(int id)
+        public RepresentativeDto GetById(int id)
         {
             var r = _repository.GetById(id);
             if (r == null) return null;
 
-            return new RepresentativeChatDto
+            return new RepresentativeDto
             {
-                IDRepresentative=r.IDRepresentative,
+                IDRepresentative = r.IDRepresentative,
                 EmailRepr = r.EmailRepr,
-                NameRepr = r.NameRepr
+                NameRepr = r.NameRepr,
+                entryHourRepr = r.entryHourRepr,
+                exitHourRepr = r.exitHourRepr,
+                IsBusy = r.IsBusy,
+                IsOnline = r.IsOnline,
+                ScoreForMonth = r.ScoreForMonth,
+                StatusRepr = r.StatusRepr
             };
         }
 
-        public RepresentativeChatDto AddRepresentative(string name, string email, string passward)
+        public RepresentativeRegisterDto AddRepresentative(string name, string email, string passward)
         {
             var newRepresentative = new Representative
             {
@@ -57,30 +69,37 @@ namespace Service1.Services
                 ScoreForMonth = 0,
                 entryHourRepr = new TimeOnly(),
                 exitHourRepr = new TimeOnly(),
-                StatusRepr = true
+                StatusRepr = true,
+                IsOnline=false,
+                IsBusy=false
             };
 
             var savedRepresentative = _repository.AddItem(newRepresentative);
             Console.WriteLine(savedRepresentative.IDRepresentative);
-            return new RepresentativeChatDto
+            return new RepresentativeRegisterDto
             {
-                IDRepresentative=savedRepresentative.IDRepresentative,
                 EmailRepr = savedRepresentative.EmailRepr,
-                NameRepr = savedRepresentative.NameRepr
+                NameRepr = savedRepresentative.NameRepr,
+                PasswordRepr= savedRepresentative.PasswordRepr,
             };
         }
 
-        public void UpdateRepresentative(int id, string name, string email, string passward)
+
+        public void UpdateRepresentative(int id,string name, string email, string passward)
         {
             var existing = _repository.GetById(id);
             if (existing != null)
             {
                 existing.EmailRepr = email;
                 existing.NameRepr = name;
-                existing.PasswordRepr = passward;
+                existing.PasswordRepr = passward;           
                 _repository.UpdateItem(id, existing);
             }
         }
+
+   
+       
+
 
         public void DeleteRepresentative(int id)
         {

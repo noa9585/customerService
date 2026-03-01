@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Service1.Dto.TopicDto
 {
-    internal class TopicChatDto
+    public class TopicChatDto
     {
         public string NameTopic { get; set; }
     }

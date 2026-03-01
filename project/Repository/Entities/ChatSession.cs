@@ -18,7 +18,7 @@ namespace Repository.Entities
 
         public virtual List<ChatMessage> Messages { get; set; }// רשימת הודעות
         public DateTime StartTimestamp { get; set; } // תאריך ושעת פתיחת פניה 
-        public DateTime ServiceStartTimestamp { get; set; } // תאריך ושעת התחלת עם נציג
+        public DateTime? ServiceStartTimestamp { get; set; } // תאריך ושעת התחלת עם נציג
         public DateTime? EndTimestamp { get; set; } // תאריך ושעת סיום השיחה
 
         public SessionStatus statusChat { get; set; } // מצב השיחה

@@ -28,7 +28,8 @@ namespace Service1.Services
                 NameTopic = t.NameTopic,
                 AverageTreatTime = t.AverageTreatTime,
                 priorityTopics = t.priorityTopics,
-                StatusTopic = t.StatusTopic
+                StatusTopic = t.StatusTopic,
+                totalSessionsCount=t.totalSessionsCount
             }).ToList();
         }
 
@@ -43,7 +44,8 @@ namespace Service1.Services
                 NameTopic = t.NameTopic,
                 AverageTreatTime = t.AverageTreatTime,
                 priorityTopics = t.priorityTopics,
-                StatusTopic = t.StatusTopic
+                StatusTopic = t.StatusTopic,
+                totalSessionsCount=t.totalSessionsCount
             };
         }
 
@@ -54,7 +56,8 @@ namespace Service1.Services
                 NameTopic = name,
                 AverageTreatTime = average,
                 priorityTopics = priority,
-                StatusTopic = true // ברירת מחדל
+                StatusTopic = true ,// ברירת מחדל
+                totalSessionsCount=0
             };
 
             var savedTopic = _repository.AddItem(newTopic);
@@ -65,11 +68,12 @@ namespace Service1.Services
                 NameTopic = savedTopic.NameTopic,
                 AverageTreatTime = savedTopic.AverageTreatTime,
                 priorityTopics = savedTopic.priorityTopics,
-                StatusTopic = savedTopic.StatusTopic
+                StatusTopic = savedTopic.StatusTopic,
+                totalSessionsCount=savedTopic.totalSessionsCount
             };
         }
 
-        public void UpdateTopic(int id, string name, double average, int priority)
+        public void UpdateTopic(int id, string name, double average, int priority,int totalSessionsCount)
         {
             var existing = _repository.GetById(id);
             if (existing != null)
@@ -77,7 +81,7 @@ namespace Service1.Services
                 existing.NameTopic = name;
                 existing.AverageTreatTime = average;
                 existing.priorityTopics = priority;
-
+                existing.TotalSessionsCount = totalSessionsCount;
                 _repository.UpdateItem(id, existing);
             }
         }

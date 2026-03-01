@@ -14,7 +14,6 @@ namespace Service1.Services
         private readonly IRepository<Customer> _customerRepository;
         private readonly IRepository<Representative> _representativeRepository;
 
-        // הבנאי מקבל את כל המרכיבים הנחוצים מה-Program.cs
         public ChatSessionService(
             IRepository<ChatSession> repository,
             IRepository<Customer> customerRepository,
@@ -27,67 +26,38 @@ namespace Service1.Services
 
         public List<ChatSessionDto> GetAllSessions()
         {
-            return _repository.GetAll().Select(s => new ChatSessionDto
-            {
-                SessionID = s.SessionID,
-                Subject = s.Subject,
-                StartTimestamp = s.StartTimestamp,
-                EndTimestamp = s.EndTimestamp,
-                ChatStatus = s.ChatStatus,
-                IDCustomer = s.IDCustomer,
-                IDRepresentative = s.IDRepresentative
-            }).ToList();
+            return _repository.GetAll().Select(s => MapToDto(s)).ToList();
         }
 
         public ChatSessionDto GetSessionById(int id)
         {
             var s = _repository.GetById(id);
-            if (s == null) return null;
-
-            return new ChatSessionDto
-            {
-                SessionID = s.SessionID,
-                Subject = s.Subject,
-                StartTimestamp = s.StartTimestamp,
-                EndTimestamp = s.EndTimestamp,
-                ChatStatus = s.ChatStatus,
-                IDCustomer = s.IDCustomer,
-                IDRepresentative = s.IDRepresentative
-            };
+            return s == null ? null : MapToDto(s);
         }
 
         public ChatSessionDto AddSession(ChatSessionCreateDto dto)
         {
-            // בדיקה ששני הצדדים קיימים ב-DB למניעת קריסה בשמירה
+            // בדיקה שהלקוח קיים
             var customerExists = _customerRepository.GetById(dto.IDCustomer);
-            var representativeExists = _representativeRepository.GetById(dto.IDRepresentative);
-
-            if (customerExists == null || representativeExists == null)
+            if (customerExists == null)
             {
-                throw new Exception("לא ניתן לפתוח שיחה: הלקוח או הנציג אינם קיימים במערכת.");
+                throw new Exception("לא ניתן לפתוח שיחה: הלקוח אינו קיים במערכת.");
             }
 
             var session = new ChatSession
             {
-                Subject = dto.Subject,
+                IDTopic = dto.IDTopic,
                 IDCustomer = dto.IDCustomer,
-                IDRepresentative = dto.IDRepresentative,
+                IDRepresentative = null, // שיחה חדשה בד"כ ללא נציג עדיין
                 StartTimestamp = DateTime.Now,
-                ChatStatus = true // שיחה חדשה מתחילה תמיד כפעילה
+                ServiceStartTimestamp = null,
+                EndTimestamp = null,
+                statusChat = SessionStatus.Waiting, // סטטוס ראשוני
+                status = true // מציינת שהשיחה פעילה במערכת
             };
 
-            // הוספה למסד הנתונים דרך ה-Repository
             var result = _repository.AddItem(session);
-
-            return new ChatSessionDto
-            {
-                SessionID = result.SessionID,
-                Subject = result.Subject,
-                IDCustomer = result.IDCustomer,
-                IDRepresentative = result.IDRepresentative,
-                StartTimestamp = result.StartTimestamp,
-                ChatStatus = result.ChatStatus
-            };
+            return MapToDto(result);
         }
 
         public void UpdateSession(int id, ChatSessionUpdateDto dto)
@@ -96,7 +66,10 @@ namespace Service1.Services
             if (existingSession != null)
             {
                 existingSession.EndTimestamp = dto.EndTimestamp;
-                existingSession.ChatStatus = dto.ChatStatus;
+                existingSession.ServiceStartTimestamp = dto.ServiceStartTimestamp;
+                existingSession.statusChat = dto.statusChat;
+                existingSession.status = dto.status;
+                existingSession.IDRepresentative = dto.IDRepresentative;
 
                 _repository.UpdateItem(id, existingSession);
             }
@@ -105,6 +78,24 @@ namespace Service1.Services
         public void DeleteSession(int id)
         {
             _repository.DeleteItem(id);
+        }
+
+        // פונקציית עזר למיפוי כדי למנוע כפל קוד
+        private ChatSessionDto MapToDto(ChatSession s)
+        {
+            return new ChatSessionDto
+            {
+                SessionID = s.SessionID,
+                IDTopic = s.IDTopic,
+                IDCustomer = s.IDCustomer,
+                IDRepresentative = s.IDRepresentative,
+                StartTimestamp = s.StartTimestamp,
+                ServiceStartTimestamp = s.ServiceStartTimestamp ?? DateTime.MinValue,
+                EndTimestamp = s.EndTimestamp,
+                status = s.status,
+                statusChat = s.statusChat,
+                // הערה: אם תרצה לכלול את ה-Objects המלאים (Customer/Topic), יש לוודא שהם נטענים ב-Repository
+            };
         }
     }
 }

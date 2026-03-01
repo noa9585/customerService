@@ -57,7 +57,7 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            _topicService.UpdateTopic(id, topicDto.NameTopic, topicDto.AverageTreatTime, topicDto.priorityTopics);
+            _topicService.UpdateTopic(id, topicDto.NameTopic, topicDto.AverageTreatTime, topicDto.priorityTopics,topicDto.totalSessionsCount);
             return NoContent();
         }
 

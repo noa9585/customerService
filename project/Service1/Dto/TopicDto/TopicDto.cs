@@ -13,5 +13,6 @@ namespace Service1.Dto.TopicDto
         public double AverageTreatTime { get; set; }
         public int priorityTopics { get; set; }
         public bool StatusTopic { get; set; }
+        public int totalSessionsCount { get; set; }
     }
 }
