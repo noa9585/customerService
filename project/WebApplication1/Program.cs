@@ -3,7 +3,7 @@ using Service1.Interface;
 using Service1.Services;
 using Repository.interfaces;
 using Repository.Entities;
-using Repository.Repositories; // וודאי שזה ה-Namespace של ה-TopicRepository שלך
+using Repository.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,20 +15,23 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<Database>();
 builder.Services.AddScoped<IContext, Database>();
 
-// רישום ה-Repository - מקשר בין ה-Interface למימוש שלו
+// --- רישום Topic ---
 builder.Services.AddScoped<IRepository<Topic>, TopicRepository>();
-// רישום ה-Service - מקשר בין ה-Interface למימוש הלוגיקה
 builder.Services.AddScoped<ITopicService, TopicService>();
 
+// --- רישום Customer ---
 builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
-// רישום ה-Service - מקשר בין ה-Interface למימוש הלוגיקה
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 
-
-// רישום ה-Repository - מקשר בין ה-Interface למימוש שלו
+// --- רישום Representative ---
 builder.Services.AddScoped<IRepository<Representative>, RepresentativeRepository>();
-// רישום ה-Service - מקשר בין ה-Interface למימוש הלוגיקה
 builder.Services.AddScoped<IRepresentativeService, RepresentativeService>();
+
+// --- רישום ChatSession ---
+// חשוב: הרישומים האלו מאפשרים ל-Service לקבל את ה-Repositories בבנאי (Constructor)
+builder.Services.AddScoped<IRepository<ChatSession>, ChatSessionRepository>();
+builder.Services.AddScoped<IChatSessionService, ChatSessionService>();
+
 // הגדרות Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
