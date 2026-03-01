@@ -15,8 +15,9 @@ namespace Repository.Entities
         [Key]
 
         public int MessageID { get; set; }
-        [ForeignKey("ChatSession")]
         public int IDSession { get; set; } // קישור לשיחה
+        [ForeignKey("IDSession")]
+
         public virtual ChatSession ChatSession { get; set; }
 
         public string Message { get; set; } // תוכן ההודעה

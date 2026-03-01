@@ -23,14 +23,17 @@ namespace Repository.Entities
 
         public SessionStatus statusChat { get; set; } // מצב השיחה
         public bool status { get; set; }
-        [ForeignKey("IDRepresentative")]
         public int? IDRepresentative { get; set; }
+        [ForeignKey("IDRepresentative")]
+
         public virtual Representative Representative { get; set; }
-        [ForeignKey("IDCustomer")]
         public int IDCustomer { get; set; }
+        [ForeignKey("IDCustomer")]
+
         public virtual Customer Customer { get; set; }
-        [ForeignKey("IDTopic")]
         public int IDTopic { get; set; }
+        [ForeignKey("IDTopic")]
+
         public virtual Topic Topic { get; set; }
 
     }

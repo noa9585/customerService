@@ -4,6 +4,7 @@ using DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataContext.Migrations
 {
     [DbContext(typeof(Database))]
-    partial class DatabaseModelSnapshot : ModelSnapshot
+    [Migration("20260301185505_Fixs")]
+    partial class Fixs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,6 +67,9 @@ namespace DataContext.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SessionID"));
 
+                    b.Property<int>("CustomerIDCustomer")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("EndTimestamp")
                         .HasColumnType("datetime2");
 
@@ -76,11 +82,17 @@ namespace DataContext.Migrations
                     b.Property<int>("IDTopic")
                         .HasColumnType("int");
 
+                    b.Property<int>("RepresentativeIDRepresentative")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("ServiceStartTimestamp")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("StartTimestamp")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("TopicIDTopic")
+                        .HasColumnType("int");
 
                     b.Property<bool>("status")
                         .HasColumnType("bit");
@@ -90,11 +102,11 @@ namespace DataContext.Migrations
 
                     b.HasKey("SessionID");
 
-                    b.HasIndex("IDCustomer");
+                    b.HasIndex("CustomerIDCustomer");
 
-                    b.HasIndex("IDRepresentative");
+                    b.HasIndex("RepresentativeIDRepresentative");
 
-                    b.HasIndex("IDTopic");
+                    b.HasIndex("TopicIDTopic");
 
                     b.ToTable("ChatSessions");
                 });
@@ -214,17 +226,19 @@ namespace DataContext.Migrations
                 {
                     b.HasOne("Repository.Entities.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("IDCustomer")
+                        .HasForeignKey("CustomerIDCustomer")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Repository.Entities.Representative", "Representative")
                         .WithMany()
-                        .HasForeignKey("IDRepresentative");
+                        .HasForeignKey("RepresentativeIDRepresentative")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Repository.Entities.Topic", "Topic")
                         .WithMany()
-                        .HasForeignKey("IDTopic")
+                        .HasForeignKey("TopicIDTopic")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

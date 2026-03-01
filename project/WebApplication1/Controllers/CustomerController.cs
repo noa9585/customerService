@@ -44,7 +44,7 @@ namespace YourProject.Controllers
             }
 
             var newCustomer = _customerService.AddCustomer(customerRegisterDto.NameCust, customerRegisterDto.EmailCust, customerRegisterDto.PasswordCust);
-            return CreatedAtAction(nameof(GetById), new { id = newCustomer.IDCustomers }, newCustomer);
+            return CreatedAtAction(nameof(GetById), new { id = newCustomer.IDCustomer }, newCustomer);
         }
 
         // עדכון נושא קיים

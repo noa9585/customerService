@@ -34,12 +34,12 @@ namespace Repository.Repositories
         }
         public Customer GetById(int id)
         {
-            return _context.Customers.ToList().FirstOrDefault(x => x.IDCustomers == id);
+            return _context.Customers.ToList().FirstOrDefault(x => x.IDCustomer == id);
         }
         public void UpdateItem(int id, Customer item)
         {
             var cust = GetById(id);
-           cust.IDCustomers = item.IDCustomers;
+           cust.IDCustomer = item.IDCustomer;
             cust.NameCust = item.NameCust;
             cust.EmailCust = item.EmailCust;
             cust.PasswordCust = item.PasswordCust;
