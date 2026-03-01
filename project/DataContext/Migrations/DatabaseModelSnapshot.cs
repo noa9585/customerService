@@ -30,25 +30,18 @@ namespace DataContext.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageID"));
 
-                    b.Property<int?>("ChatSessionSessionID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IDCustomer")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IDRepresentative")
-                        .HasColumnType("int");
-
                     b.Property<int>("IDSend")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IDSession")
                         .HasColumnType("int");
 
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MessageType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("MessageType")
+                        .HasColumnType("int");
 
                     b.Property<bool>("StatusMessage")
                         .HasColumnType("bit");
@@ -58,11 +51,7 @@ namespace DataContext.Migrations
 
                     b.HasKey("MessageID");
 
-                    b.HasIndex("ChatSessionSessionID");
-
-                    b.HasIndex("IDCustomer");
-
-                    b.HasIndex("IDRepresentative");
+                    b.HasIndex("IDSession");
 
                     b.ToTable("ChatMessages");
                 });
@@ -75,9 +64,6 @@ namespace DataContext.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SessionID"));
 
-                    b.Property<bool>("ChatStatus")
-                        .HasColumnType("bit");
-
                     b.Property<int>("CustomerIDCustomers")
                         .HasColumnType("int");
 
@@ -87,24 +73,37 @@ namespace DataContext.Migrations
                     b.Property<int>("IDCustomer")
                         .HasColumnType("int");
 
-                    b.Property<int>("IDRepresentative")
+                    b.Property<int?>("IDRepresentative")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IDTopic")
                         .HasColumnType("int");
 
                     b.Property<int>("RepresentativeIDRepresentative")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("ServiceStartTimestamp")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("StartTimestamp")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Subject")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("TopicIDTopic")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("status")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("statusChat")
+                        .HasColumnType("int");
 
                     b.HasKey("SessionID");
 
                     b.HasIndex("CustomerIDCustomers");
 
                     b.HasIndex("RepresentativeIDRepresentative");
+
+                    b.HasIndex("TopicIDTopic");
 
                     b.ToTable("ChatSessions");
                 });
@@ -149,6 +148,12 @@ namespace DataContext.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsBusy")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsOnline")
+                        .HasColumnType("bit");
+
                     b.Property<string>("NameRepr")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -176,11 +181,11 @@ namespace DataContext.Migrations
 
             modelBuilder.Entity("Repository.Entities.Topic", b =>
                 {
-                    b.Property<int>("IDTopics")
+                    b.Property<int>("IDTopic")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDTopics"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IDTopic"));
 
                     b.Property<double>("AverageTreatTime")
                         .HasColumnType("float");
@@ -195,32 +200,23 @@ namespace DataContext.Migrations
                     b.Property<int>("priorityTopics")
                         .HasColumnType("int");
 
-                    b.HasKey("IDTopics");
+                    b.Property<int>("totalSessionsCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("IDTopic");
 
                     b.ToTable("Topics");
                 });
 
             modelBuilder.Entity("Repository.Entities.ChatMessage", b =>
                 {
-                    b.HasOne("Repository.Entities.ChatSession", null)
+                    b.HasOne("Repository.Entities.ChatSession", "ChatSession")
                         .WithMany("Messages")
-                        .HasForeignKey("ChatSessionSessionID");
-
-                    b.HasOne("Repository.Entities.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("IDCustomer")
+                        .HasForeignKey("IDSession")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Repository.Entities.Representative", "Representative")
-                        .WithMany()
-                        .HasForeignKey("IDRepresentative")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Representative");
+                    b.Navigation("ChatSession");
                 });
 
             modelBuilder.Entity("Repository.Entities.ChatSession", b =>
@@ -237,9 +233,17 @@ namespace DataContext.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Repository.Entities.Topic", "Topic")
+                        .WithMany()
+                        .HasForeignKey("TopicIDTopic")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Customer");
 
                     b.Navigation("Representative");
+
+                    b.Navigation("Topic");
                 });
 
             modelBuilder.Entity("Repository.Entities.ChatSession", b =>

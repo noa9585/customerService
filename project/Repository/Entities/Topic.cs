@@ -10,7 +10,7 @@ namespace Repository.Entities
     public class Topic
     {
         [Key]
-        public int IDTopics { get; set; }
+        public int IDTopic { get; set; }
         public string NameTopic { get; set; }
         public double AverageTreatTime { get; set; }
         public int priorityTopics { get; set; }

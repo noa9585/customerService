@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataContext.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class DBCustomerService : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -39,7 +39,9 @@ namespace DataContext.Migrations
                     ScoreForMonth = table.Column<int>(type: "int", nullable: false),
                     entryHourRepr = table.Column<TimeOnly>(type: "time", nullable: false),
                     exitHourRepr = table.Column<TimeOnly>(type: "time", nullable: false),
-                    StatusRepr = table.Column<bool>(type: "bit", nullable: false)
+                    StatusRepr = table.Column<bool>(type: "bit", nullable: false),
+                    IsOnline = table.Column<bool>(type: "bit", nullable: false),
+                    IsBusy = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -50,16 +52,17 @@ namespace DataContext.Migrations
                 name: "Topics",
                 columns: table => new
                 {
-                    IDTopics = table.Column<int>(type: "int", nullable: false)
+                    IDTopic = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NameTopic = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AverageTreatTime = table.Column<double>(type: "float", nullable: false),
                     priorityTopics = table.Column<int>(type: "int", nullable: false),
-                    StatusTopic = table.Column<bool>(type: "bit", nullable: false)
+                    StatusTopic = table.Column<bool>(type: "bit", nullable: false),
+                    totalSessionsCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Topics", x => x.IDTopics);
+                    table.PrimaryKey("PK_Topics", x => x.IDTopic);
                 });
 
             migrationBuilder.CreateTable(
@@ -68,14 +71,17 @@ namespace DataContext.Migrations
                 {
                     SessionID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StartTimestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ServiceStartTimestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndTimestamp = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ChatStatus = table.Column<bool>(type: "bit", nullable: false),
-                    IDRepresentative = table.Column<int>(type: "int", nullable: false),
+                    statusChat = table.Column<int>(type: "int", nullable: false),
+                    status = table.Column<bool>(type: "bit", nullable: false),
+                    IDRepresentative = table.Column<int>(type: "int", nullable: true),
                     RepresentativeIDRepresentative = table.Column<int>(type: "int", nullable: false),
                     IDCustomer = table.Column<int>(type: "int", nullable: false),
-                    CustomerIDCustomers = table.Column<int>(type: "int", nullable: false)
+                    CustomerIDCustomers = table.Column<int>(type: "int", nullable: false),
+                    IDTopic = table.Column<int>(type: "int", nullable: false),
+                    TopicIDTopic = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -92,6 +98,12 @@ namespace DataContext.Migrations
                         principalTable: "Representatives",
                         principalColumn: "IDRepresentative",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ChatSessions_Topics_TopicIDTopic",
+                        column: x => x.TopicIDTopic,
+                        principalTable: "Topics",
+                        principalColumn: "IDTopic",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -100,51 +112,28 @@ namespace DataContext.Migrations
                 {
                     MessageID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    IDSession = table.Column<int>(type: "int", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IDSend = table.Column<int>(type: "int", nullable: false),
-                    MessageType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StatusMessage = table.Column<bool>(type: "bit", nullable: false),
-                    IDRepresentative = table.Column<int>(type: "int", nullable: false),
-                    IDCustomer = table.Column<int>(type: "int", nullable: false),
-                    ChatSessionSessionID = table.Column<int>(type: "int", nullable: true)
+                    MessageType = table.Column<int>(type: "int", nullable: false),
+                    StatusMessage = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ChatMessages", x => x.MessageID);
                     table.ForeignKey(
-                        name: "FK_ChatMessages_ChatSessions_ChatSessionSessionID",
-                        column: x => x.ChatSessionSessionID,
+                        name: "FK_ChatMessages_ChatSessions_IDSession",
+                        column: x => x.IDSession,
                         principalTable: "ChatSessions",
-                        principalColumn: "SessionID");
-                    table.ForeignKey(
-                        name: "FK_ChatMessages_Customers_IDCustomer",
-                        column: x => x.IDCustomer,
-                        principalTable: "Customers",
-                        principalColumn: "IDCustomers",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ChatMessages_Representatives_IDRepresentative",
-                        column: x => x.IDRepresentative,
-                        principalTable: "Representatives",
-                        principalColumn: "IDRepresentative",
+                        principalColumn: "SessionID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChatMessages_ChatSessionSessionID",
+                name: "IX_ChatMessages_IDSession",
                 table: "ChatMessages",
-                column: "ChatSessionSessionID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ChatMessages_IDCustomer",
-                table: "ChatMessages",
-                column: "IDCustomer");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ChatMessages_IDRepresentative",
-                table: "ChatMessages",
-                column: "IDRepresentative");
+                column: "IDSession");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ChatSessions_CustomerIDCustomers",
@@ -155,6 +144,11 @@ namespace DataContext.Migrations
                 name: "IX_ChatSessions_RepresentativeIDRepresentative",
                 table: "ChatSessions",
                 column: "RepresentativeIDRepresentative");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChatSessions_TopicIDTopic",
+                table: "ChatSessions",
+                column: "TopicIDTopic");
         }
 
         /// <inheritdoc />
@@ -164,9 +158,6 @@ namespace DataContext.Migrations
                 name: "ChatMessages");
 
             migrationBuilder.DropTable(
-                name: "Topics");
-
-            migrationBuilder.DropTable(
                 name: "ChatSessions");
 
             migrationBuilder.DropTable(
@@ -174,6 +165,9 @@ namespace DataContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "Representatives");
+
+            migrationBuilder.DropTable(
+                name: "Topics");
         }
     }
 }

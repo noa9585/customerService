@@ -31,13 +31,13 @@ namespace Repository.Repositories
 
         public Topic GetById(int id)
         {
-            return _context.Topics.ToList().FirstOrDefault(x => x.IDTopics == id);
+            return _context.Topics.ToList().FirstOrDefault(x => x.IDTopic == id);
         }
 
         public void UpdateItem(int id, Topic item)
         {
             var topic = GetById(id);
-            topic.IDTopics = item.IDTopics;
+            topic.IDTopic = item.IDTopic;
             topic.NameTopic = item.NameTopic;
             topic.AverageTreatTime = item.AverageTreatTime;
             topic.priorityTopics = item.priorityTopics;
