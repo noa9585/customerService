@@ -36,20 +36,30 @@ namespace YourProject.Controllers
             return Ok(message);
         }
 
-        // 3. הוספת הודעה חדשה
-        // הערה: מומלץ להשתמש ב-DTO כפרמטר ב-Post במקום רשימת משתנים ארוכה
+        // 3. הוספת הודעה חדשה - שימוש ב-DTO מתוך ה-Body
         [HttpPost]
-        public ActionResult<ChatMessageChatDto> Add(int idSession, string message, int idSend, SenderType messageType)
+        public ActionResult<ChatMessageChatDto> Add([FromBody] ChatMessageChatDto messageDto)
         {
-            var newMessage = _chatMessageService.AddMessage(idSession, message, idSend, messageType);
+            if (messageDto == null)
+            {
+                return BadRequest("Invalid message data.");
+            }
 
-            // מחזיר 201 Created עם נתיב לשליפת האובייקט החדש
-            return CreatedAtAction(nameof(GetById), new { id = idSend }, newMessage);
+            // שליחת הנתונים מה-DTO אל ה-Service
+            var createdMessage = _chatMessageService.AddMessage(
+                messageDto.IDSession,
+                messageDto.Message,
+                messageDto.IDSend,
+                messageDto.MessageType
+            );
+
+            // החזרת תשובה מסוג 201 Created
+            return CreatedAtAction(nameof(GetById), new { id = messageDto.IDSend }, createdMessage);
         }
 
         // 4. עדכון הודעה קיימת
         [HttpPut("{id}")]
-        public IActionResult Update(int id, int idSession, string message, int idSend, SenderType messageType, bool statusMessage)
+        public IActionResult Update(int id, [FromBody] ChatMessageChatDto messageDto, [FromQuery] bool statusMessage)
         {
             var existing = _chatMessageService.GetById(id);
             if (existing == null)
@@ -57,7 +67,14 @@ namespace YourProject.Controllers
                 return NotFound();
             }
 
-            _chatMessageService.UpdateMessage(id, idSession, message, idSend, messageType, statusMessage);
+            _chatMessageService.UpdateMessage(
+                id,
+                messageDto.IDSession,
+                messageDto.Message,
+                messageDto.IDSend,
+                messageDto.MessageType,
+                statusMessage
+            );
 
             return NoContent();
         }
