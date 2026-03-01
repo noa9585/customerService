@@ -26,6 +26,9 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 // --- רישום Representative ---
 builder.Services.AddScoped<IRepository<Representative>, RepresentativeRepository>();
 builder.Services.AddScoped<IRepresentativeService, RepresentativeService>();
+// --- רישום Representative ---
+builder.Services.AddScoped<IRepository<ChatMessage>, ChatMessageRepository>();
+builder.Services.AddScoped<IChatMessageService, ChatMessageService>();
 
 // --- רישום ChatSession ---
 // חשוב: הרישומים האלו מאפשרים ל-Service לקבל את ה-Repositories בבנאי (Constructor)
