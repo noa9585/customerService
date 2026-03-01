@@ -15,6 +15,6 @@ namespace Repository.Entities
         public double AverageTreatTime { get; set; }
         public int priorityTopics { get; set; }
         public bool StatusTopic {  get; set; }
-        
+        public int totalSessionsCount {  get; set; }
     }
 }
