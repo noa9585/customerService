@@ -55,6 +55,7 @@ namespace Service1.Services
 
             return new CustomerChatDto
             {
+                IDCustomers=saveCustomer.IDCustomers,
                 NameCust = saveCustomer.NameCust,
                 EmailCust = saveCustomer.EmailCust,
 

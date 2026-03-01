@@ -11,12 +11,8 @@ namespace Service1.Dto.ChatSessionDto
 {
     public class ChatSessionCreateDto
     {
-        [ForeignKey("IDCustomer")]
         public int IDCustomer { get; set; }
-        public virtual Customer Customer { get; set; }
-        [ForeignKey("IDTopic")]
         public int IDTopic { get; set; }
-        public virtual Topic Topic { get; set; }
     }
 }
 
