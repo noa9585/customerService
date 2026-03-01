@@ -1,5 +1,6 @@
 ﻿using Repository.Entities;
 using Repository.interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace Repository.Repositories
 {
@@ -41,7 +42,10 @@ namespace Repository.Repositories
             topic.AverageTreatTime = item.AverageTreatTime;
             topic.priorityTopics = item.priorityTopics;
             topic.StatusTopic = item.StatusTopic;
+            topic.totalSessionsCount = item.totalSessionsCount;
             _context.save();
         }
     }
 }
+
+

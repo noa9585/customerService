@@ -21,7 +21,8 @@ namespace Repository.Entities
         public DateTime ServiceStartTimestamp { get; set; } // תאריך ושעת התחלת עם נציג
         public DateTime? EndTimestamp { get; set; } // תאריך ושעת סיום השיחה
 
-        public SessionStatus status { get; set; } // מצב השיחה
+        public SessionStatus statusChat { get; set; } // מצב השיחה
+        public bool status { get; set; }
         [ForeignKey("IDRepresentative")]
         public int? IDRepresentative { get; set; }
         public virtual Representative Representative { get; set; }
@@ -31,5 +32,6 @@ namespace Repository.Entities
         [ForeignKey("Topic")]
         public int IDTopic { get; set; }
         public virtual Topic Topic { get; set; }
+
     }
 }

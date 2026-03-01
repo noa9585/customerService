@@ -2,6 +2,8 @@
 using Repository.interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,15 +44,23 @@ namespace Repository.Repositories
         public void UpdateItem(int id, ChatSession item)
         {
             var chses = GetById(id);
+            chses.SessionID = item.SessionID;
             chses.Messages = item.Messages;
-            chses.ChatStatus = item.ChatStatus;
             chses.StartTimestamp = item.StartTimestamp;
+            chses.ServiceStartTimestamp = item.ServiceStartTimestamp;
             chses.EndTimestamp = item.EndTimestamp;
-            chses.Subject = item.Subject;
-            chses.ChatStatus = item.ChatStatus;
+            chses.status=item.status;
+            chses.statusChat=item.statusChat;
             chses.IDCustomer = item.IDCustomer;
             chses.IDRepresentative = item.IDRepresentative;
+            chses.IDTopic = item.IDTopic;
             _context.save();
         }
     }
 }
+
+
+
+
+
+
