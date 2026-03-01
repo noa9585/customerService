@@ -18,6 +18,11 @@ namespace Repository.Entities
         public TimeOnly entryHourRepr { get; set; }
         public TimeOnly exitHourRepr { get; set; }
         public bool StatusRepr { get; set; }
+        // האם הנציג ביצע Login למערכת כרגע?
+        public bool IsOnline { get; set; }
+
+        // האם הנציג נמצא בשיחה פעילה כרגע?
+        public bool IsBusy { get; set; }
 
     }
 }
