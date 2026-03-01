@@ -44,7 +44,7 @@ namespace WebApplication1.Controllers
             }
 
             var newTopic = _topicService.AddTopic(topicDto.NameTopic, topicDto.AverageTreatTime, topicDto.priorityTopics);
-            return CreatedAtAction(nameof(GetById), new { id = newTopic.IDTopics }, newTopic);
+            return CreatedAtAction(nameof(GetById), new { id = newTopic.IDTopic }, newTopic);
         }
 
         // עדכון נושא קיים
@@ -57,7 +57,7 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            _topicService.UpdateTopic(id, topicDto.NameTopic, topicDto.AverageTreatTime, topicDto.priorityTopics,topicDto.totalSessionsCount);
+            _topicService.UpdateTopic(id, topicDto.NameTopic, topicDto.AverageTreatTime, topicDto.priorityTopics);
             return NoContent();
         }
 

@@ -24,7 +24,7 @@ namespace Service1.Services
             // מיפוי מרשימת ישויות לרשימת DTO
             return topics.Select(t => new TopicDto
             {
-                IDTopics = t.IDTopics,
+                IDTopic = t.IDTopic,
                 NameTopic = t.NameTopic,
                 AverageTreatTime = t.AverageTreatTime,
                 priorityTopics = t.priorityTopics,
@@ -40,7 +40,7 @@ namespace Service1.Services
 
             return new TopicDto
             {
-                IDTopics = t.IDTopics,
+                IDTopic = t.IDTopic,
                 NameTopic = t.NameTopic,
                 AverageTreatTime = t.AverageTreatTime,
                 priorityTopics = t.priorityTopics,
@@ -64,7 +64,7 @@ namespace Service1.Services
 
             return new TopicDto
             {
-                IDTopics = savedTopic.IDTopics,
+                IDTopic = savedTopic.IDTopic,
                 NameTopic = savedTopic.NameTopic,
                 AverageTreatTime = savedTopic.AverageTreatTime,
                 priorityTopics = savedTopic.priorityTopics,
@@ -73,7 +73,7 @@ namespace Service1.Services
             };
         }
 
-        public void UpdateTopic(int id, string name, double average, int priority,int totalSessionsCount)
+        public void UpdateTopic(int id, string name, double average, int priority)
         {
             var existing = _repository.GetById(id);
             if (existing != null)
@@ -81,7 +81,6 @@ namespace Service1.Services
                 existing.NameTopic = name;
                 existing.AverageTreatTime = average;
                 existing.priorityTopics = priority;
-                existing.TotalSessionsCount = totalSessionsCount;
                 _repository.UpdateItem(id, existing);
             }
         }

@@ -32,7 +32,7 @@ namespace WebApplication1.Controllers
         }
         // הוספת נציג חדש
         [HttpPost]
-        public ActionResult<RepresentativeChatDto> Add([FromBody] RepresentativeRegisterDto representativeDto)
+        public ActionResult<RepresentativeDto> Add([FromBody] RepresentativeRegisterDto representativeDto)
         {
             if (representativeDto == null)
             {
@@ -40,7 +40,7 @@ namespace WebApplication1.Controllers
             }
 
             var newrepresentative= _representativeService.AddRepresentative(representativeDto.NameRepr,representativeDto.EmailRepr, representativeDto.PasswordRepr);
-            return CreatedAtAction(nameof(GetById), new { id = newrepresentative.IDRepresentative }, representativeDto);
+            return CreatedAtAction(nameof(GetById), new { id = newrepresentative.IDRepresentative }, newrepresentative);
         }
         // עדכון נציג קיים
         [HttpPut("{id}")]

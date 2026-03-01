@@ -12,7 +12,7 @@ namespace Service1.Interface
         List<TopicDto> GetAll();
         TopicDto GetById(int id);
         TopicDto AddTopic(string name,double avrage,int priority);
-        void UpdateTopic(int id, string name, double avrage, int priority,int totalSessionsCount);
+        void UpdateTopic(int id, string name, double avrage, int priority);
         void DeleteTopic(int id);
     }
 }
