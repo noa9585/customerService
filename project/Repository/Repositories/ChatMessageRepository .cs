@@ -45,13 +45,13 @@ namespace Repository.Repositories
         {
             var chmes = GetById(id);
             chmes.MessageID = item.MessageID;
+            chmes.IDSession= item.IDSession;
             chmes.Message= item.Message;
             chmes.Timestamp = item.Timestamp;
             chmes.IDSend = item.IDSend;
             chmes.MessageType= item.MessageType;
             chmes.StatusMessage= item.StatusMessage;
-            chmes.IDRepresentative = item.IDRepresentative;
-            chmes.IDCustomer = item.IDCustomer;
+          
             _context.save();
         }
     }

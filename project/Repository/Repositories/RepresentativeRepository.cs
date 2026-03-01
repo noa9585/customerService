@@ -46,6 +46,8 @@ namespace Repository.Repositories
             representative.entryHourRepr = item.entryHourRepr;
             representative.exitHourRepr = item.exitHourRepr;
             representative.StatusRepr = item.StatusRepr;
+            representative.IsBusy= item.IsBusy;
+            representative.IsOnline=item.IsOnline;
             _context.save();
         }
     }
