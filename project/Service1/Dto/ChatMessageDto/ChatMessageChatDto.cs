@@ -5,14 +5,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Repository.Entities;
 namespace Service1.Dto.ChatMessageDto
 {
     public class ChatMessageChatDto
     {
         public string Message { get; set; } // תוכן ההודעה
+        public int IDSession {  get; set; }//קישור לשיחה
         public DateTime Timestamp { get; set; } // תאריך ושעת שליחת ההודעה
-      //  public int IDSend { get; set; } // מזהה שולח
-        public string MessageType { get; set; } // סוג ההודעה (לקוח או נציג)
+        public int IDSend { get; set; } // מזהה שולח
+        public SenderType MessageType { get; set; } // סוג ההודעה (לקוח או נציג)
     }
 }

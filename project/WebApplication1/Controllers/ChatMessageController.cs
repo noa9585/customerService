@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service1.Interface;
 using Service1.Dto.ChatMessageDto;
+using Repository.Entities;
 using System.Collections.Generic;
 
 namespace YourProject.Controllers
@@ -16,14 +17,14 @@ namespace YourProject.Controllers
             _chatMessageService = chatMessageService;
         }
 
-        // שליפת כל ההודעות
+        // 1. שליפת כל ההודעות
         [HttpGet]
         public ActionResult<IEnumerable<ChatMessageChatDto>> GetAll()
         {
             return Ok(_chatMessageService.GetAll());
         }
 
-        // שליפת הודעה לפי ID
+        // 2. שליפת הודעה לפי ID
         [HttpGet("{id}")]
         public ActionResult<ChatMessageChatDto> GetById(int id)
         {
@@ -35,20 +36,20 @@ namespace YourProject.Controllers
             return Ok(message);
         }
 
-        // הוספת הודעה חדשה - מסונכרן בדיוק לחתימת הממשק
+        // 3. הוספת הודעה חדשה
+        // הערה: מומלץ להשתמש ב-DTO כפרמטר ב-Post במקום רשימת משתנים ארוכה
         [HttpPost]
-        public ActionResult<ChatMessageChatDto> Add(string message, int idSend, string messageType, int idRepresentative, int idCustomer)
+        public ActionResult<ChatMessageChatDto> Add(int idSession, string message, int idSend, SenderType messageType)
         {
-            // קריאה לשירות עם הפרמטרים המפורטים
-            var newMessage = _chatMessageService.AddMessage(message, idSend, messageType, idRepresentative, idCustomer);
+            var newMessage = _chatMessageService.AddMessage(idSession, message, idSend, messageType);
 
-            // שימוש במזהה השולח כאינדקס זמני (או מזהה ההודעה אם קיים ב-DTO)
+            // מחזיר 201 Created עם נתיב לשליפת האובייקט החדש
             return CreatedAtAction(nameof(GetById), new { id = idSend }, newMessage);
         }
 
-        // עדכון הודעה קיימת - מסונכרן בדיוק לחתימת הממשק
+        // 4. עדכון הודעה קיימת
         [HttpPut("{id}")]
-        public IActionResult Update(int id, string message, int idSend, string messageType, int idRepresentative, int idCustomer, bool statusMessage)
+        public IActionResult Update(int id, int idSession, string message, int idSend, SenderType messageType, bool statusMessage)
         {
             var existing = _chatMessageService.GetById(id);
             if (existing == null)
@@ -56,13 +57,12 @@ namespace YourProject.Controllers
                 return NotFound();
             }
 
-            // עדכון כל השדות כפי שמופיע במימוש השירות
-            _chatMessageService.UpdateMessage(id, message, idSend, messageType, idRepresentative, idCustomer, statusMessage);
+            _chatMessageService.UpdateMessage(id, idSession, message, idSend, messageType, statusMessage);
 
             return NoContent();
         }
 
-        // מחיקת הודעה
+        // 5. מחיקת הודעה
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
