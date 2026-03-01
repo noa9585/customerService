@@ -38,7 +38,7 @@ namespace YourProject.Controllers
 
         // 3. הוספת הודעה חדשה - שימוש ב-DTO מתוך ה-Body
         [HttpPost]
-        public ActionResult<ChatMessageChatDto> Add([FromBody] ChatMessageChatDto messageDto)
+        public ActionResult<ChatMessageSendDto> Add([FromBody] ChatMessageSendDto messageDto)
         {
             if (messageDto == null)
             {
@@ -49,12 +49,11 @@ namespace YourProject.Controllers
             var createdMessage = _chatMessageService.AddMessage(
                 messageDto.IDSession,
                 messageDto.Message,
-                messageDto.IDSend,
                 messageDto.MessageType
             );
 
             // החזרת תשובה מסוג 201 Created
-            return CreatedAtAction(nameof(GetById), new { id = messageDto.IDSend }, createdMessage);
+            return CreatedAtAction(nameof(GetById), new { id = createdMessage.MessageID }, createdMessage);
         }
 
         // 4. עדכון הודעה קיימת
@@ -71,7 +70,6 @@ namespace YourProject.Controllers
                 id,
                 messageDto.IDSession,
                 messageDto.Message,
-                messageDto.IDSend,
                 messageDto.MessageType,
                 statusMessage
             );

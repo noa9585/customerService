@@ -11,10 +11,10 @@ namespace Service1.Interface
         ChatMessageChatDto GetById(int id);
 
         // הוספה: מחזיר את האובייקט שנוצר
-        ChatMessageChatDto AddMessage(int iDSession, string message, int idSend, SenderType messageType);
+        ChatMessageDto AddMessage(int iDSession, string message, SenderType messageType);
 
         // עדכון: הוספתי id כדי שנדע איזו הודעה לעדכן
-        void UpdateMessage(int id, int iDSession, string message, int iDSend, SenderType messageType, bool statusMessage);
+        void UpdateMessage(int id, int iDSession, string message, SenderType messageType, bool statusMessage);
 
         void DeleteMessage(int id);
     }
