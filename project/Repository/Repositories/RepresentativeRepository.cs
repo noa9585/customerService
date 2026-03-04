@@ -48,6 +48,7 @@ namespace Repository.Repositories
             representative.StatusRepr = item.StatusRepr;
             representative.IsBusy= item.IsBusy;
             representative.IsOnline=item.IsOnline;
+            representative.Role = item.Role; 
             _context.save();
         }
     }

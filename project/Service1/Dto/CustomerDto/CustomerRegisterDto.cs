@@ -12,5 +12,7 @@ namespace Service1.Dto.CustomerDto
         public string NameCust { get; set; }
         public string EmailCust { get; set; }
         public string PasswordCust { get; set; }
+        public string? Role { get; set; }
+
     }
 }

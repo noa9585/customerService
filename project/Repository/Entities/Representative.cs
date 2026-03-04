@@ -23,6 +23,8 @@ namespace Repository.Entities
 
         // האם הנציג נמצא בשיחה פעילה כרגע?
         public bool IsBusy { get; set; }
+        public string? Role { get; set; }
 
-    }
+
+}
 }

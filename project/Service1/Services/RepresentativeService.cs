@@ -5,6 +5,7 @@ using Service1.Dto.TopicDto;
 using Service1.Interface;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,7 +36,8 @@ namespace Service1.Services
                 IsBusy = r.IsBusy,
                 IsOnline = r.IsOnline,
                 ScoreForMonth = r.ScoreForMonth,
-                StatusRepr = r.StatusRepr                
+                StatusRepr = r.StatusRepr,
+                Role = r.Role,
             }).ToList();
         }
     
@@ -55,7 +57,8 @@ namespace Service1.Services
                 IsBusy = r.IsBusy,
                 IsOnline = r.IsOnline,
                 ScoreForMonth = r.ScoreForMonth,
-                StatusRepr = r.StatusRepr
+                StatusRepr = r.StatusRepr,
+                Role = r.Role,
             };
         }
 
@@ -72,7 +75,8 @@ namespace Service1.Services
                 exitHourRepr = new TimeOnly(),
                 StatusRepr = true,
                 IsOnline=false,
-                IsBusy=false
+                IsBusy=false,
+                Role= "Representative"
             };
 
             var savedRepresentative = _repository.AddItem(newRepresentative);
@@ -94,7 +98,7 @@ namespace Service1.Services
             {
                 existing.EmailRepr = email;
                 existing.NameRepr = name;
-                existing.PasswordRepr = passward;           
+                existing.PasswordRepr = passward;
                 _repository.UpdateItem(id, existing);
             }
         }

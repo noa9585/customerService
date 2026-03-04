@@ -12,6 +12,7 @@ namespace Service1.Dto.RepresentativeDto
         public string NameRepr { get; set; }
         public string EmailRepr { get; set; }
         public string PasswordRepr { get; set; }
-   
+        public string? Role { get; set; }
+
     }
 }

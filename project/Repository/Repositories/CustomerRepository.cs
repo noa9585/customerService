@@ -44,6 +44,7 @@ namespace Repository.Repositories
             cust.EmailCust = item.EmailCust;
             cust.PasswordCust = item.PasswordCust;
             cust.StatusCust = item.StatusCust;
+            cust.Role = item.Role; 
             _context.save();
         }
     }

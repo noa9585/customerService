@@ -11,5 +11,6 @@ namespace Service1.Dto.RepresentativeDto
     {
         public int IDRepresentative {  get; set; }
         public string NameRepr { get; set; }
+        public string? Role { get; set; }
     }
 }

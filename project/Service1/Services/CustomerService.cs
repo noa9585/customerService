@@ -24,6 +24,7 @@ namespace Service1.Services
                 IDCustomer = t.IDCustomer,
                 NameCust = t.NameCust,
                 EmailCust = t.EmailCust,
+                Role=t.Role,
             }).ToList();
         }
 
@@ -37,6 +38,7 @@ namespace Service1.Services
                 IDCustomer= t.IDCustomer,
                 NameCust = t.NameCust,
                 EmailCust = t.EmailCust,
+                Role=t.Role,
             };
         }
 
@@ -48,7 +50,8 @@ namespace Service1.Services
                 NameCust = name,
                 EmailCust = email,
                 PasswordCust = password,
-                StatusCust = true // ברירת מחדל
+                StatusCust = true, // ברירת מחדל
+                Role="USER",
             };
 
             var saveCustomer = _repository.AddItem(newCustomer);
@@ -58,6 +61,7 @@ namespace Service1.Services
                 IDCustomer=saveCustomer.IDCustomer,
                 NameCust = saveCustomer.NameCust,
                 EmailCust = saveCustomer.EmailCust,
+                Role=saveCustomer.Role,
 
             };
         }
@@ -70,7 +74,6 @@ namespace Service1.Services
                 existing.NameCust = name;
                 existing.EmailCust = email;
                 existing.PasswordCust = PasswordCust;
-
                 _repository.UpdateItem(id, existing);
             }
         }

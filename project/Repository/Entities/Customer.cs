@@ -15,6 +15,7 @@ namespace Repository.Entities
         public string EmailCust { get; set; }
         public string PasswordCust { get; set; }
         public bool StatusCust { get; set; }
+        public string? Role { get; set; } 
 
     }
 }

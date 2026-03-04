@@ -11,5 +11,7 @@ namespace Service1.Dto.CustomerDto
         public int IDCustomer { get; set; }
         public string NameCust { get; set; }
         public string EmailCust { get; set; }
+        public string? Role { get; set; }
+
     }
 }
