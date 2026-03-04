@@ -14,5 +14,8 @@ namespace Service1.Interface
         CustomerChatDto AddCustomer(string name, string email, string password);
         void UpdateCustomer(int id,string name, string email,string password);
         void DeleteCustomer(int id);
+        CustomerChatDto Login(CustomerLoginDto customerLoginDto);
+        CustomerChatDto Register(CustomerRegisterDto registerDto);
+
     }
 }

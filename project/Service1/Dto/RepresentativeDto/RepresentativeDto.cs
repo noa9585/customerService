@@ -12,7 +12,6 @@ namespace Service1.Dto.RepresentativeDto
         public int IDRepresentative { get; set; }
         public string NameRepr { get; set; }
         public string EmailRepr { get; set; }
-        public string PasswordRepr {  get; set; }
         public int ScoreForMonth { get; set; }
         public TimeOnly entryHourRepr { get; set; }
         public TimeOnly exitHourRepr { get; set; }

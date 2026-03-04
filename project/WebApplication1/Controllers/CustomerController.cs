@@ -74,5 +74,32 @@ namespace YourProject.Controllers
             _customerService.DeleteCustomer(id);
             return NoContent();
         }
+        [HttpPost("login")]
+        public ActionResult<CustomerChatDto> Login([FromBody] CustomerLoginDto loginDto)
+        {
+            var customer = _customerService.Login(loginDto);
+
+            if (customer == null)
+            {
+                return Unauthorized("אימייל או סיסמה שגויים");
+            }
+
+            return Ok(customer);
+        }
+        [HttpPost("register")]
+        public ActionResult<CustomerChatDto> Register([FromBody] CustomerRegisterDto registerDto)
+        {
+            if (registerDto == null) return BadRequest();
+
+            try
+            {
+                var result = _customerService.Register(registerDto);
+                return CreatedAtAction(nameof(GetById), new { id = result.IDCustomer }, result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message); // יחזיר שגיאה אם האימייל קיים
+            }
+        }
     }
 }

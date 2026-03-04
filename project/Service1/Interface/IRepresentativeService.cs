@@ -13,5 +13,10 @@ namespace Service1.Interface
         RepresentativeDto AddRepresentative(string name,string email, string passward);
         void UpdateRepresentative(int id,string name, string email, string passward);
         void DeleteRepresentative(int id);
+        RepresentativeDto Login(RepresentativeLoginDto loginDto);
+        RepresentativeDto Register(RepresentativeRegisterDto registerDto);
+        void Logout(int id);
+        void ToggleBreak(int id);
+        void ReturnFromBreak(int id);
     }
 }

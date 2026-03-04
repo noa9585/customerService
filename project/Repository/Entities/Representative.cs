@@ -7,6 +7,21 @@ using System.Threading.Tasks;
 
 namespace Repository.Entities
 {
+    public class WorkTime
+    {
+        [Key] // דורש using System.ComponentModel.DataAnnotations;
+        public int Id { get; set; }
+        public TimeOnly entryHourRepr { get; set; }
+        public TimeOnly exitHourRepr { get; set; }
+        public DateOnly WorkDate { get; set; }
+        public WorkTime() { }
+        public WorkTime(DateOnly WorkDate, TimeOnly entryHourRepr)
+        {
+            this.WorkDate = WorkDate;
+            this.entryHourRepr = entryHourRepr;
+        }
+        public void SetExitHourRepr(TimeOnly exitHourRepr) {  this.exitHourRepr = exitHourRepr; }
+    }
     public class Representative
     {
         [Key]
@@ -14,6 +29,7 @@ namespace Repository.Entities
         public string NameRepr { get; set; }
         public string EmailRepr { get; set; }
         public string PasswordRepr { get; set; }
+        public List<WorkTime> LHours { get; set; }
         public int ScoreForMonth { get; set; }
         public TimeOnly entryHourRepr { get; set; }
         public TimeOnly exitHourRepr { get; set; }
@@ -26,5 +42,5 @@ namespace Repository.Entities
         public string? Role { get; set; }
 
 
-}
+    }
 }

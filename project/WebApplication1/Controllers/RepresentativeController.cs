@@ -69,6 +69,74 @@ namespace WebApplication1.Controllers
             _representativeService.DeleteRepresentative(id);
             return NoContent();
         }
+        //התחברות
+
+        [HttpPost("login")]
+        public ActionResult<RepresentativeDto> Login([FromBody] RepresentativeLoginDto loginDto)
+        {
+            if (loginDto == null) return BadRequest("נתוני התחברות חסרים");
+
+            var result = _representativeService.Login(loginDto);
+
+            if (result == null)
+            {
+                return Unauthorized("אימייל או סיסמה שגויים");
+            }
+
+            return Ok(result);
+        }
+        [HttpPost("register")]
+        public ActionResult<RepresentativeDto> Register([FromBody] RepresentativeRegisterDto regDto)
+        {
+            if (regDto == null) return BadRequest("נתונים חסרים");
+
+            try
+            {
+                var result = _representativeService.Register(regDto);
+                // החזרת קוד 201 Created עם הנתיב לשליפת הנציג
+                return CreatedAtAction(nameof(GetById), new { id = result.IDRepresentative }, result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpPost("logout/{id}")]
+        public IActionResult Logout(int id)
+        {
+            var representative = _representativeService.GetById(id);
+            if (representative == null)
+            {
+                return NotFound("נציג לא נמצא");
+            }
+
+            _representativeService.Logout(id);
+            return Ok(new { message = "התנתקת בהצלחה" });
+        }
+        [HttpPut("ToggleBreak/{id}")]
+        public IActionResult ToggleBreak(int id)
+        {
+            var existing = _representativeService.GetById(id);
+            if (existing == null)
+            {
+                return NotFound("נציג לא נמצא");
+            }
+
+            _representativeService.ToggleBreak(id);
+            return Ok(new { message = "יצאת להפסקה בהצלחה" });
+        }
+        [HttpPut("return-from-break/{id}")]
+        public IActionResult ReturnFromBreak(int id)
+        {
+            var existing = _representativeService.GetById(id);
+            if (existing == null)
+            {
+                return NotFound("נציג לא נמצא");
+            }
+
+            _representativeService.ReturnFromBreak(id);
+            return Ok(new { message = "חזרת מהפסקה, הנך זמין לקבלת שיחות" });
+        }
     }
 }
 

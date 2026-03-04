@@ -51,7 +51,7 @@ namespace Service1.Services
                 EmailCust = email,
                 PasswordCust = password,
                 StatusCust = true, // ברירת מחדל
-                Role="USER",
+                Role= "Customer",
             };
 
             var saveCustomer = _repository.AddItem(newCustomer);
@@ -83,6 +83,56 @@ namespace Service1.Services
             _repository.DeleteItem(id);
         }
 
+        public CustomerChatDto Login(CustomerLoginDto customerLoginDto)
+        {
+            // שליפת כל הלקוחות מה-Repository
+            var customer = _repository.GetAll()
+                .FirstOrDefault(c => c.EmailCust == customerLoginDto.EmailCust && c.PasswordCust == customerLoginDto.PasswordCust);
 
+            // אם לא נמצא לקוח מתאים
+            if (customer == null) return null;
+
+            // החזרת הנתונים בפורמט DTO
+            return new CustomerChatDto
+            {
+                IDCustomer = customer.IDCustomer,
+                NameCust = customer.NameCust,
+                EmailCust = customer.EmailCust,
+                Role=customer.Role,
+                
+            };
+        }
+        public CustomerChatDto Register(CustomerRegisterDto registerDto)
+        {
+            // 1. בדיקה אם האימייל כבר תפוס
+            var existingCustomer = _repository.GetAll()
+                .FirstOrDefault(c => c.EmailCust == registerDto.EmailCust);
+
+            if (existingCustomer != null)
+            {
+                throw new Exception("משתמש עם אימייל זה כבר קיים במערכת");
+            }
+
+            // 2. יצירת ישות לקוח חדשה מה-DTO
+            var newCustomer = new Customer
+            {
+                NameCust = registerDto.NameCust,
+                EmailCust = registerDto.EmailCust,
+                PasswordCust = registerDto.PasswordCust,
+                StatusCust = true, // לקוח פעיל כברירת מחדל
+                Role = "Customer" // הגדרת תפקיד כפי שסיכמנו
+            };
+
+            // 3. שמירה בבסיס הנתונים
+            var savedCustomer = _repository.AddItem(newCustomer);
+
+            // 4. החזרת DTO ללא הסיסמה
+            return new CustomerChatDto
+            {
+                IDCustomer = savedCustomer.IDCustomer,
+                NameCust = savedCustomer.NameCust,
+                EmailCust = savedCustomer.EmailCust
+            };
+        }
     }
 }

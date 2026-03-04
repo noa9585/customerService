@@ -1,6 +1,6 @@
-﻿using Repository.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Repository.Entities;
 using Repository.interfaces;
-
 namespace Repository.Repositories
 {
     public class RepresentativeRepository : IRepository<Representative>
@@ -21,24 +21,34 @@ namespace Repository.Repositories
 
         public void DeleteItem(int id)
         {
-            _context.Representatives.Remove(GetById(id));
-            _context.save();
+            var item = GetById(id);
+            if (item != null)
+            {
+                _context.Representatives.Remove(item);
+                _context.save();
+            }
         }
 
         public List<Representative> GetAll()
         {
-            return _context.Representatives.ToList();
+            // שימוש ב-Include כדי לוודא שרשימת השעות נטענת מה-DB
+            return _context.Representatives
+                           .Include(x => x.LHours)
+                           .ToList();
         }
 
         public Representative GetById(int id)
         {
-            return _context.Representatives.ToList().FirstOrDefault(x => x.IDRepresentative == id);
+
+            // חיפוש ישירות ב-DB עם טעינת השעות, ללא ToList מקדים
+            return _context.Representatives.Include(x => x.LHours).FirstOrDefault(x => x.IDRepresentative == id);
+            //return _context.Representatives.ToList().FirstOrDefault(x => x.IDRepresentative == id);
         }
 
         public void UpdateItem(int id, Representative item)
         {
             var representative = GetById(id);
-            representative.IDRepresentative = item.IDRepresentative;
+            //representative.IDRepresentative = item.IDRepresentative;
             representative.ScoreForMonth = item.ScoreForMonth;
             representative.NameRepr = item.NameRepr;
             representative.EmailRepr = item.EmailRepr;
@@ -49,6 +59,7 @@ namespace Repository.Repositories
             representative.IsBusy= item.IsBusy;
             representative.IsOnline=item.IsOnline;
             representative.Role = item.Role; 
+            representative.LHours = item.LHours;
             _context.save();
         }
     }
