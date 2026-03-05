@@ -1,9 +1,11 @@
 using DataContext;
-using Service1.Interface;
-using Service1.Services;
-using Repository.interfaces;
 using Repository.Entities;
+using Repository.interfaces;
 using Repository.Repositories;
+using Service1.Interface;
+using Service1.Logic;
+using Service1.Services;
+using WebApplication1.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,14 +43,27 @@ builder.Services.AddScoped<IChatMessageService, ChatMessageService>();
 builder.Services.AddScoped<IRepository<ChatSession>, ChatSessionRepository>();
 builder.Services.AddScoped<IChatSessionService, ChatSessionService>();
 
+// הוספה לפני השורה var app = builder.Build();
+builder.Services.AddSingleton<IChatQueueManager, ChatQueueManager>();
+builder.Services.AddHostedService<QueueUpdateWorker>();
+
 // הגדרות Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // --- 2. בניית האפליקציה (Build) ---
-
+// --- הגדרת CORS לאישור כניסה מה-React ---
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReact", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173", "http://localhost:5174") // כתובות ה-React שלך
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 var app = builder.Build();
-
+app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 // --- 3. הגדרת הצינורות (Pipeline / Middleware) ---
 
 // שימוש ב-Swagger בסביבת פיתוח

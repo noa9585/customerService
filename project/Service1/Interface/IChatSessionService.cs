@@ -16,5 +16,6 @@ namespace Service1.Interface
         // שימוש ב-DTO לעדכון
         void UpdateSession(int id, ChatSessionUpdateDto sessionDto);
         void DeleteSession(int id);
+        double CalculateWaitTime(int sessionId);
     }
 }

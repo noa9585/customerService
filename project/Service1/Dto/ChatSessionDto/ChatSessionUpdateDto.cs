@@ -16,6 +16,7 @@ namespace Service1.Dto.ChatSessionDto
         public DateTime? EndTimestamp { get; set; } // תאריך ושעת סיום השיחה
 
         public SessionStatus statusChat { get; set; } // מצב השיחה
+        public double EstimatedWaitTime { get; set; }
         public bool status { get; set; }
         public int? IDRepresentative { get; set; }
 

@@ -16,6 +16,7 @@ namespace Service1.Interface
         void DeleteCustomer(int id);
         CustomerChatDto Login(CustomerLoginDto customerLoginDto);
         CustomerChatDto Register(CustomerRegisterDto registerDto);
+        void Logout(int id);
 
     }
 }

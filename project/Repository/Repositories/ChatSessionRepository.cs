@@ -54,6 +54,7 @@ namespace Repository.Repositories
             chses.IDCustomer = item.IDCustomer;
             chses.IDRepresentative = item.IDRepresentative;
             chses.IDTopic = item.IDTopic;
+            chses.EstimatedWaitTime = item.EstimatedWaitTime;
             _context.save();
         }
     }

@@ -24,7 +24,7 @@ namespace Service1.Services
                 IDCustomer = t.IDCustomer,
                 NameCust = t.NameCust,
                 EmailCust = t.EmailCust,
-                Role=t.Role,
+                Role = t.Role,
             }).ToList();
         }
 
@@ -35,10 +35,10 @@ namespace Service1.Services
 
             return new CustomerChatDto
             {
-                IDCustomer= t.IDCustomer,
+                IDCustomer = t.IDCustomer,
                 NameCust = t.NameCust,
                 EmailCust = t.EmailCust,
-                Role=t.Role,
+                Role = t.Role,
             };
         }
 
@@ -51,17 +51,17 @@ namespace Service1.Services
                 EmailCust = email,
                 PasswordCust = password,
                 StatusCust = true, // ברירת מחדל
-                Role= "Customer",
+                Role = "Customer",
             };
 
             var saveCustomer = _repository.AddItem(newCustomer);
 
             return new CustomerChatDto
             {
-                IDCustomer=saveCustomer.IDCustomer,
+                IDCustomer = saveCustomer.IDCustomer,
                 NameCust = saveCustomer.NameCust,
                 EmailCust = saveCustomer.EmailCust,
-                Role=saveCustomer.Role,
+                Role = saveCustomer.Role,
 
             };
         }
@@ -80,7 +80,13 @@ namespace Service1.Services
 
         public void DeleteCustomer(int id)
         {
-            _repository.DeleteItem(id);
+            var customer = _repository.GetById(id);
+            if (customer != null)
+            {
+                customer.StatusCust = false;
+                _repository.UpdateItem(id, customer);
+            }
+            // _repository.DeleteItem(id);
         }
 
         public CustomerChatDto Login(CustomerLoginDto customerLoginDto)
@@ -98,8 +104,8 @@ namespace Service1.Services
                 IDCustomer = customer.IDCustomer,
                 NameCust = customer.NameCust,
                 EmailCust = customer.EmailCust,
-                Role=customer.Role,
-                
+                Role = customer.Role,
+
             };
         }
         public CustomerChatDto Register(CustomerRegisterDto registerDto)
@@ -133,6 +139,16 @@ namespace Service1.Services
                 NameCust = savedCustomer.NameCust,
                 EmailCust = savedCustomer.EmailCust
             };
+        }
+        public void Logout(int id)
+        {
+            var customer = _repository.GetById(id);
+            if (customer != null)
+            {
+                // סימון הלקוח כלא פעיל כרגע במערכת
+
+                _repository.UpdateItem(id, customer);
+            }
         }
     }
 }

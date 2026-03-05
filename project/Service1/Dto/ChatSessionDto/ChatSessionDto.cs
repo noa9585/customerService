@@ -20,7 +20,7 @@ namespace Service1.Dto.ChatSessionDto
         public DateTime StartTimestamp { get; set; } // תאריך ושעת פתיחת פניה 
         public DateTime ServiceStartTimestamp { get; set; } // תאריך ושעת התחלת עם נציג
         public DateTime? EndTimestamp { get; set; } // תאריך ושעת סיום השיחה
-
+        public double EstimatedWaitTime { get; set; }
         public SessionStatus statusChat { get; set; } // מצב השיחה
         public bool status { get; set; }
         public int? IDRepresentative { get; set; }

@@ -101,5 +101,17 @@ namespace YourProject.Controllers
                 return BadRequest(ex.Message); // יחזיר שגיאה אם האימייל קיים
             }
         }
+        [HttpPut("logout/{id}")]
+        public IActionResult Logout(int id)
+        {
+            var existing = _customerService.GetById(id);
+            if (existing == null)
+            {
+                return NotFound("לקוח לא נמצא");
+            }
+
+            _customerService.Logout(id);
+            return Ok(new { message = "התנתקת מהמערכת בהצלחה" });
+        }
     }
 }
