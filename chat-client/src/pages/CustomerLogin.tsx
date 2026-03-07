@@ -1,40 +1,13 @@
 import React from 'react';
 import { useCustomerAuth } from '../hooks/useCustomerLogin'; // וודא שהנתיב נכון
-import '../styles/CustomerLogin.css';
-import React, { useState } from 'react';
-import { loginCustomer } from '../services/customer.service';
-import { CustomerLogin as CustomerLoginType } from '../types/customer.types';
 import '../styles/CustomerLogin.css'; // נשתמש בעיצוב שהכנו קודם
 import { Link } from 'react-router-dom';
 
 const CustomerLogin: React.FC = () => {
     // שליפת הנתונים מה-Hook
-    const { formData, setFormData, error, loading, handleLogin } = useCustomerAuth();
+    const { formData, setFormData, error, loading, handleSubmit } = useCustomerAuth();
 
-    // שיניתי את השם ל-handleSubmit כדי שיתאים ל-JSX שלך למטה
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const user = await handleLogin();
-            if (user) {
-                alert(`שלום ${user.nameCust}, ברוך הבא!`);
-            }
-        } catch (err) {
-            // הלוגיקה של השגיאה מנוהלת בתוך ה-Hook (משתנה error)
-            console.error("Login failed", err);
-            // קריאה ל-Service שבנית!
-            const user = await loginCustomer(formData);
-            console.log("התחברת בהצלחה!", user);
-            alert(`שלום ${user.nameCust}, ברוך הבא!`);
 
-            // כאן בהמשך נשמור אותו ב-Context או ב-SessionStorage
-        } catch (err: any) {
-            // טיפול בשגיאה (למשל 401 Unauthorized מה-Controller)
-            setError("אימייל או סיסמה שגויים. נסה שוב.");
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <div className="chat-card">

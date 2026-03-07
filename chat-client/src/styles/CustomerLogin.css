@@ -14,7 +14,7 @@ body {
   margin: 0;
 }
 
-.auth-card {
+.chat-card {
   background: white;
   padding: 40px;
   border-radius: 24px;
@@ -25,7 +25,7 @@ body {
   border-top: 4px solid var(--primary);
 }
 
-.icon-circle {
+.logo-icon {
   width: 70px;
   height: 70px;
   background: #eff6ff;
@@ -62,16 +62,21 @@ input:focus {
 button {
   width: 100%;
   padding: 12px;
-  background: var(--primary);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
   margin-top: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-button:hover { opacity: 0.9; }
+button:hover { 
+  opacity: 1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
 
 .footer-text { margin-top: 20px; font-size: 13px; color: #64748b; }
 .footer-text a { color: var(--primary); text-decoration: none; font-weight: 600; }

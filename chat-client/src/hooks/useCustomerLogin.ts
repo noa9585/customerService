@@ -24,5 +24,18 @@ export const useCustomerAuth = () => {
         }
     };
 
-    return { formData, setFormData, error, loading, handleLogin };
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const user = await handleLogin();
+            if (user) {
+                alert(`שלום ${user.nameCust}, ברוך הבא!`);
+            }
+        } catch (err) {
+            // הלוגיקה של השגיאה מנוהלת בתוך ה-Hook (משתנה error)
+            console.error("Login failed", err);
+        }
+    };
+
+    return { formData, setFormData, error, loading, handleSubmit };
 };
