@@ -1,22 +1,22 @@
 // הבסיס המשותף לכולם
 export type CustomerBase = {
-    EmailCust: string;
+    emailCust: string;
 }
 
 // הרחבה לרישום
 export type CustomerRegister = CustomerBase & {
-    NameCust: string;
-    PasswordCust: string;
+    nameCust: string;
+    passwordCust: string;
 }
 
 // הרחבה להתחברות
 export type CustomerLogin = CustomerBase & {
-    PasswordCust: string;
+    passwordCust: string;
 }
 
 // אובייקט לקוח "חי" במערכת (בלי סיסמה)
 export type CustomerChat = CustomerBase & {
-    IDCustomer: number;
-    NameCust: string;
-    Role: string;
+    idCustomer: number;
+    nameCust: string;
+    role: string;
 }

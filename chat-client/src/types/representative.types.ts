@@ -1,28 +1,28 @@
 export type RepresentativeChat = {
-    IDRepresentative: number;
-    NameRepr: string;
-    Role: string;
+    idRepresentative: number;
+    nameRepr: string;
+    role: string;
 }
 
 export type Representative = {
 
-    IDRepresentative: number;
-    NameRepr: string;
-    Role: string;
-    EmailRepr: string;
-    ScoreForMonth: number;
+    idRepresentative: number;
+    nameRepr: string;
+    role: string;
+    emailRepr: string;
+    scoreForMonth: number;
     entryHourRepr: string;// "HH:mm:ss"
     exitHourRepr: string;// "HH:mm:ss"
-    StatusRepr: boolean;
-    IsOnline: boolean;
-    IsBusy: boolean;
+    statusRepr: boolean;
+    isOnline: boolean;
+    isBusy: boolean;
 }
 
 export type RepresentativeLogin = {
-    EmailRepr: string;
-    PasswordRepr: string;
+    emailRepr: string;
+    passwordRepr: string;
 }
 export type RepresentativeRegister = RepresentativeLogin & {
-    NameRepr: string;
+    nameRepr: string;
 }
 export type RepresentativeUpdate = RepresentativeRegister & {}

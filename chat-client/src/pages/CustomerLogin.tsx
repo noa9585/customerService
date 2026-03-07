@@ -6,8 +6,8 @@ import '../styles/CustomerLogin.css'; // נשתמש בעיצוב שהכנו קו
 const CustomerLogin: React.FC = () => {
     // State לניהול השדות בטופס
     const [formData, setFormData] = useState<CustomerLoginType>({
-        EmailCust: '',
-        PasswordCust: ''
+        emailCust: '',
+        passwordCust: ''
     });
 
     const [error, setError] = useState<string | null>(null);
@@ -46,8 +46,8 @@ const CustomerLogin: React.FC = () => {
                     <input 
                         type="email" 
                         required
-                        value={formData.EmailCust}
-                        onChange={(e) => setFormData({...formData, EmailCust: e.target.value})}
+                        value={formData.emailCust}
+                        onChange={(e) => setFormData({...formData, emailCust: e.target.value})}
                         placeholder="your@email.com"
                     />
                 </div>
@@ -57,8 +57,8 @@ const CustomerLogin: React.FC = () => {
                     <input 
                         type="password" 
                         required
-                        value={formData.PasswordCust}
-                        onChange={(e) => setFormData({...formData, PasswordCust: e.target.value})}
+                        value={formData.passwordCust}
+                        onChange={(e) => setFormData({...formData, passwordCust: e.target.value})}
                         placeholder="******"
                     />
                 </div>
