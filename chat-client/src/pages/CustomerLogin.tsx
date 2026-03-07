@@ -1,0 +1,80 @@
+import React, { useState } from 'react';
+import { loginCustomer } from '../services/customer.service';
+import { CustomerLogin as CustomerLoginType} from '../types/customer.types';
+import '../styles/CustomerLogin.css'; // נשתמש בעיצוב שהכנו קודם
+
+const CustomerLogin: React.FC = () => {
+    // State לניהול השדות בטופס
+    const [formData, setFormData] = useState<CustomerLoginType>({
+        EmailCust: '',
+        PasswordCust: ''
+    });
+
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
+        setLoading(true);
+
+        try {
+            // קריאה ל-Service שבנית!
+            const user = await loginCustomer(formData);
+            console.log("התחברת בהצלחה!", user);
+            alert(`שלום ${user.nameCust}, ברוך הבא!`);
+            
+            // כאן בהמשך נשמור אותו ב-Context או ב-SessionStorage
+        } catch (err: any) {
+            // טיפול בשגיאה (למשל 401 Unauthorized מה-Controller)
+            setError("אימייל או סיסמה שגויים. נסה שוב.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="chat-card">
+            <div className="logo-container">
+                <div className="logo-icon">👤</div>
+                <h1>כניסת לקוח</h1>
+            </div>
+
+            <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label>אימייל:</label>
+                    <input 
+                        type="email" 
+                        required
+                        value={formData.EmailCust}
+                        onChange={(e) => setFormData({...formData, EmailCust: e.target.value})}
+                        placeholder="your@email.com"
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>סיסמה:</label>
+                    <input 
+                        type="password" 
+                        required
+                        value={formData.PasswordCust}
+                        onChange={(e) => setFormData({...formData, PasswordCust: e.target.value})}
+                        placeholder="******"
+                    />
+                </div>
+
+                {error && <p style={{ color: 'red', fontSize: '14px' }}>{error}</p>}
+
+                <button type="submit" disabled={loading}>
+                    {loading ? <div className="spinner"></div> : 'התחברות'}
+                </button>
+            </form>
+            
+            <p style={{ marginTop: '20px', fontSize: '14px' }}>
+                עדיין לא רשום? <a href="/register">צור חשבון חדש</a>
+            </p>
+        </div>
+    );
+};
+
+export default CustomerLogin;

@@ -1,0 +1,16 @@
+input {
+  width: 100%;
+  padding: 12px 16px;
+  background: #f1f5f9;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  font-size: 16px;
+  box-sizing: border-box; /* חשוב כדי שה-padding לא ינפח את הרוחב */
+  transition: all 0.3s;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: white;
+}
