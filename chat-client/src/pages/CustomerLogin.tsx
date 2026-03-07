@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { loginCustomer } from '../services/customer.service';
-import { CustomerLogin as CustomerLoginType} from '../types/customer.types';
+import { CustomerLogin as CustomerLoginType } from '../types/customer.types';
 import '../styles/CustomerLogin.css'; // נשתמש בעיצוב שהכנו קודם
+import { Link } from 'react-router-dom';
 
 const CustomerLogin: React.FC = () => {
     // State לניהול השדות בטופס
@@ -23,7 +24,7 @@ const CustomerLogin: React.FC = () => {
             const user = await loginCustomer(formData);
             console.log("התחברת בהצלחה!", user);
             alert(`שלום ${user.nameCust}, ברוך הבא!`);
-            
+
             // כאן בהמשך נשמור אותו ב-Context או ב-SessionStorage
         } catch (err: any) {
             // טיפול בשגיאה (למשל 401 Unauthorized מה-Controller)
@@ -43,22 +44,22 @@ const CustomerLogin: React.FC = () => {
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>אימייל:</label>
-                    <input 
-                        type="email" 
+                    <input
+                        type="email"
                         required
                         value={formData.emailCust}
-                        onChange={(e) => setFormData({...formData, emailCust: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, emailCust: e.target.value })}
                         placeholder="your@email.com"
                     />
                 </div>
 
                 <div className="form-group">
                     <label>סיסמה:</label>
-                    <input 
-                        type="password" 
+                    <input
+                        type="password"
                         required
                         value={formData.passwordCust}
-                        onChange={(e) => setFormData({...formData, passwordCust: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, passwordCust: e.target.value })}
                         placeholder="******"
                     />
                 </div>
@@ -69,9 +70,9 @@ const CustomerLogin: React.FC = () => {
                     {loading ? <div className="spinner"></div> : 'התחברות'}
                 </button>
             </form>
-            
+
             <p style={{ marginTop: '20px', fontSize: '14px' }}>
-                עדיין לא רשום? <a href="/register">צור חשבון חדש</a>
+                עדיין לא רשום? <Link to="/register">צור חשבון חדש</Link>
             </p>
         </div>
     );

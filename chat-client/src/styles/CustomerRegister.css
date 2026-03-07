@@ -1,0 +1,122 @@
+/* מיכל מרכזי למרכוז הטופס במסך */
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    direction: rtl; /* תמיכה בעברית */
+}
+
+/* הכרטיס הלבן */
+.chat-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.logo-section .icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.logo-section h1 {
+    font-size: 24px;
+    color: #334155;
+    margin-bottom: 25px;
+}
+
+/* ניהול השדות */
+.form-item {
+    text-align: right;
+    margin-bottom: 15px;
+}
+
+.form-item label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #64748b;
+}
+
+.form-item input {
+    width: 100%;
+    padding: 12px 16px;
+    background: #f1f5f9;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+.form-item input:focus {
+    outline: none;
+    border-color: #3b82f6; /* צבע המיתוג שלך */
+    background: white;
+}
+
+/* כפתור שליחה */
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #2563eb;
+}
+
+.submit-btn:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+}
+
+.error-msg {
+    color: #ef4444;
+    font-size: 14px;
+    margin-bottom: 15px;
+    background: #fee2e2;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.footer-link {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.footer-link a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* אנימציית טעינה פשוטה */
+.loader {
+    width: 20px;
+    height: 20px;
+    border: 3px solid #FFF;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
