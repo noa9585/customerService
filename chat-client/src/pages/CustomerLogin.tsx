@@ -1,35 +1,22 @@
-import React, { useState } from 'react';
-import { loginCustomer } from '../services/customer.service';
-import { CustomerLogin as CustomerLoginType} from '../types/customer.types';
-import '../styles/CustomerLogin.css'; // נשתמש בעיצוב שהכנו קודם
+import React from 'react';
+import { useCustomerAuth } from '../hooks/useCustomerLogin'; // וודא שהנתיב נכון
+import '../styles/CustomerLogin.css';
 
 const CustomerLogin: React.FC = () => {
-    // State לניהול השדות בטופס
-    const [formData, setFormData] = useState<CustomerLoginType>({
-        emailCust: '',
-        passwordCust: ''
-    });
+    // שליפת הנתונים מה-Hook
+    const { formData, setFormData, error, loading, handleLogin } = useCustomerAuth();
 
-    const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
-
+    // שיניתי את השם ל-handleSubmit כדי שיתאים ל-JSX שלך למטה
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError(null);
-        setLoading(true);
-
         try {
-            // קריאה ל-Service שבנית!
-            const user = await loginCustomer(formData);
-            console.log("התחברת בהצלחה!", user);
-            alert(`שלום ${user.nameCust}, ברוך הבא!`);
-            
-            // כאן בהמשך נשמור אותו ב-Context או ב-SessionStorage
-        } catch (err: any) {
-            // טיפול בשגיאה (למשל 401 Unauthorized מה-Controller)
-            setError("אימייל או סיסמה שגויים. נסה שוב.");
-        } finally {
-            setLoading(false);
+            const user = await handleLogin();
+            if (user) {
+                alert(`שלום ${user.nameCust}, ברוך הבא!`);
+            }
+        } catch (err) {
+            // הלוגיקה של השגיאה מנוהלת בתוך ה-Hook (משתנה error)
+            console.error("Login failed", err);
         }
     };
 
@@ -40,6 +27,7 @@ const CustomerLogin: React.FC = () => {
                 <h1>כניסת לקוח</h1>
             </div>
 
+            {/* עכשיו handleSubmit מוגדר נכון */}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>אימייל:</label>
@@ -63,6 +51,7 @@ const CustomerLogin: React.FC = () => {
                     />
                 </div>
 
+                {/* משתנה error מגיע מה-Hook */}
                 {error && <p style={{ color: 'red', fontSize: '14px' }}>{error}</p>}
 
                 <button type="submit" disabled={loading}>
