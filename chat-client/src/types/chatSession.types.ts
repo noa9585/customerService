@@ -1,4 +1,4 @@
-import  {ChatMessage}  from './chatMessage.Type';
+import  {ChatMessage}  from './chatMessage.types';
 
 // הגדרת ה-Enum עבור מצב השיחה
 export enum SessionStatus {
