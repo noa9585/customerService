@@ -4,7 +4,7 @@ export type RepresentativeChat = {
     Role: string;
 }
 
-export type RepresentativeDto = {
+export type Representative = {
 
     IDRepresentative: number;
     NameRepr: string;
@@ -18,11 +18,11 @@ export type RepresentativeDto = {
     IsBusy: boolean;
 }
 
-export type RepresentativeLoginDto = {
+export type RepresentativeLogin = {
     EmailRepr: string;
     PasswordRepr: string;
 }
-export type RepresentativeRegister = RepresentativeLoginDto & {
+export type RepresentativeRegister = RepresentativeLogin & {
     NameRepr: string;
 }
 export type RepresentativeUpdate = RepresentativeRegister & {}

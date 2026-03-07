@@ -7,14 +7,14 @@ export type Topic = {
 }
 
 // ה-DTO ליצירת נושא חדש (ללא ה-ID, כי הוא נוצר ב-DB)
-export type TopicAddDto = {
+export type TopicAdd = {
     nameTopic: string;
     averageTreatTime: number;
     priorityTopics: number;
 }
 
 // ה-DTO לעדכון (לפעמים זהה ל-Add, אבל טוב להפריד)
-export type TopicUpdateDto = {
+export type TopicUpdate = {
     idTopic: number;
     nameTopic: string;
     averageTreatTime: number;
