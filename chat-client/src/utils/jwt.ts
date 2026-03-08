@@ -19,3 +19,32 @@ export function parseJwt(token: string) {
 }
 
 export default parseJwt;
+
+// Try to normalize/resolve a user's name from a decoded JWT payload.
+export function getNameFromPayload(payload: any): string | null {
+  if (!payload) return null;
+  // Common claim keys that may contain the name
+  const keys = [
+    'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name',
+    'name',
+    'unique_name',
+    'given_name',
+    'nameCust',
+    'email', // fallback to email
+    'sub'
+  ];
+
+  for (const k of keys) {
+    if (Object.prototype.hasOwnProperty.call(payload, k) && payload[k]) {
+      return payload[k];
+    }
+  }
+  return null;
+}
+
+export function getNameFromToken(token: string | null | undefined): string | null {
+  if (!token) return null;
+  const payload = parseJwt(token);
+  return getNameFromPayload(payload);
+}
+
