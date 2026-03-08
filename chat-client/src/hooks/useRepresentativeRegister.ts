@@ -19,6 +19,10 @@ export const useCustomerAuth = () => {
 
         try {
             const newUser = await registerRepresentative(formData);
+             if(newUser.token) {
+                localStorage.setItem('representativeToken', newUser.token);
+                console.log("Token stored in localStorage:", newUser.token);
+            }   
             console.log("הרשמה הצליחה:", newUser);
             alert(`ברוך הבא, ${newUser.nameRepr}!`);
         } catch (err: any) {
