@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service1.Interface;
 using Service1.Dto.RepresentativeDto;
+using Microsoft.AspNetCore.Authorization;
 namespace WebApplication1.Controllers
 {
     [Route("api/[controller]")]
@@ -70,7 +71,7 @@ namespace WebApplication1.Controllers
             return NoContent();
         }
         //התחברות
-
+        [AllowAnonymous]
         [HttpPost("login")]
         public ActionResult<RepresentativeDto> Login([FromBody] RepresentativeLoginDto loginDto)
         {
@@ -85,6 +86,7 @@ namespace WebApplication1.Controllers
 
             return Ok(result);
         }
+        [AllowAnonymous]
         [HttpPost("register")]
         public ActionResult<RepresentativeDto> Register([FromBody] RepresentativeRegisterDto regDto)
         {
