@@ -16,6 +16,7 @@ export type Representative = {
     statusRepr: boolean;
     isOnline: boolean;
     isBusy: boolean;
+    token: string | null;
 }
 
 export type RepresentativeLogin = {
