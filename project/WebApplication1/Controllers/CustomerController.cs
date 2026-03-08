@@ -107,7 +107,6 @@ namespace YourProject.Controllers
                 return BadRequest(ex.Message); // יחזיר שגיאה אם האימייל קיים
             }
         }
-
         [HttpPut("logout/{id}")]
         public IActionResult Logout(int id)
         {

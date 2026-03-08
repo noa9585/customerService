@@ -1,14 +1,15 @@
 using DataContext;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Repository.Entities;
 using Repository.interfaces;
 using Repository.Repositories;
 using Service1.Interface;
 using Service1.Logic;
 using Service1.Services;
-using WebApplication1.BackgroundServices;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using WebApplication1.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,7 +68,38 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApplication1 API", Version = "v1" });
+
+    var bearerScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Enter 'Bearer' [space] and then your valid JWT token.\r\n\r\nExample: \"Bearer eyJhb...\"",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        }
+    };
+
+    options.AddSecurityDefinition("Bearer", bearerScheme);
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 // CORS
 builder.Services.AddCors(options =>
