@@ -1,36 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import '../styles/NewChat.css';
-import { useNewChatForm } from '../hooks/useNewChatForm';
-import { chatService } from '../services/chatService';
-import { Topic } from '../types/chat';
+import { useNewChatPage } from '../hooks/useNewChatPage';
 
 
 const NewChat: React.FC = () => {
-    const [topics, setTopics] = useState<Topic[]>([]);
-    const [error1, setError] = useState<string | null>(null);
-    const [selectedTopic, setSelectedTopic] = useState<number | string>('');
-
-    const { form, loading, error, handleChange, handleSubmit } = useNewChatForm((data) => {
-        // optional place for success side-effects (analytics, navigate, toast...)
+    const { form, loading, error, handleChange, handleSubmit, topics, selectedTopic, setSelectedTopic, topicsError } = useNewChatPage((data) => {
         alert('הבקשה נשלחה — נציג יחזור אליך בהקדם');
     });
 
-    useEffect(() => {
-        chatService.getTopics()
-            .then(res => {
-                // בדיקה שהנתונים הם אכן מערך לפני שמעדכנים
-                if (Array.isArray(res.data)) {
-                    setTopics(res.data);
-                } else {
-                    console.error("השרת לא החזיר מערך:", res.data);
-                    setError("נתוני הנושאים לא הגיעו בפורמט תקין");
-                }
-            })
-            .catch(err => {
-                console.error("שגיאה בתקשורת עם השרת:", err);
-                setError("לא ניתן להתחבר לשרת. ודא שה-Backend רץ ושכתובת ה-API נכונה.");
-            });
-    }, []);
     return (
         <div className="newchat-page">
             <div className="newchat-container">
