@@ -45,6 +45,7 @@ namespace Repository.Repositories
             cust.PasswordCust = item.PasswordCust;
             cust.StatusCust = item.StatusCust;
             cust.Role = item.Role; 
+            cust.IsOnline = item.IsOnline;
             _context.save();
         }
     }

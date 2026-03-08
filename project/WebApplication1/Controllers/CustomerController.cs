@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service1.Interface;
 using Service1.Dto.CustomerDto;
+using Microsoft.AspNetCore.Authorization;
 
 namespace YourProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize] // מגן על כל ה-endpoints כברירת מחדל
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
@@ -15,14 +17,14 @@ namespace YourProject.Controllers
             _customerService = customerService;
         }
 
-        // שליפת כל הנושאים
+        // שליפת כל הלקוחות
         [HttpGet]
         public ActionResult<IEnumerable<CustomerChatDto>> GetAll()
         {
             return Ok(_customerService.GetAll());
         }
 
-        // שליפת נושא לפי ID
+        // שליפת לקוח לפי ID
         [HttpGet("{id}")]
         public ActionResult<CustomerChatDto> GetById(int id)
         {
@@ -34,7 +36,7 @@ namespace YourProject.Controllers
             return Ok(customer);
         }
 
-        // הוספת לקוח חדש
+        // הוספת לקוח חדש (ישאירו מוגן; אם רוצים לאפשר הרשמה פתוחה השתמשו ב-Register)
         [HttpPost]
         public ActionResult<CustomerChatDto> Add([FromBody] CustomerRegisterDto customerRegisterDto)
         {
@@ -47,7 +49,7 @@ namespace YourProject.Controllers
             return CreatedAtAction(nameof(GetById), new { id = newCustomer.IDCustomer }, newCustomer);
         }
 
-        // עדכון נושא קיים
+        // עדכון לקוח קיים
         [HttpPut("{id}")]
         public IActionResult Update(int id, [FromBody] CustomerRegisterDto customerRegisterDto)
         {
@@ -61,7 +63,7 @@ namespace YourProject.Controllers
             return NoContent();
         }
 
-        // מחיקת נושא
+        // מחיקת לקוח
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
@@ -74,6 +76,8 @@ namespace YourProject.Controllers
             _customerService.DeleteCustomer(id);
             return NoContent();
         }
+
+        [AllowAnonymous]
         [HttpPost("login")]
         public ActionResult<CustomerChatDto> Login([FromBody] CustomerLoginDto loginDto)
         {
@@ -86,6 +90,8 @@ namespace YourProject.Controllers
 
             return Ok(customer);
         }
+
+        [AllowAnonymous]
         [HttpPost("register")]
         public ActionResult<CustomerChatDto> Register([FromBody] CustomerRegisterDto registerDto)
         {
@@ -101,6 +107,7 @@ namespace YourProject.Controllers
                 return BadRequest(ex.Message); // יחזיר שגיאה אם האימייל קיים
             }
         }
+
         [HttpPut("logout/{id}")]
         public IActionResult Logout(int id)
         {

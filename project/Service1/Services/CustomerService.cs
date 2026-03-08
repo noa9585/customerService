@@ -8,11 +8,13 @@ namespace Service1.Services
     public class CustomerService : ICustomerService
     {
         private readonly IRepository<Customer> _repository;
+        private readonly ITokenService _tokenService;
 
-        // הזרקת ה-Repository דרך הבנאי
-        public CustomerService(IRepository<Customer> repository)
+        // הזרקת ה-Repository ו-TokenService דרך הבנאי
+        public CustomerService(IRepository<Customer> repository, ITokenService tokenService)
         {
             _repository = repository;
+            _tokenService = tokenService;
         }
 
         public List<CustomerChatDto> GetAll()
@@ -25,6 +27,7 @@ namespace Service1.Services
                 NameCust = t.NameCust,
                 EmailCust = t.EmailCust,
                 Role = t.Role,
+                isOnline = t.IsOnline,
             }).ToList();
         }
 
@@ -39,6 +42,7 @@ namespace Service1.Services
                 NameCust = t.NameCust,
                 EmailCust = t.EmailCust,
                 Role = t.Role,
+                isOnline = t.IsOnline,
             };
         }
 
@@ -51,10 +55,12 @@ namespace Service1.Services
                 EmailCust = email,
                 PasswordCust = password,
                 StatusCust = true, // ברירת מחדל
+                IsOnline=false, // ברירת מחדל
                 Role = "Customer",
             };
 
             var saveCustomer = _repository.AddItem(newCustomer);
+
 
             return new CustomerChatDto
             {
@@ -62,7 +68,6 @@ namespace Service1.Services
                 NameCust = saveCustomer.NameCust,
                 EmailCust = saveCustomer.EmailCust,
                 Role = saveCustomer.Role,
-
             };
         }
 
@@ -97,15 +102,17 @@ namespace Service1.Services
 
             // אם לא נמצא לקוח מתאים
             if (customer == null) return null;
-
-            // החזרת הנתונים בפורמט DTO
+            customer.IsOnline = true; // סימון הלקוח כפעיל כרגע במערכת
+                _repository.UpdateItem(customer.IDCustomer, customer);
+            // יצירת DTO והוספת טוקן
             return new CustomerChatDto
             {
                 IDCustomer = customer.IDCustomer,
                 NameCust = customer.NameCust,
                 EmailCust = customer.EmailCust,
                 Role = customer.Role,
-
+                isOnline = customer.IsOnline,
+                Token = _tokenService.GenerateTokenForCustomer(customer)
             };
         }
         public CustomerChatDto Register(CustomerRegisterDto registerDto)
@@ -118,7 +125,7 @@ namespace Service1.Services
             {
                 throw new Exception("משתמש עם אימייל זה כבר קיים במערכת");
             }
-
+            
             // 2. יצירת ישות לקוח חדשה מה-DTO
             var newCustomer = new Customer
             {
@@ -126,18 +133,22 @@ namespace Service1.Services
                 EmailCust = registerDto.EmailCust,
                 PasswordCust = registerDto.PasswordCust,
                 StatusCust = true, // לקוח פעיל כברירת מחדל
-                Role = "Customer" // הגדרת תפקיד כפי שסיכמנו
+                IsOnline = true, //  מקוון כברירת מחדל
+                Role = "Customer" // הגדרת תפקיד
             };
 
             // 3. שמירה בבסיס הנתונים
             var savedCustomer = _repository.AddItem(newCustomer);
 
-            // 4. החזרת DTO ללא הסיסמה
+            // 4. יצירת DTO והוספת טוקן
             return new CustomerChatDto
             {
                 IDCustomer = savedCustomer.IDCustomer,
                 NameCust = savedCustomer.NameCust,
-                EmailCust = savedCustomer.EmailCust
+                EmailCust = savedCustomer.EmailCust,
+                Role = savedCustomer.Role,
+                isOnline = savedCustomer.IsOnline,
+                Token = _tokenService.GenerateTokenForCustomer(savedCustomer)
             };
         }
         public void Logout(int id)
@@ -146,7 +157,7 @@ namespace Service1.Services
             if (customer != null)
             {
                 // סימון הלקוח כלא פעיל כרגע במערכת
-
+                customer.IsOnline = false;
                 _repository.UpdateItem(id, customer);
             }
         }
