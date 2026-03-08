@@ -16,7 +16,7 @@ namespace Repository.Entities
         public string PasswordCust { get; set; }
         public bool IsOnline { get; set; }
         public bool StatusCust { get; set; }
-        public string? Role { get; set; } 
+        public string Role { get; set; } 
 
     }
 }
