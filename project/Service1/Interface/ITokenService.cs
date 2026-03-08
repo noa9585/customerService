@@ -8,8 +8,8 @@ namespace Service1.Interface
 {
     public interface ITokenService
     {
-        string GenerateToken(Representative representative);
         string GenerateTokenForCustomer(Repository.Entities.Customer customer);
+        string GenerateTokenForRepresentative(Repository.Entities.Representative representative);
     }
 }
 

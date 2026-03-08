@@ -16,14 +16,26 @@ namespace Service1.Services
             _config = config;
         }
 
-        public string GenerateToken(Representative representative)
-        {
-            return GenerateCommonToken(representative.IDRepresentative.ToString(), representative.EmailRepr, representative.NameRepr, representative.Role);
-        }
+       
 
         public string GenerateTokenForCustomer(Customer customer)
         {
-            return GenerateCommonToken(customer.IDCustomer.ToString(), customer.EmailCust, customer.NameCust, "Customer");
+            return GenerateCommonToken(
+                customer.IDCustomer.ToString(),
+                customer.EmailCust,
+                customer.NameCust,
+                customer.Role
+            );
+        }
+
+        public string GenerateTokenForRepresentative(Representative representative)
+        {
+            return GenerateCommonToken(
+                representative.IDRepresentative.ToString(),
+                representative.EmailRepr,
+                representative.NameRepr,
+                representative.Role
+            );
         }
 
         private string GenerateCommonToken(string id, string email, string name, string? role)

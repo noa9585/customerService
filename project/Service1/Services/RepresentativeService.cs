@@ -15,11 +15,13 @@ namespace Service1.Services
     {
 
         private readonly IRepository<Representative> _repository;
+        private readonly ITokenService _tokenService;
 
         // הזרקת ה-Repository דרך הבנאי
-        public RepresentativeService(IRepository<Representative> repository)
+        public RepresentativeService(IRepository<Representative> repository,ITokenService tokenService)
         {
             _repository = repository;
+            _tokenService = tokenService;
         }
 
         public List<RepresentativeDto> GetAll()
@@ -142,7 +144,8 @@ namespace Service1.Services
                 IsBusy = representative.IsBusy,
                 entryHourRepr = representative.entryHourRepr, 
                 exitHourRepr = representative.exitHourRepr,
-                Role = "Representative"
+                Role = "Representative",
+                Token=_tokenService.GenerateTokenForRepresentative(representative)
             };
         }
         // בתוך IRepresentativeService.cs
@@ -184,7 +187,7 @@ namespace Service1.Services
                 NameRepr = savedRep.NameRepr,
                 EmailRepr = savedRep.EmailRepr,
                 Role = "Representative",
-
+                Token = _tokenService.GenerateTokenForRepresentative(savedRep)
             };
         }
         public void Logout(int id)
