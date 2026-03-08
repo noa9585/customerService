@@ -14,9 +14,6 @@ namespace Service1.Dto.CustomerDto
         public bool isOnline { get; set; }
         public string? Role { get; set; }
         public string? Token { get; set; }
-
-
-
     }
 }
 
