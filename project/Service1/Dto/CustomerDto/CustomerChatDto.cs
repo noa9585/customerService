@@ -11,7 +11,13 @@ namespace Service1.Dto.CustomerDto
         public int IDCustomer { get; set; }
         public string NameCust { get; set; }
         public string EmailCust { get; set; }
+        public bool isOnline { get; set; }
         public string? Role { get; set; }
+        public string? Token { get; set; }
+
+
 
     }
 }
+
+
