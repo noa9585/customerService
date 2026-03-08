@@ -73,15 +73,40 @@
   margin-bottom: 40px;
 }
 
-/* Buttons */
+/* Buttons (works for <button> and <a class="btn">) */
 .btn {
-  padding: 12px 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 36px;
   border: none;
   border-radius: 12px;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
+  text-decoration: none; /* remove underline for links */
+  min-width: 240px; /* ensure wider buttons and consistent size */
+}
+
+/* Ensure links with .btn don't change color when visited/active */
+.btn:link,
+.btn:visited,
+.btn:active {
+  text-decoration: none;
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+}
+
+/* Ensure .btn-primary keeps white text for link/visited/active states */
+.btn-primary,
+.btn-primary:link,
+.btn-primary:visited,
+.btn-primary:active {
+  color: #fff;
 }
 
 .btn-primary {

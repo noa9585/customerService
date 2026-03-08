@@ -12,7 +12,7 @@ function App() {
     <Router>
       <Routes>
         {/* דף ברירת המחדל יוביל ללוגין */}
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/" element={<Navigate to="/contact-us" />} />
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/new-chat" element={<NewChat />} />
         <Route path="/chat" element={<ChatView />} />

@@ -1,7 +1,10 @@
 import React from 'react';
 import '../styles/ContactUs.css';
+import { Link } from 'react-router-dom';
+import { useContactActions } from '../hooks/useContactActions';
 
 const ContactUs: React.FC = () => {
+    const { handleStart } = useContactActions();
     return (
         <div className="contact-container">
             <div className="contact-card">
@@ -19,8 +22,8 @@ const ContactUs: React.FC = () => {
 
                 {/* CTA Buttons */}
                 <div className="button-group">
-                    <button className="btn btn-outline">למד עוד</button>
-                    <button className="btn btn-primary">התחל שיחה 💬</button>
+                    <Link to="/login" className="btn btn-outline">למד עוד</Link>
+                    <button type="button" className="btn btn-primary" onClick={handleStart}>התחל שיחה 💬</button>
                 </div>
 
                 {/* Stats Section */}
