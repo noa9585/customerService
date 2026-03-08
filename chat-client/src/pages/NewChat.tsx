@@ -4,9 +4,10 @@ import { useNewChatPage } from '../hooks/useNewChatPage';
 
 
 const NewChat: React.FC = () => {
-    const { form, loading, error, handleChange, handleSubmit, topics, selectedTopic, setSelectedTopic, topicsError } = useNewChatPage((data) => {
+    const { form, loading, error, handleChange, handleSubmit, topics, selectedTopic, setSelectedTopic, topicsError, decodedToken } = useNewChatPage((data) => {
         alert('הבקשה נשלחה — נציג יחזור אליך בהקדם');
     });
+console.log(decodedToken);
 
     return (
         <div className="newchat-page">
@@ -14,16 +15,22 @@ const NewChat: React.FC = () => {
                 <h1 className="nc-title">פתח שיחה חדשה</h1>
                 <p className="nc-sub">מלא את הפרטים ונחבר אותך לנציג בהקדם</p>
 
+                {decodedToken && (
+                    <div style={{ marginBottom: 12 }}>
+                        <strong>מזוהה כ:</strong> {decodedToken.nameCust || decodedToken.name || decodedToken.email || decodedToken.sub}
+                    </div>
+                )}
+
                 <form className="nc-card" onSubmit={handleSubmit} dir="rtl">
                     <div className="nc-row two-cols">
                         <label className="nc-label">
                             שם מלא
-                            <input name="fullName" value={form.fullName} onChange={handleChange} placeholder="הזן את שמך" required />
+                            <input name="fullName" value={form.idSend} onChange={handleChange} placeholder="הזן את שמך" required />
                         </label>
 
                         <label className="nc-label">
                             אימייל
-                            <input name="email" type="email" value={form.email} onChange={handleChange} placeholder="your@email.com" required />
+                            <input name="email" type="email" value={form.idSend} onChange={handleChange} placeholder="your@email.com" required />
                         </label>
                     </div>
 

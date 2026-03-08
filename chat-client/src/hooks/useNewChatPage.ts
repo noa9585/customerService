@@ -1,32 +1,47 @@
 import { useCallback, useEffect, useState } from 'react';
-import { chatService } from '../services/chatService';
+
+import{getAllTopics}from '../services/topic.service'
 import { Topic } from '../types/chat';
+import{ChatMessage}from '../types/chatMessage.types'
+import parseJwt from '../utils/jwt';
 
-type Form = {
-  fullName: string;
-  email: string;
-  subject: string;
-  message: string;
-};
+// type Form = {
+//   fullName: string;
+//   email: string;
+//   subject: string;
+//   message: string;
+// };
 
-export const useNewChatPage = (onSuccess?: (data: Form) => void) => {
-  const [form, setForm] = useState<Form>({ fullName: '', email: '', subject: '', message: '' });
+export const useNewChatPage = (onSuccess?: (data: ChatMessage) => void) => {
+  const [form, setForm] = useState<ChatMessage>({ messageID: 0, idSession: 0, message: '', timestamp: new Date(), idSend: 0, messageType: 0, statusMessage: false });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [topics, setTopics] = useState<Topic[]>([]);
   const [selectedTopic, setSelectedTopic] = useState<number | string>('');
   const [topicsError, setTopicsError] = useState<string | null>(null);
+  const [decodedToken, setDecodedToken] = useState<any | null>(null);
 
   useEffect(() => {
+    // decode token from localStorage (if present) so pages can access user info
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const decoded = parseJwt(token);
+        setDecodedToken(decoded);
+      }
+    } catch (e) {
+      console.warn('No token to decode or decode failed', e);
+    }
+
     let mounted = true;
-    chatService.getTopics()
+    getAllTopics()
       .then(res => {
         if (!mounted) return;
-        if (Array.isArray(res.data)) {
-          setTopics(res.data);
+        if (Array.isArray(res)) {
+          setTopics(res);
         } else {
-          console.error('Unexpected topics response:', res.data);
+          console.error('Unexpected topics response:', res);
           setTopicsError('נתוני הנושאים לא הגיעו בפורמט תקין');
         }
       })
@@ -52,7 +67,7 @@ export const useNewChatPage = (onSuccess?: (data: Form) => void) => {
       // TODO: replace with real API call (e.g., chatService.createSession)
       await new Promise(res => setTimeout(res, 800));
       if (onSuccess) onSuccess(form);
-      setForm({ fullName: '', email: '', subject: '', message: '' });
+      setForm({ messageID: 0, idSession: 0, message: '', timestamp: new Date(), idSend: 0, messageType: 0, statusMessage: false });
     } catch (err) {
       console.error('Submit error', err);
       setError('אירעה שגיאה בשליחה. נסה שנית.');
@@ -73,5 +88,6 @@ export const useNewChatPage = (onSuccess?: (data: Form) => void) => {
     selectedTopic,
     setSelectedTopic,
     topicsError,
+    decodedToken,
   };
 };
