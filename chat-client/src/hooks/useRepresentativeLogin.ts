@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { loginCustomer } from '../services/customer.service';
-import { CustomerLogin as CustomerLoginType } from '../types/customer.types';
+import { loginRepresentative } from '../services/representative.service';
+import { RepresentativeLogin} from '../types/representative.types';
 
 export const useCustomerAuth = () => {
-    const [formData, setFormData] = useState<CustomerLoginType>({
-        emailCust: '',
-        passwordCust: ''
+    const [formData, setFormData] = useState<RepresentativeLogin>({
+        emailRepr: '',
+        passwordRepr: ''
     });
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -14,7 +14,7 @@ export const useCustomerAuth = () => {
         setError(null);
         setLoading(true);
         try {
-            const user = await loginCustomer(formData);
+            const user = await loginRepresentative(formData);
             return user;
         } catch (err) {
             setError("אימייל או סיסמה שגויים. נסה שוב.");
@@ -29,14 +29,13 @@ export const useCustomerAuth = () => {
         try {
             const user = await handleLogin();
             if (user) {
-                alert(`שלום ${user.nameCust}, ברוך הבא!`);
+                alert(`שלום ${user.nameRepr}, ברוך הבא!`);
             }
         } catch (err) {
             // הלוגיקה של השגיאה מנוהלת בתוך ה-Hook (משתנה error)
             console.error("Login failed", err);
         }
     };
-    
 
     return { formData, setFormData, error, loading, handleSubmit };
 };

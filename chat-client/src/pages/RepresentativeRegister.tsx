@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { registerCustomer } from '../services/customer.service';
-import { CustomerRegister as CustomerRegisterType } from '../types/customer.types';
+import { registerRepresentative } from '../services/representative.service';
+import { RepresentativeRegister as RepresentativeRegisterType} from '../types/representative.types';
 import '../styles/CustomerRegister.css'; // ייבוא הקובץ שהפרדנו
 import { Link } from 'react-router-dom';
-import { useCustomerAuth } from '../hooks/useCustomerRegister';
-const CustomerRegister: React.FC = () => {
-    const { formData, setFormData, error, loading, handleSubmit } = useCustomerAuth();
-
+import { useCustomerAuth } from '../hooks/useRepresentativeRegister';
+const RepresentativeRegister: React.FC = () => {
+       const { formData, setFormData, error, loading, handleSubmit } = useCustomerAuth();
     return (
         <div className="register-container">
             <div className="chat-card">
@@ -21,8 +20,8 @@ const CustomerRegister: React.FC = () => {
                         <input
                             type="text"
                             required
-                            value={formData.nameCust}
-                            onChange={(e) => setFormData({ ...formData, nameCust: e.target.value })}
+                            value={formData.nameRepr}
+                            onChange={(e) => setFormData({ ...formData, nameRepr: e.target.value })}
                             placeholder="ישראל ישראלי"
                         />
                     </div>
@@ -32,8 +31,8 @@ const CustomerRegister: React.FC = () => {
                         <input
                             type="email"
                             required
-                            value={formData.emailCust}
-                            onChange={(e) => setFormData({ ...formData, emailCust: e.target.value })}
+                            value={formData.emailRepr}
+                            onChange={(e) => setFormData({ ...formData, emailRepr: e.target.value })}
                             placeholder="example@mail.com"
                         />
                     </div>
@@ -43,8 +42,8 @@ const CustomerRegister: React.FC = () => {
                         <input
                             type="password"
                             required
-                            value={formData.passwordCust}
-                            onChange={(e) => setFormData({ ...formData, passwordCust: e.target.value })}
+                            value={formData.passwordRepr}
+                            onChange={(e) => setFormData({ ...formData, passwordRepr: e.target.value })}
                             placeholder="לפחות 6 תווים"
                         />
                     </div>
@@ -57,7 +56,7 @@ const CustomerRegister: React.FC = () => {
                 </form>
 
                 <p className="footer-link">
-                    כבר רשום? <Link to="/login">התחבר כאן</Link>
+                    כבר רשום? <Link to="/RepresentativeLogin">התחבר כאן</Link>
                 </p>
 
 
@@ -66,4 +65,4 @@ const CustomerRegister: React.FC = () => {
     );
 };
 
-export default CustomerRegister;
+export default RepresentativeRegister;
