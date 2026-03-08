@@ -14,8 +14,14 @@ export const useCustomerAuth = () => {
         setError(null);
         setLoading(true);
         try {
-            const user = await loginCustomer(formData);
-            return user;
+            const response = await loginCustomer(formData);
+            // Assuming response includes user and token
+            //const { idCustomer, nameCust, role,isOnline,emailCust, token } = response;
+            if (response.token) {
+                localStorage.setItem('token', response.token);
+                console.log('Token stored:', response.token);
+            }
+            return response;
         } catch (err) {
             setError("אימייל או סיסמה שגויים. נסה שוב.");
             throw err;
@@ -36,7 +42,7 @@ export const useCustomerAuth = () => {
             console.error("Login failed", err);
         }
     };
-    
+
 
     return { formData, setFormData, error, loading, handleSubmit };
 };

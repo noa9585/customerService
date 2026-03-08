@@ -19,4 +19,6 @@ export type CustomerChat = CustomerBase & {
     idCustomer: number;
     nameCust: string;
     role: string;
+    token: string | null;
+    isOnline: boolean;
 }
