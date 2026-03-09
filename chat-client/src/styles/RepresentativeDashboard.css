@@ -1,0 +1,137 @@
+/* RepresentativeDashboard.css - Desktop Grid Optimized */
+:root {
+  --primary: #3b82f6;
+  --bg-dark: #0f172a;
+  --bg-light: #f1f5f9;
+  --card-white: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --success: #10b981;
+}
+
+.dashboard-page {
+  min-height: 100vh;
+  background-color: var(--bg-light);
+  padding: 40px;
+  direction: rtl;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* שורת הכותרת */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.user-profile-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.avatar-circle {
+  width: 60px;
+  height: 60px;
+  background: var(--card-white);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.dash-title { margin: 0 0 4px 0; font-size: 24px; color: var(--text-main); }
+.dash-email { margin: 0; color: var(--text-muted); }
+
+/* פריסת הכרטיסים */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: var(--card-white);
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-label { color: var(--text-muted); font-size: 14px; font-weight: 600; }
+.stat-value { color: var(--text-main); font-size: 28px; font-weight: 800; }
+
+/* לוח הבקרה המרכזי */
+.main-control-panel {
+  background: var(--card-white);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.status-indicator {
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-online { background: #dcfce7; color: #166534; }
+.status-break { background: #fee2e2; color: #991b1b; }
+
+.action-buttons {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: 800px;
+}
+
+.btn-dash {
+  flex: 1;
+  padding: 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary-dash { background: var(--primary); color: white; }
+.btn-primary-dash:hover:not(:disabled) { background: #2563eb; transform: translateY(-2px); }
+
+.btn-outline-dash { background: white; border: 2px solid #e2e8f0; color: var(--text-main); }
+.btn-outline-dash:hover:not(:disabled) { background: #f8fafc; border-color: var(--primary); }
+
+.btn-logout { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
+.btn-logout:hover:not(:disabled) { background: #ffe4e6; }
+
+/* --- האפקט של כפתור כבוי (התבהרות וחסימת לחיצה) --- */
+.btn-dash:disabled {
+  opacity: 0.4; /* עושה את הכפתור שקוף ודהוי */
+  filter: grayscale(40%); /* מוריד קצת מהצבע שלו */
+  cursor: not-allowed; /* משנה את העכבר לסימן של חסימה */
+  transform: none; /* מבטל את אנימציית הקפיצה */
+  pointer-events: none; /* מוודא שאי אפשר ללחוץ */
+}

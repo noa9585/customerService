@@ -17,7 +17,7 @@ export const useCustomerAuth = () => {
             const user = await loginRepresentative(formData);
             if(user.token) {
                 localStorage.setItem('representativeToken', user.token);
-                console.log("Token stored in localStorage:", user.token);
+                // console.log("Token stored in localStorage:", user.token);
             }   
             return user;
         } catch (err) {
