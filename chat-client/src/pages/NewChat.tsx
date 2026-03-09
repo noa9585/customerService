@@ -6,7 +6,7 @@ import { useNewChatPage } from '../hooks/useNewChatPage.hook';
 
 
 const NewChat: React.FC = () => {
-    const { form, loading, error, handleChange, handleSubmit, topics, selectedTopic, setSelectedTopic, topicsError, decodedToken ,openSession} = useNewChatPage((data) => {
+    const { form, loading, error, handleChange, topics, selectedTopic, setSelectedTopic, topicsError, decodedToken ,openSession} = useNewChatPage((data) => {
         alert('הבקשה נשלחה — נציג יחזור אליך בהקדם');
     });
 // console.log(decodedToken);
@@ -24,7 +24,7 @@ const NewChat: React.FC = () => {
                     </div>
                 )}
 
-                <form className="nc-card" onSubmit={handleSubmit} dir="rtl">
+                <form className="nc-card" onSubmit={openSession} dir="rtl">
                     <div className="nc-row two-cols">
                         <label className="nc-label">
                             שם מלא
@@ -62,7 +62,7 @@ const NewChat: React.FC = () => {
 
                     {error && <p style={{ color: 'red', fontSize: 14 }}>{error}</p>}
 
-                    <button className="nc-submit" type="submit" disabled={loading} onClick={openSession}>
+                    <button className="nc-submit" type="submit" disabled={loading} >
                         {loading ? 'שולח...' : 'הצטרף לתור ✉️'} 
                     </button>
                 </form>

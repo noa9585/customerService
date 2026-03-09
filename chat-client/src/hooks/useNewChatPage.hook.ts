@@ -13,7 +13,7 @@ import { addMessage } from '../services/chatMessage.service'
 //   message: string;
 // };
 
-export const useNewChatPage = (onSuccess?: (data: ChatMessage) => void) => {
+export const useNewChatPage = (onSuccess?: (data: any) => void) => {
   const [form, setForm] = useState<ChatMessage>({ messageID: 0, idSession: 0, message: '', timestamp: new Date(), idSend: 0, messageType: 0, statusMessage: false });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -60,67 +60,62 @@ export const useNewChatPage = (onSuccess?: (data: ChatMessage) => void) => {
     setForm(prev => ({ ...prev, [name]: value }));
   }, []);
 
-  const handleSubmit = useCallback(async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    setError(null);
-    setLoading(true);
+  
+  const openSession = useCallback(async (e?: React.FormEvent) => {
+    if (e)
+      e.preventDefault();
+    setError(null)
+    const messageContent = form.message;
+    if (!messageContent || !selectedTopic) {
+      setError('אנא מלא את כל השדות הנדרשים');
+      return;
+    }
+
+    if (!decodedToken || !decodedToken.sub) {
+      setError("שגיאת אימות אנא התחבר מחדש");
+      return;
+    }
+    setLoading(true)
     try {
-      // TODO: replace with real API call (e.g., chatService.createSession)
-      await new Promise(res => setTimeout(res, 800));
-      if (onSuccess) onSuccess(form);
-      setForm({ messageID: 0, idSession: 0, message: '', timestamp: new Date(), idSend: 0, messageType: 0, statusMessage: false });
-    } catch (err) {
-      console.error('Submit error', err);
-      setError('אירעה שגיאה בשליחה. נסה שנית.');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [form, onSuccess]);
-
-  const openSession = useCallback(async (e?: React.FormEvent<HTMLFormElement>) => {
-    if (e) {
-      e.preventDefault(); // מונע מהדף להתרענן
-
-      const messageContent = form.message;
-      if (!messageContent || !selectedTopic) {
-        setError('אנא מלא את כל השדות הנדרשים');
-        return;
-      }
-      const topic = topics.find(t => t.nameTopic === selectedTopic);
-      if (!topic) {
-        setError('נושא לא תקין');
-        return;
-      }
-      const newSession = createSession({
-        idCustomer: decodedToken?.sub,
-        idTopic: topic.idTopic,
+      
+      const newSession = await createSession({
+        idCustomer: Number(decodedToken.sub),
+        idTopic: Number(selectedTopic),
       })
+      const sessionId=newSession.session.sessionID
       const newMessage = addMessage({
-        message:messageContent,
-        idSession:(await newSession).session.sessionID,
-        timestamp: new Date(), // חובה להוסיף זמן
-        messageType: 1
-      }
+        message: messageContent,
+        idSession: sessionId,
+        timestamp: new Date().toISOString(), 
+        messageType: 0
+      })
+      if (onSuccess) onSuccess(newSession)
+      setForm(prev=>({...prev,message:''}))
+      setSelectedTopic('')
 
-
-      )
     }
+    catch(err:any)
+    {
+      console.error('Failed to open session or send message', err)
+      setError(err.response?.data?.message || 'אירעה שגיאה בפתיחת השיחה. נסה שנית.')
+    }
+    finally{
+      setLoading(false)
+    }
+    
+}, [form.message,selectedTopic,decodedToken,onSuccess]); // חשוב להוסיף את התלויות כאן כדי שהערכים יהיו מעודכנים
 
-  }, []); // חשוב להוסיף את התלויות כאן כדי שהערכים יהיו מעודכנים
-
-  return {
-    form,
-    setForm,
-    loading,
-    error,
-    handleChange,
-    handleSubmit,
-    topics,
-    selectedTopic,
-    setSelectedTopic,
-    topicsError,
-    decodedToken,
-    openSession,
-  };
+return {
+  form,
+  setForm,
+  loading,
+  error,
+  handleChange,
+  topics,
+  selectedTopic,
+  setSelectedTopic,
+  topicsError,
+  decodedToken,
+  openSession,
+};
 };
