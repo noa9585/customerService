@@ -6,24 +6,29 @@ import {
     toggleBreak,
     returnFromBreak,
     logoutRepresentative
-} from '../services/representative.service';
-import axiosInstance from '../services/axios';
+} from '../services/representative.service'
+ import axiosInstance from '../services/axios'
 
 export const useRepresentativeDashboard = () => {
-    const navigate = useNavigate();
-    const [repData, setRepData] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
-    const [actionLoading, setActionLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate()
+    const [repData, setRepData] = useState<any>(null)
+    const [loading, setLoading] = useState(true)
+    const [actionLoading, setActionLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
     const loadData = useCallback(async () => {
         try {
             const token = localStorage.getItem('representativeToken');
-            if (!token) return navigate('/RepresentativeLogin');
+            if (!token)
+            {
+                setError("לא נמצאה אסימון. אנא התחבר מחדש.");
+                 return navigate('/RepresentativeLogin'); 
+            }
 
             const decoded = parseJwt(token);
             const data = await getRepresentativeById(Number(decoded.sub));
             setRepData(data);
+            
             
         } catch (err) {
             navigate('/RepresentativeLogin');

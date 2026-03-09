@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { getAllTopics } from '../services/topic.service'
 import { Topic } from '../types/chat';
 import { ChatMessage } from '../types/chatMessage.types'
-import parseJwt from '../utils/jwt';
+import { getDecodedToken } from '../utils/auth';
 import { createSession } from '../services/chatSession.service'
 import { addMessage } from '../services/chatMessage.service'
 import { useNavigate } from 'react-router-dom';
@@ -22,9 +22,8 @@ export const useNewChatPage = (onSuccess?: (data: any) => void) => {
   useEffect(() => {
     // decode token from localStorage (if present) so pages can access user info
     try {
-      const token = localStorage.getItem('token');
-      if (token) {
-        const decoded = parseJwt(token);
+      const decoded = getDecodedToken();
+      if (decoded) {
         setDecodedToken(decoded);
       }
     } catch (e) {

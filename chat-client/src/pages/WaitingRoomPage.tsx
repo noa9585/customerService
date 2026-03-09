@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import WaitingRoomStyled from './WaitingRoomStyled';
+import WaitingRoomSection from '../sections/WaitingRoom/WaitingRoomSection';
 import { getWaitTimeEstimate, getSessionById } from '../services/chatSession.service';
 import { SessionStatus } from '../types/chatSession.types';
 
@@ -54,7 +54,7 @@ const WaitingRoomPage: React.FC = () => {
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc' }}>
-      <WaitingRoomStyled 
+      <WaitingRoomSection 
         session={sessionData} 
         elapsed={elapsed} 
         waitTime={waitTime} 
