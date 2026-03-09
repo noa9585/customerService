@@ -4,11 +4,12 @@ import { useNewChatPage } from '../hooks/useNewChatPage.hook';
 // import { getNameFromPayload } from '../utils/jwt';
 
 
+
 const NewChat: React.FC = () => {
-    const { form, loading, error, handleChange, handleSubmit, topics, selectedTopic, setSelectedTopic, topicsError, decodedToken } = useNewChatPage((data) => {
+    const { form, loading, error, handleChange, handleSubmit, topics, selectedTopic, setSelectedTopic, topicsError, decodedToken ,openSession} = useNewChatPage((data) => {
         alert('הבקשה נשלחה — נציג יחזור אליך בהקדם');
     });
-console.log(decodedToken);
+// console.log(decodedToken);
     // const nameFromToken = decodedToken ? getNameFromPayload(decodedToken) : null;
 
     return (
@@ -61,8 +62,8 @@ console.log(decodedToken);
 
                     {error && <p style={{ color: 'red', fontSize: 14 }}>{error}</p>}
 
-                    <button className="nc-submit" type="submit" disabled={loading}>
-                        {loading ? 'שולח...' : 'הצטרף לתור ✉️'} onClick{}
+                    <button className="nc-submit" type="submit" disabled={loading} onClick={openSession}>
+                        {loading ? 'שולח...' : 'הצטרף לתור ✉️'} 
                     </button>
                 </form>
             </div>

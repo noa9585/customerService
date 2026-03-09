@@ -19,7 +19,6 @@ export const useCustomerAuth = () => {
             //const { idCustomer, nameCust, role,isOnline,emailCust, token } = response;
             if (response.token) {
                 localStorage.setItem('token', response.token);
-                console.log('Token stored:', response.token);
             }
             return response;
         } catch (err) {

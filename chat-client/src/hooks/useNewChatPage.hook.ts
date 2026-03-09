@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import{getAllTopics}from '../services/topic.service'
+import { getAllTopics } from '../services/topic.service'
 import { Topic } from '../types/chat';
-import{ChatMessage}from '../types/chatMessage.types'
+import { ChatMessage } from '../types/chatMessage.types'
 import parseJwt from '../utils/jwt';
-import {createSession} from '../services/chatSession.service'
+import { createSession } from '../services/chatSession.service'
+import { addMessage } from '../services/chatMessage.service'
 // type Form = {
 //   fullName: string;
 //   email: string;
@@ -77,11 +78,36 @@ export const useNewChatPage = (onSuccess?: (data: ChatMessage) => void) => {
     }
   }, [form, onSuccess]);
 
-  const openSession = useCallback(async (e?: React.FormEvent) => {
-    console.log(e);
-    
-      const session=createSession(decodedToken?.idCustomer)
-  },[]);
+  const openSession = useCallback(async (e?: React.FormEvent<HTMLFormElement>) => {
+    if (e) {
+      e.preventDefault(); // מונע מהדף להתרענן
+
+      const messageContent = form.message;
+      if (!messageContent || !selectedTopic) {
+        setError('אנא מלא את כל השדות הנדרשים');
+        return;
+      }
+      const topic = topics.find(t => t.nameTopic === selectedTopic);
+      if (!topic) {
+        setError('נושא לא תקין');
+        return;
+      }
+      const newSession = createSession({
+        idCustomer: decodedToken?.sub,
+        idTopic: topic.idTopic,
+      })
+      const newMessage = addMessage({
+        message:messageContent,
+        idSession:(await newSession).session.sessionID,
+        timestamp: new Date(), // חובה להוסיף זמן
+        messageType: 1
+      }
+
+
+      )
+    }
+
+  }, []); // חשוב להוסיף את התלויות כאן כדי שהערכים יהיו מעודכנים
 
   return {
     form,
