@@ -18,5 +18,6 @@ namespace Service1.Interface
         void Logout(int id);
         void ToggleBreak(int id);
         void ReturnFromBreak(int id);
+        bool HasOnlineRepresentatives();
     }
 }

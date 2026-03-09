@@ -6,14 +6,10 @@ import { ChatMessage } from '../types/chatMessage.types'
 import parseJwt from '../utils/jwt';
 import { createSession } from '../services/chatSession.service'
 import { addMessage } from '../services/chatMessage.service'
-// type Form = {
-//   fullName: string;
-//   email: string;
-//   subject: string;
-//   message: string;
-// };
+import { useNavigate } from 'react-router-dom';
 
 export const useNewChatPage = (onSuccess?: (data: any) => void) => {
+  const navigate = useNavigate();
   const [form, setForm] = useState<ChatMessage>({ messageID: 0, idSession: 0, message: '', timestamp: new Date(), idSend: 0, messageType: 0, statusMessage: false });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -60,7 +56,7 @@ export const useNewChatPage = (onSuccess?: (data: any) => void) => {
     setForm(prev => ({ ...prev, [name]: value }));
   }, []);
 
-  
+
   const openSession = useCallback(async (e?: React.FormEvent) => {
     if (e)
       e.preventDefault();
@@ -77,45 +73,54 @@ export const useNewChatPage = (onSuccess?: (data: any) => void) => {
     }
     setLoading(true)
     try {
-      
+
       const newSession = await createSession({
         idCustomer: Number(decodedToken.sub),
         idTopic: Number(selectedTopic),
       })
-      const sessionId=newSession.session.sessionID
+      //const sessionId = newSession.session.sessionID
       const newMessage = addMessage({
         message: messageContent,
-        idSession: sessionId,
-        timestamp: new Date().toISOString(), 
+        idSession: newSession.sessionID,
+        timestamp: new Date().toISOString(),
         messageType: 0
       })
+      navigate('/waiting-room', { 
+                state: { 
+                    sessionId: newSession.sessionID,
+                    initialWait: newSession.estimatedWaitTime 
+                } 
+            });
       if (onSuccess) onSuccess(newSession)
-      setForm(prev=>({...prev,message:''}))
+      setForm(prev => ({ ...prev, message: '' }))
       setSelectedTopic('')
 
     }
-    catch(err:any)
-    {
+
+    catch (err: any) {
+      // אם השרת החזיר BadRequest עם { message: "..." }, זה יוצג למשתמש
       console.error('Failed to open session or send message', err)
-      setError(err.response?.data?.message || 'אירעה שגיאה בפתיחת השיחה. נסה שנית.')
+
+      const serverMessage = err.response?.data?.message;
+      setError(serverMessage || 'אירעה שגיאה בחיבור. נסה שוב מאוחר יותר.');
     }
-    finally{
+    finally {
       setLoading(false)
     }
-    
-}, [form.message,selectedTopic,decodedToken,onSuccess]); // חשוב להוסיף את התלויות כאן כדי שהערכים יהיו מעודכנים
 
-return {
-  form,
-  setForm,
-  loading,
-  error,
-  handleChange,
-  topics,
-  selectedTopic,
-  setSelectedTopic,
-  topicsError,
-  decodedToken,
-  openSession,
-};
+  }, [form.message, selectedTopic, decodedToken,navigate, onSuccess]); // חשוב להוסיף את התלויות כאן כדי שהערכים יהיו מעודכנים
+
+  return {
+    form,
+    setForm,
+    loading,
+    error,
+    handleChange,
+    topics,
+    selectedTopic,
+    setSelectedTopic,
+    topicsError,
+    decodedToken,
+    openSession,
+  };
 };

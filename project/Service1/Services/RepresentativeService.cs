@@ -231,5 +231,10 @@ namespace Service1.Services
                 _repository.UpdateItem(id, representative);
             }
         }
+        public bool HasOnlineRepresentatives()
+        {
+            // בודק אם יש לפחות נציג אחד שמוגדר כ-Online
+            return _repository.GetAll().Any(r => r.IsOnline && r.StatusRepr);
+        }
     }
 }

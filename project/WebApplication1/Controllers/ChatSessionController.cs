@@ -35,38 +35,39 @@ namespace WebApplication1.Controllers
             return Ok(session);
         }
 
-        //[HttpPost]
-        //public ActionResult<ChatSessionDto> Post([FromBody] ChatSessionCreateDto createDto)
-        //{
-        //    if (createDto == null) return BadRequest();
-
-        //    var created = _chatSessionService.AddSession(createDto);
-        //    return CreatedAtAction(nameof(Get), new { id = created.SessionID }, created);
-        //}
-
-
         [HttpPost]
-        public ActionResult<ChatSessionDto> Post([FromBody] ChatSessionCreateDto createDto)
+        public ActionResult Post([FromBody] ChatSessionCreateDto createDto)
         {
+            if (createDto == null) return BadRequest();
+
             try
             {
-                if (createDto == null) return BadRequest();
-                // יצירת השיחה
+                // 1. בדיקה מוקדמת - האם יש נציגים?
+                if (!_representativeService.HasOnlineRepresentatives())
+                {
+                    return BadRequest(new { message = "אין נציגים מחוברים למערכת כרגע. אנא נסה שוב מאוחר יותר." });
+                }
+
+                // 2. יצירת הסשן (רק אם יש נציגים)
                 var created = _chatSessionService.AddSession(createDto);
-                // שליפת זמן ההמתנה המשוער עבור השיחה החדשה שנוצרה
+
+                // 3. חישוב זמן המתנה ראשוני
                 double estimatedWait = _chatSessionService.CalculateWaitTime(created.SessionID);
 
-                // אפשר להוסיף את הנתון הזה ל-Header או לעטוף באובייקט תשובה
-                return CreatedAtAction(nameof(Get), new { id = created.SessionID }, new
-                {
-                    Session = created,
-                    EstimatedWaitMinutes = estimatedWait
-                });
+                // עדכון האובייקט שחוזר עם הזמן שחושב
+                created.EstimatedWaitTime = estimatedWait;
+
+                return CreatedAtAction(nameof(Get), new { id = created.SessionID }, created);
             }
             catch (InvalidOperationException ex)
             {
-                // כאן נחזיר 400 עם ההודעה "אין נציגים"
+                // תפיסת שגיאות לוגיות מה-Service (כמו תור מלא או בעיה בחישוב)
                 return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                // תפיסת שגיאות שרת כלליות מבלי להפיל את האפליקציה
+                return StatusCode(500, new { message = "אירעה שגיאה פנימית בשרת", details = ex.Message });
             }
         }
 

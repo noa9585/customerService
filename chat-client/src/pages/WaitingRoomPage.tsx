@@ -1,30 +1,64 @@
-import React, { useState } from 'react';
-import WaitingRoom from '../component/WaitingRoom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import WaitingRoomStyled from './WaitingRoomStyled';
-import { useNavigate } from 'react-router-dom';
+import { getWaitTimeEstimate, getSessionById } from '../services/chatSession.service';
+import { SessionStatus } from '../types/chatSession.types';
 
 const WaitingRoomPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // חילוץ הנתונים שהועברו מהדף הקודם (NewChat)
+  const { sessionId, initialWait } = location.state || {};
+  
+  const [sessionData, setSessionData] = useState<any>(null);
+  const [waitTime, setWaitTime] = useState(initialWait || 0);
+  const [elapsed, setElapsed] = useState(0);
 
-  // example session object shape matches what the existing component expects
-  const [session, setSession] = useState<any>({
-    id: 123,
-    customer_name: 'יפי ליפשיץ',
-    topic_name: 'תמיכה טכנית',
-    queue_position: 1,
-    estimated_wait_minutes: 3,
-    status: 'waiting'
-  });
+  useEffect(() => {
+    // הגנה: אם אין מזהה שיחה, נחזיר את המשתמש לדף פתיחת שיחה
+    if (!sessionId) {
+      navigate('/new-chat');
+      return;
+    }
 
-  const handleCancel = () => {
-    // For demo: navigate back to home. In real usage this should call the API.
-    navigate('/');
-  };
+    // טיימר פנימי להצגת זמן שעבר בשניות (בשביל העיצוב)
+    const timer = setInterval(() => setElapsed(prev => prev + 1), 1000);
+
+    // מנגנון Polling - בדיקת סטטוס בשרת כל 10 שניות
+    const apiInterval = setInterval(async () => {
+      try {
+        // 1. קבלת זמן המתנה מעודכן שה-Worker חישב
+        const estimate = await getWaitTimeEstimate(sessionId);
+        setWaitTime(estimate);
+
+        // 2. בדיקת סטטוס השיחה - האם נציג משך את הלקוח?
+        const currentSession = await getSessionById(sessionId);
+        setSessionData(currentSession);
+
+        // אם הסטטוס הפך ל-Active (1), עוברים לצ'אט
+        if (currentSession.statusChat === SessionStatus.Active) {
+          clearInterval(apiInterval);
+          navigate('/chat', { state: { sessionId } });
+        }
+      } catch (err) {
+        console.error("שגיאה בעדכון נתוני המתנה:", err);
+      }
+    }, 10000);
+
+    return () => {
+      clearInterval(timer);
+      clearInterval(apiInterval);
+    };
+  }, [sessionId, navigate]);
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc' }}>
-      {/* To view the new styled waiting room, we render the styled component here. */}
-      <WaitingRoomStyled />
+      <WaitingRoomStyled 
+        session={sessionData} 
+        elapsed={elapsed} 
+        waitTime={waitTime} 
+      />
     </div>
   );
 };

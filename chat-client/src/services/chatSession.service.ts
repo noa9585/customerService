@@ -32,10 +32,10 @@ export const getSessionById = async (id: number): Promise<ChatSession> => {
 };
 
 // 3. יצירת סשן חדש (מחזיר גם זמן המתנה)
-export const createSession = async (createDto: ChatSessionCreate): Promise<CreateSessionResponse> => {
+export const createSession = async (createDto: ChatSessionCreate): Promise<ChatSession> => {
     try {
         const response = await axios.post(url, createDto);
-        return response.data;
+        return response.data; // השרת מחזיר כעת את ה-ChatSession ישירות
     } catch (error) {
         console.error("Error creating session:", error);
         throw error;

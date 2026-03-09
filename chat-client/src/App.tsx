@@ -17,7 +17,7 @@ function App() {
         <Route path="/" element={<Navigate to="/contact-us" />} />
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/waiting-room-styled" element={<WaitingRoomStyled />} />
-        <Route path="/Waiting-Room-Page" element={<WaitingRoomPage />} />
+        <Route path="/Waiting-Room" element={<WaitingRoomPage />} />
         <Route path="/new-chat" element={<NewChat />} />
         <Route path="/chat" element={<ChatView />} />
         <Route path="/login" element={<CustomerLogin />} />
