@@ -48,20 +48,26 @@ namespace WebApplication1.Controllers
         [HttpPost]
         public ActionResult<ChatSessionDto> Post([FromBody] ChatSessionCreateDto createDto)
         {
-            if (createDto == null) return BadRequest();
-
-            // יצירת השיחה
-            var created = _chatSessionService.AddSession(createDto);
-
-            // שליפת זמן ההמתנה המשוער עבור השיחה החדשה שנוצרה
-            double estimatedWait = _chatSessionService.CalculateWaitTime(created.SessionID);
-
-            // אפשר להוסיף את הנתון הזה ל-Header או לעטוף באובייקט תשובה
-            return CreatedAtAction(nameof(Get), new { id = created.SessionID }, new
+            try
             {
-                Session = created,
-                EstimatedWaitMinutes = estimatedWait
-            });
+                if (createDto == null) return BadRequest();
+                // יצירת השיחה
+                var created = _chatSessionService.AddSession(createDto);
+                // שליפת זמן ההמתנה המשוער עבור השיחה החדשה שנוצרה
+                double estimatedWait = _chatSessionService.CalculateWaitTime(created.SessionID);
+
+                // אפשר להוסיף את הנתון הזה ל-Header או לעטוף באובייקט תשובה
+                return CreatedAtAction(nameof(Get), new { id = created.SessionID }, new
+                {
+                    Session = created,
+                    EstimatedWaitMinutes = estimatedWait
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // כאן נחזיר 400 עם ההודעה "אין נציגים"
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpGet("estimate/{id}")]

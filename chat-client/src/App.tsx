@@ -6,6 +6,8 @@ import RepresentativeRegister from './pages/RepresentativeRegister';
 import ContactUs from './pages/ContactUs';
 import NewChat from './pages/NewChat';
 import ChatView from './pages/ChatView';
+import WaitingRoomPage from './pages/WaitingRoomPage';
+import WaitingRoomStyled from './pages/WaitingRoomStyled';
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
         {/* דף ברירת המחדל יוביל ללוגין */}
         <Route path="/" element={<Navigate to="/contact-us" />} />
         <Route path="/contact-us" element={<ContactUs />} />
+        <Route path="/waiting-room-styled" element={<WaitingRoomStyled />} />
+        <Route path="/Waiting-Room-Page" element={<WaitingRoomPage />} />
         <Route path="/new-chat" element={<NewChat />} />
         <Route path="/chat" element={<ChatView />} />
         <Route path="/login" element={<CustomerLogin />} />
