@@ -21,7 +21,7 @@ export const getAllRepresentatives = async (): Promise<RepresentativeChat[]> => 
 };
 
 // שליפת נציג לפי ID
-export const getRepresentativeById = async (id: number): Promise<RepresentativeChat> => {
+export const getRepresentativeById = async (id: number): Promise<Representative> => {
     try {
         const response = await axios.get(`${url}/${id}`);
         return response.data;
@@ -30,7 +30,15 @@ export const getRepresentativeById = async (id: number): Promise<RepresentativeC
         throw error;
     }
 };
-
+export const getRepresentativeByIdToUpdate = async (id: number): Promise<RepresentativeUpdate> => {
+    try {
+        const response = await axios.get(`${url}/updateByID/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching representative with ID ${id}:`, error);
+        throw error;
+    }
+};
 // הוספה/רישום נציג חדש
 export const registerRepresentative = async (data: RepresentativeRegister): Promise<Representative> => {
     try {
@@ -65,7 +73,7 @@ export const logoutRepresentative = async (id: number): Promise<{ message: strin
 };
 
 // עדכון פרטי נציג
-export const updateRepresentative = async (id: number, data: RepresentativeRegister): Promise<void> => {
+export const updateRepresentative = async (id: number, data: RepresentativeUpdate): Promise<void> => {
     try {
         await axios.put(`${url}/${id}`, data);
     } catch (error) {

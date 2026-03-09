@@ -10,6 +10,7 @@ namespace Service1.Interface
     {
         List<RepresentativeDto> GetAll();
         RepresentativeDto GetById(int id);
+        RepresentativeUpdateDto GetByIdToUpdate(int id);
         RepresentativeDto AddRepresentative(string name,string email, string passward);
         void UpdateRepresentative(int id,string name, string email, string passward);
         void DeleteRepresentative(int id);

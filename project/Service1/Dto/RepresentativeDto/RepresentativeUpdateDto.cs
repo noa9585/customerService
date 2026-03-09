@@ -8,6 +8,7 @@ namespace Service1.Dto.RepresentativeDto
 {
     public class RepresentativeUpdateDto
     {
+
         public string NameRepr { get; set; }
         public string EmailRepr { get; set; }
         public string PasswordRepr { get; set; }

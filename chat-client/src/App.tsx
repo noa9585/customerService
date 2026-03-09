@@ -9,6 +9,7 @@ import ChatView from './pages/ChatView';
 import WaitingRoomPage from './pages/WaitingRoomPage';
 import WaitingRoomStyled from './pages/WaitingRoomStyled';
 import RepresentativeDashboard from './pages/RepresentativeDashboard';
+import UpdateRepresentative from './pages/UpdateRepresentative';
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
         <Route path="/RepresentativeLogin" element={<RepresentativeLogin />} />
         <Route path="/RepresentativeRegister" element={<RepresentativeRegister />} />
         <Route path="/register" element={<CustomerRegister />} />
+        <Route path="/update-representative" element={<UpdateRepresentative />} />
+
       </Routes>
     </Router>
   );

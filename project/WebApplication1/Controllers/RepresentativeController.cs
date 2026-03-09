@@ -31,6 +31,18 @@ namespace WebApplication1.Controllers
             }
             return Ok(representative);
         }
+
+        
+        [HttpGet("updateByID/{id}")]
+        public ActionResult<RepresentativeChatDto> GetByIdToUpdeate(int id)
+        {
+            var representative = _representativeService.GetByIdToUpdate(id);
+            if (representative == null)
+            {
+                return NotFound($"Representative with ID {id} not found.");
+            }
+            return Ok(representative);
+        }
         // הוספת נציג חדש
         [HttpPost]
         public ActionResult<RepresentativeDto> Add([FromBody] RepresentativeRegisterDto representativeDto)

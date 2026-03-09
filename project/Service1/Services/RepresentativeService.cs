@@ -63,7 +63,18 @@ namespace Service1.Services
                 Role = r.Role,
             };
         }
+        public RepresentativeUpdateDto GetByIdToUpdate(int id)
+        {
+            var r = _repository.GetById(id);
+            if (r == null) return null;
 
+            return new RepresentativeUpdateDto
+            {
+                EmailRepr = r.EmailRepr,
+                NameRepr = r.NameRepr,
+                PasswordRepr=r.PasswordRepr,
+            };
+        }
         public RepresentativeDto AddRepresentative(string name, string email, string passward)
         {
             var newRepresentative = new Representative
