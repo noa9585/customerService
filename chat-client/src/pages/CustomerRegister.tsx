@@ -3,7 +3,7 @@ import { registerCustomer } from '../services/customer.service';
 import { CustomerRegister as CustomerRegisterType } from '../types/customer.types';
 import '../styles/CustomerRegister.css'; // ייבוא הקובץ שהפרדנו
 import { Link } from 'react-router-dom';
-import { useCustomerRegister } from '../hooks/useCustomerRegister';
+import { useCustomerRegister } from '../hooks/useCustomerRegister.hook';
 const CustomerRegister: React.FC = () => {
     const { formData, setFormData, error, loading, handleSubmit } = useCustomerRegister();
 

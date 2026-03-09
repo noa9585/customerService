@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCustomerAuth } from '../hooks/useCustomerLogin'; // וודא שהנתיב נכון
+import { useCustomerAuth } from '../hooks/useCustomerLogin.hook'; // וודא שהנתיב נכון
 import '../styles/CustomerLogin.css'; // נשתמש בעיצוב שהכנו קודם
 import { Link } from 'react-router-dom';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/NewChat.css';
-import { useNewChatPage } from '../hooks/useNewChatPage';
-import { getNameFromPayload } from '../utils/jwt';
+import { useNewChatPage } from '../hooks/useNewChatPage.hook';
+// import { getNameFromPayload } from '../utils/jwt';
 
 
 const NewChat: React.FC = () => {
@@ -9,7 +9,7 @@ const NewChat: React.FC = () => {
         alert('הבקשה נשלחה — נציג יחזור אליך בהקדם');
     });
 console.log(decodedToken);
-    const nameFromToken = decodedToken ? getNameFromPayload(decodedToken) : null;
+    // const nameFromToken = decodedToken ? getNameFromPayload(decodedToken) : null;
 
     return (
         <div className="newchat-page">
@@ -19,7 +19,7 @@ console.log(decodedToken);
 
                 {decodedToken && (
                     <div style={{ marginBottom: 12 }}>
-                        <strong>מזוהה כ:</strong> {nameFromToken ?? decodedToken.nameCust ?? decodedToken.name ?? decodedToken.email ?? decodedToken.sub}
+                         {decodedToken?.['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || 'שם לא זמין'}<strong>:מזוהה כ</strong>
                     </div>
                 )}
 
@@ -27,12 +27,12 @@ console.log(decodedToken);
                     <div className="nc-row two-cols">
                         <label className="nc-label">
                             שם מלא
-                            <input name="fullName" value={(form as any).fullName ?? nameFromToken ?? decodedToken?.nameCust ?? decodedToken?.name ?? ''} onChange={handleChange} placeholder="הזן את שמך" required />
+                            <input name="fullName" value={decodedToken?.['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] ||'שם לא זמין'} onChange={handleChange} placeholder="הזן את שמך" required />
                         </label>
 
                         <label className="nc-label">
                             אימייל
-                            <input name="email" type="email" value={(form as any).email ?? decodedToken?.email ?? ''} onChange={handleChange} placeholder="your@email.com" required />
+                            <input name="email" type="email" value={ decodedToken?.email||'' } onChange={handleChange} placeholder="your@email.com" required />
                         </label>
                     </div>
 
@@ -62,7 +62,7 @@ console.log(decodedToken);
                     {error && <p style={{ color: 'red', fontSize: 14 }}>{error}</p>}
 
                     <button className="nc-submit" type="submit" disabled={loading}>
-                        {loading ? 'שולח...' : 'הצטרף לתור ✉️'}
+                        {loading ? 'שולח...' : 'הצטרף לתור ✉️'} onClick{}
                     </button>
                 </form>
             </div>

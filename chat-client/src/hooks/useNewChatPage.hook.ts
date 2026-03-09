@@ -4,7 +4,7 @@ import{getAllTopics}from '../services/topic.service'
 import { Topic } from '../types/chat';
 import{ChatMessage}from '../types/chatMessage.types'
 import parseJwt from '../utils/jwt';
-
+import {createSession} from '../services/chatSession.service'
 // type Form = {
 //   fullName: string;
 //   email: string;
@@ -77,6 +77,12 @@ export const useNewChatPage = (onSuccess?: (data: ChatMessage) => void) => {
     }
   }, [form, onSuccess]);
 
+  const openSession = useCallback(async (e?: React.FormEvent) => {
+    console.log(e);
+    
+      const session=createSession(decodedToken?.idCustomer)
+  },[]);
+
   return {
     form,
     setForm,
@@ -89,5 +95,6 @@ export const useNewChatPage = (onSuccess?: (data: ChatMessage) => void) => {
     setSelectedTopic,
     topicsError,
     decodedToken,
+    openSession,
   };
 };
