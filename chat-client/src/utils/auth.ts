@@ -60,3 +60,29 @@ export const getUserRoleFromToken = (): string | null => {
   const decoded = getDecodedToken();
   return decoded?.role || null;
 };
+
+export const getDecodedTokenRep = (): any | null => {
+  try {
+    const token = localStorage.getItem('representativeToken');
+    if (!token) return null;
+    return parseJwt(token);
+  } catch (e) {
+    console.warn('Failed to decode token:', e);
+    return null;
+  }
+};
+
+/**
+ * Store token in localStorage
+ * @param token JWT token string
+ */
+export const setTokenRep = (token: string): void => {
+  localStorage.setItem('representativeToken', token);
+};
+
+/**
+ * Remove token from localStorage
+ */
+export const removeTokenRep = (): void => {
+  localStorage.removeItem('representativeToken');
+};

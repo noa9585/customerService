@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import RepresentativeDashboardSection from '../sections/RepresentativeDashboard/RepresentativeDashboardSection';
+import RepresentativeDashboardSection from '../sections/RepresentativeDashboard/RepresentativeDashboard.Section';
 import { useRepresentativeDashboard } from '../hooks/useRepresentativeDashboard.hook';
 
 /**

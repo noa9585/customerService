@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { loginRepresentative } from '../services/representative.service';
 import { RepresentativeLogin} from '../types/representative.types';
-
+import{setTokenRep}from '../utils/auth'
 export const useCustomerAuth = () => {
     const [formData, setFormData] = useState<RepresentativeLogin>({
         emailRepr: '',
@@ -16,7 +16,8 @@ export const useCustomerAuth = () => {
         try {
             const user = await loginRepresentative(formData);
             if(user.token) {
-                localStorage.setItem('representativeToken', user.token);
+                // localStorage.setItem('representativeToken', user.token);
+                setTokenRep(user.token)
                 // console.log("Token stored in localStorage:", user.token);
             }   
             return user;

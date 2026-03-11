@@ -16,7 +16,6 @@ const CustomerLogin: React.FC = () => {
                 <h1>כניסת לקוח</h1>
             </div>
 
-            {/* עכשיו handleSubmit מוגדר נכון */}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>אימייל:</label>
