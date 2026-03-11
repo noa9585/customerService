@@ -24,6 +24,16 @@ export const getMessageById = async (id: number): Promise<ChatMessageChatDto> =>
         throw error;
     }
 };
+export const getMessageBySessionId = async (sessionId: number): Promise<ChatMessage[]> => {
+
+    try {
+        const response = await axios.get(`${url}/history/${sessionId}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching messages for session ID ${sessionId}:`, error);
+        throw error;
+    }
+}
 
 // 3. הוספת הודעה חדשה
 export const addMessage = async (messageData: ChatMessageSend): Promise<ChatMessage> => {
@@ -40,8 +50,8 @@ export const addMessage = async (messageData: ChatMessageSend): Promise<ChatMess
 // 4. עדכון הודעה קיימת
 // ה-Controller מצפה ל-ID בנתיב, ל-Body (DTO) ול-Query Parameter (statusMessage)
 export const updateMessage = async (
-    id: number, 
-    messageDto: ChatMessageChatDto, 
+    id: number,
+    messageDto: ChatMessageChatDto,
     statusMessage: boolean
 ): Promise<void> => {
     try {

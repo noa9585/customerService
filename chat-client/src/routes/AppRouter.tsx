@@ -9,6 +9,7 @@ import ChatView from '../pages/ChatView';
 import WaitingRoomPage from '../pages/WaitingRoomPage';
 import RepresentativeDashboard from '../pages/RepresentativeDashboard';
 import UpdateRepresentative from '../pages/UpdateRepresentative';
+import ChatPage from '../pages/cc';
 
 /**
  * AppRouter Component
@@ -20,23 +21,24 @@ export const AppRouter = () => {
     <Routes>
       {/* Default redirect */}
       <Route path="/" element={<Navigate to="/contact-us" />} />
-      
+
       {/* Public pages */}
       <Route path="/contact-us" element={<ContactUs />} />
       <Route path="/login" element={<CustomerLogin />} />
       <Route path="/register" element={<CustomerRegister />} />
       <Route path="/RepresentativeLogin" element={<RepresentativeLogin />} />
       <Route path="/RepresentativeRegister" element={<RepresentativeRegister />} />
-      
+
       {/* Customer pages */}
       <Route path="/new-chat" element={<NewChat />} />
-      <Route path="/waiting-room" element={<WaitingRoomPage />} />
+      <Route path="/chatt" element={<ChatPage />} />     
+       <Route path="/waiting-room" element={<WaitingRoomPage />} />
       <Route path="/chat" element={<ChatView />} />
-      
+
       {/* Representative pages */}
       <Route path="/representative-dashboard" element={<RepresentativeDashboard />} />
       <Route path="/update-representative" element={<UpdateRepresentative />} />
-      
+
       {/* Fallback for undefined routes */}
       <Route path="*" element={<Navigate to="/contact-us" />} />
     </Routes>
