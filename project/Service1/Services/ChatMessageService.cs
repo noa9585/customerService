@@ -11,10 +11,10 @@ namespace Service1.Services
     public class ChatMessageService : IChatMessageService
     {
         private readonly IRepository<ChatMessage> _repository;
-        private readonly IRepository<ChatSession> _sessionRepository; // הוספת השורה הזו
+        private readonly IChatSessionRepository _sessionRepository; // הוספת השורה הזו
 
         // עדכון הבנאי לקבלת שני הפרמטרים
-        public ChatMessageService(IRepository<ChatMessage> repository, IRepository<ChatSession> sessionRepository)
+        public ChatMessageService(IRepository<ChatMessage> repository, IChatSessionRepository sessionRepository)
         {
             _repository = repository;
             _sessionRepository = sessionRepository;

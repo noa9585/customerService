@@ -35,7 +35,7 @@ builder.Services.AddScoped<IRepository<ChatMessage>, ChatMessageRepository>();
 builder.Services.AddScoped<IChatMessageService, ChatMessageService>();
 builder.Services.AddScoped<IRepository<Representative>, RepresentativeRepository>();
 builder.Services.AddScoped<IRepresentativeService, RepresentativeService>();
-builder.Services.AddScoped<IRepository<ChatSession>, ChatSessionRepository>();
+builder.Services.AddScoped<IChatSessionRepository, ChatSessionRepository>();
 builder.Services.AddScoped<IChatSessionService, ChatSessionService>();
 
 // Queue manager and background worker

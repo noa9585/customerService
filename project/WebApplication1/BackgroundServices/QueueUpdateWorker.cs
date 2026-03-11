@@ -22,7 +22,7 @@ namespace WebApplication1.BackgroundServices
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    var sessionRepo = scope.ServiceProvider.GetRequiredService<IRepository<ChatSession>>();
+                    var sessionRepo = scope.ServiceProvider.GetRequiredService<IChatSessionRepository>();
                     var chatSessionService = scope.ServiceProvider.GetRequiredService<IChatSessionService>();
                     var topicRepo = scope.ServiceProvider.GetRequiredService<IRepository<Topic>>();
 
