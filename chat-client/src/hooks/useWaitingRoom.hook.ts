@@ -29,6 +29,7 @@ export const useWaitingRoom = (initial?: Partial<WaitingSession>) => {
   }, [session.status]);
 
   const cancel = useCallback(() => {
+    
     setSession((s) => ({ ...s, status: 'cancelled' }));
   }, []);
 

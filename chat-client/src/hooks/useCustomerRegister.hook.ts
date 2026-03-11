@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { registerCustomer } from '../services/customer.service';
 import { CustomerRegister as CustomerRegisterType } from '../types/customer.types';
-
+import{setToken}from '../utils/auth'
 export const useCustomerRegister = () => {
 
     const [formData, setFormData] = useState<CustomerRegisterType>({
@@ -23,7 +23,8 @@ export const useCustomerRegister = () => {
             const newUser = await registerCustomer(formData);
             //const { idCustomer, nameCust, role, isOnline, emailCust, token } = newUser;
             if (newUser.token) {
-                localStorage.setItem('token', newUser.token);
+                // localStorage.setItem('token', newUser.token);
+                setToken(newUser.token)
                 console.log('Token stored:', newUser.token);
             }
             console.log("הרשמה הצליחה:", newUser);

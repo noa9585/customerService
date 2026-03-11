@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/ContactUs.css';
 import { Link } from 'react-router-dom';
-import { useContactActions } from '../hooks/useContactActions.hook';
+import { useContactActions } from '../hooks/useContactUs.hook';
 
 const ContactUs: React.FC = () => {
     const { handleStart } = useContactActions();

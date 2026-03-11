@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { registerRepresentative } from '../services/representative.service';
 import { RepresentativeRegister as RepresentativeRegisterType } from '../types/representative.types';
-
+import{setTokenRep} from '../utils/auth'
 export const useCustomerAuth = () => {
     const [formData, setFormData] = useState<RepresentativeRegisterType>({
         nameRepr: '',
@@ -20,8 +20,9 @@ export const useCustomerAuth = () => {
         try {
             const newUser = await registerRepresentative(formData);
              if(newUser.token) {
-                localStorage.setItem('representativeToken', newUser.token);
-                console.log("Token stored in localStorage:", newUser.token);
+                // localStorage.setItem('representativeToken', newUser.token);
+                // console.log("Token stored in localStorage:", newUser.token);
+                setTokenRep(newUser.token)
             }   
             console.log("הרשמה הצליחה:", newUser);
             alert(`ברוך הבא, ${newUser.nameRepr}!`);

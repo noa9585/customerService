@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import WaitingRoomSection from '../sections/WaitingRoom/WaitingRoomSection';
+import WaitingRoomSection from '../sections/WaitingRoom/WaitingRoom.Section';
 import { getWaitTimeEstimate, getSessionById } from '../services/chatSession.service';
 import { SessionStatus } from '../types/chatSession.types';
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { loginCustomer } from '../services/customer.service';
 import { CustomerLogin as CustomerLoginType } from '../types/customer.types';
-
+import { setToken } from '../utils/auth'
 export const useCustomerAuth = () => {
     const [formData, setFormData] = useState<CustomerLoginType>({
         emailCust: '',
@@ -18,7 +18,8 @@ export const useCustomerAuth = () => {
             // Assuming response includes user and token
             //const { idCustomer, nameCust, role,isOnline,emailCust, token } = response;
             if (response.token) {
-                localStorage.setItem('token', response.token);
+                // localStorage.setItem('token', response.token);
+                setToken(response.token)
             }
             return response;
         } catch (err) {
