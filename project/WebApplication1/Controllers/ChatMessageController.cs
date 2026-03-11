@@ -90,5 +90,12 @@ namespace YourProject.Controllers
             _chatMessageService.DeleteMessage(id);
             return NoContent();
         }
+        // שליפת היסטוריית ההודעות לפי ID של שיחה
+        [HttpGet("history/{sessionId}")]
+        public IActionResult GetChatHistory(int sessionId)
+        {
+            var history = _chatMessageService.GetChatHistory(sessionId);
+            return Ok(history);
+        }
     }
 }

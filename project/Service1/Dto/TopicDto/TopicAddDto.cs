@@ -11,6 +11,6 @@ namespace Service1.Dto.TopicDto
     {
         public string NameTopic { get; set; }
         public double AverageTreatTime { get; set; }
-        public int priorityTopics { get; set; }
+        public double priorityTopics { get; set; }
     }
 }

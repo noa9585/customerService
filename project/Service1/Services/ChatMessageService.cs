@@ -10,11 +10,11 @@ namespace Service1.Services
 {
     public class ChatMessageService : IChatMessageService
     {
-        private readonly IRepository<ChatMessage> _repository;
+        private readonly IChatMessageRepository _repository;
         private readonly IChatSessionRepository _sessionRepository; // הוספת השורה הזו
 
         // עדכון הבנאי לקבלת שני הפרמטרים
-        public ChatMessageService(IRepository<ChatMessage> repository, IChatSessionRepository sessionRepository)
+        public ChatMessageService(IChatMessageRepository repository, IChatSessionRepository sessionRepository)
         {
             _repository = repository;
             _sessionRepository = sessionRepository;
@@ -109,6 +109,18 @@ namespace Service1.Services
         public void DeleteMessage(int id)
         {
             _repository.DeleteItem(id);
+        }
+        public List<ChatMessageDto> GetChatHistory(int sessionId)
+        {
+            var messages = _repository.GetMessagesBySessionId(sessionId);
+            return messages.Select(m => new ChatMessageDto
+            {
+                MessageID = m.MessageID,
+                Message = m.Message,
+                Timestamp = m.Timestamp,
+                MessageType = m.MessageType, // 'Representative' או 'Customer'
+                IDSession = m.IDSession
+            }).ToList();
         }
     }
 }

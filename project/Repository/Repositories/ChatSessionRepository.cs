@@ -37,8 +37,13 @@ namespace Repository.Repositories
         }
         public List<ChatSession> GetAllWaiting()
         {
-            return _context.ChatSessions.Where(x => x.statusChat == 0).OrderBy(x=>x.EstimatedWaitTime).ToList();
+            return _context.ChatSessions.Where(x => x.statusChat == SessionStatus.Waiting).OrderBy(x=>x.EstimatedWaitTime).ToList();
         }
+        public List<ChatSession> GetAllActive()
+        {
+            return _context.ChatSessions.Where(x => x.statusChat == SessionStatus.Active).OrderBy(x => x.SessionID).ToList();
+        }
+
         public ChatSession GetById(int id)
         {
             return _context.ChatSessions.ToList().FirstOrDefault(x => x.SessionID == id);
@@ -59,6 +64,14 @@ namespace Repository.Repositories
             chses.IDTopic = item.IDTopic;
             chses.EstimatedWaitTime = item.EstimatedWaitTime;
             _context.save();
+        }
+
+        public ChatSession GetNextWaitingSession()
+        {
+            return _context.ChatSessions
+                .Where(cs => cs.statusChat == SessionStatus.Waiting)
+                .OrderBy(cs => cs.EstimatedWaitTime) 
+                .FirstOrDefault();
         }
     }
 }

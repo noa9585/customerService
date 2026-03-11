@@ -29,8 +29,9 @@ const WaitingRoomPage: React.FC = () => {
     const apiInterval = setInterval(async () => {
       try {
         // 1. קבלת זמן המתנה מעודכן שה-Worker חישב
-        const estimate = await getWaitTimeEstimate(sessionId);
-        setWaitTime(estimate);
+        // var session = await getSessionById(sessionId);
+        // const estimate = await getWaitTimeEstimate(session.idTopic);
+        // setWaitTime(estimate);
 
         // 2. בדיקת סטטוס השיחה - האם נציג משך את הלקוח?
         const currentSession = await getSessionById(sessionId);

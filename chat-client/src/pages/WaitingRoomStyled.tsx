@@ -37,7 +37,7 @@ const WaitingRoomStyled: React.FC<WaitingRoomProps> = ({ session, elapsed, waitT
           </div>
         </div>
 
-        <button className="wr-badge">מתמין בתור לשיחה</button>
+        <button className="wr-badge">ממתין בתור לשיחה</button>
 
         <h1 className="wr-title">מיד נתחבר, {session.customerName || 'לקוח יקר'}</h1>
         <div className="wr-sub">מזהה פנייה: <strong>#{session.sessionID}</strong></div>
@@ -51,7 +51,7 @@ const WaitingRoomStyled: React.FC<WaitingRoomProps> = ({ session, elapsed, waitT
 
           <div className="wr-stat">
             <div className="stat-icon">🕒</div>
-            <div className="stat-main">~ {Math.round(waitTime)} דק׳</div>
+            <div className="stat-main">~ {waitTime} דק׳</div>
             <div className="stat-sub">זמן משוער שנותר</div>
           </div>
 

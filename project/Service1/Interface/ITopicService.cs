@@ -11,8 +11,8 @@ namespace Service1.Interface
     {
         List<TopicDto> GetAll();
         TopicDto GetById(int id);
-        TopicDto AddTopic(string name,double avrage,int priority);
-        void UpdateTopic(int id, string name, double avrage, int priority);
+        TopicDto AddTopic(string name,double avrage,double priority);
+        void UpdateTopic(int id, string name, double avrage, double priority);
         void DeleteTopic(int id);
     }
 }

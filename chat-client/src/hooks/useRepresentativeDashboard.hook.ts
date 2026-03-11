@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import{getDecodedTokenRep} from '../utils/auth'
+import { getDecodedTokenRep } from '../utils/auth'
 import parseJwt from '../utils/jwt';
 import {
     getRepresentativeById,
@@ -8,7 +8,8 @@ import {
     returnFromBreak,
     logoutRepresentative
 } from '../services/representative.service'
- import axiosInstance from '../services/axios'
+import axiosInstance from '../services/axios'
+import { getNextClient } from '../services/chatSession.service';
 
 export const useRepresentativeDashboard = () => {
     const navigate = useNavigate()
@@ -20,17 +21,16 @@ export const useRepresentativeDashboard = () => {
     const loadData = useCallback(async () => {
         try {
             const token = localStorage.getItem('representativeToken');
-            if (!token)
-            {
+            if (!token) {
                 setError("לא נמצאה אסימון. אנא התחבר מחדש.");
-                 return navigate('/RepresentativeLogin'); 
+                return navigate('/RepresentativeLogin');
             }
 
             const decoded = parseJwt(token);
             const data = await getRepresentativeById(Number(decoded.sub));
             setRepData(data);
-            
-            
+
+
         } catch (err) {
             navigate('/RepresentativeLogin');
         } finally {
@@ -42,13 +42,23 @@ export const useRepresentativeDashboard = () => {
 
     const handleGetNextClient = async () => {
         setActionLoading(true);
+        setError(null);
         try {
-            const res = await axiosInstance.post(`/ChatSession/get-next-client/${repData.idRepresentative}`);
-            navigate('/chat', { state: { sessionId: res.data.sessionID } });
+            const res = await getNextClient(repData.idRepresentative);
+            navigate('/chat', { state: { sessionId: res.sessionID } });
         } catch (err: any) {
-            setError(err.response?.data?.message || "אין לקוחות בתור");
-        } finally { setActionLoading(false); }
+            if (err.response && err.response.status === 404) {
+                setError("אין לקוחות ממתינים בתור כרגע. נסה שוב בעוד כמה דקות.");
+            } else {
+                setError("אירעה שגיאה בחיבור לשרת. אנא נסה שוב.");
+            }
+        } finally {
+            setActionLoading(false);
+        }
     };
+
+
+
 
     const handleToggleBreak = async () => {
         setActionLoading(true);

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Repository.Repositories
 {
-    public class ChatMessageRepository : IRepository<ChatMessage>
+    public class ChatMessageRepository :IChatMessageRepository
     {
         private readonly IContext _context;
         public ChatMessageRepository (IContext context)
@@ -53,6 +53,13 @@ namespace Repository.Repositories
             chmes.StatusMessage= item.StatusMessage;
           
             _context.save();
+        }
+        public List<ChatMessage> GetMessagesBySessionId(int sessionId)
+        {
+            return _context.ChatMessages
+                .Where(m => m.IDSession == sessionId)
+                .OrderBy(m => m.Timestamp) 
+                .ToList();
         }
     }
 }

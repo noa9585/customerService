@@ -31,7 +31,7 @@ builder.Services.AddScoped<IRepository<Topic>, TopicRepository>();
 builder.Services.AddScoped<ITopicService, TopicService>();
 builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IRepository<ChatMessage>, ChatMessageRepository>();
+builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
 builder.Services.AddScoped<IChatMessageService, ChatMessageService>();
 builder.Services.AddScoped<IRepository<Representative>, RepresentativeRepository>();
 builder.Services.AddScoped<IRepresentativeService, RepresentativeService>();

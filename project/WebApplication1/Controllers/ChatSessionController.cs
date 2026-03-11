@@ -31,7 +31,11 @@ namespace WebApplication1.Controllers
         {
             return Ok(_chatSessionService.GetAllWaiting());
         }
-
+        [HttpGet("/getActive")]
+        public ActionResult<List<ChatSessionDto>> getAllActive()
+        {
+            return Ok(_chatSessionService.GetAllActive());
+        }
         [HttpGet("{id}")]
         public ActionResult<ChatSessionDto> Get(int id)
         {
@@ -56,11 +60,11 @@ namespace WebApplication1.Controllers
                 // 2. יצירת הסשן (רק אם יש נציגים)
                 var created = _chatSessionService.AddSession(createDto);
 
-                // 3. חישוב זמן המתנה ראשוני
-                double estimatedWait = _chatSessionService.CalculateWaitTime(created.SessionID);
+                //// 3. חישוב זמן המתנה ראשוני
+                //double estimatedWait = _chatSessionService.CalculateWaitTime(created.SessionID);
 
-                // עדכון האובייקט שחוזר עם הזמן שחושב
-                created.EstimatedWaitTime = estimatedWait;
+                //// עדכון האובייקט שחוזר עם הזמן שחושב
+                //created.EstimatedWaitTime = estimatedWait;
 
                 return CreatedAtAction(nameof(Get), new { id = created.SessionID }, created);
             }
@@ -119,37 +123,22 @@ namespace WebApplication1.Controllers
             return NoContent();
         }
 
-        [HttpPost("get-next-client/{repId}")]
-        public ActionResult GetNextClient(int repId)
+        [HttpPost("get-next-client/{idRepresentative}")]
+        public IActionResult GetNextClient(int idRepresentative)
         {
-            // 1. בדיקה קריטית: האם הנציג קיים ב-DB?
-            // זה ימנע את השגיאה שראינו ב-Inner Exception
-            var representative = _representativeService.GetById(repId);
-            if (representative == null)
+            try
             {
-                return BadRequest(new { message = $"שגיאת מערכת: נציג מס' {repId} לא נמצא במסד הנתונים." });
-            }
-
-            // 2. משיכת הלקוח הבא מהתור
-            int? nextSessionId = _queueManager.GetNextSession();
-
-            if (nextSessionId == null) return NotFound(new { message = "התור ריק." });
-
-            // 3. עדכון השיחה לשיוך לנציג הקיים
-            var session = _chatSessionService.GetSessionById(nextSessionId.Value);
-            if (session != null)
-            {
-                var updateDto = new ChatSessionUpdateDto
+                var sessionDto = _chatSessionService.PullNextClientForRepresentative(idRepresentative);
+                if (sessionDto == null)
                 {
-                    IDRepresentative = repId, // עכשיו אנחנו בטוחים שהוא קיים
-                    statusChat = SessionStatus.Active,
-                    ServiceStartTimestamp = DateTime.Now,
-                    status = true
-                };
-                _chatSessionService.UpdateSession(nextSessionId.Value, updateDto);
+                    return NotFound(new { message = "אין לקוחות ממתינים בתור כרגע." });
+                }
+                return Ok(sessionDto);
             }
-
-            return Ok(session);
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "אירעה שגיאה במשיכת הלקוח הבא.", details = ex.Message });
+            }
         }
     }
 }

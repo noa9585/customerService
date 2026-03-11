@@ -12,6 +12,7 @@ namespace Service1.Interface
         List<ChatSessionDto> GetAllSessions();
         ChatSessionDto GetSessionById(int id);
         List<ChatSessionDto> GetAllWaiting();
+        List<ChatSessionDto> GetAllActive();
         // שימוש ב-DTO להוספה
         ChatSessionDto AddSession(ChatSessionCreateDto sessionDto);
         // שימוש ב-DTO לעדכון
@@ -19,5 +20,6 @@ namespace Service1.Interface
         void DeleteSession(int id);
 
         double CalculateWaitTime(int sessionId);
+        ChatSessionDto PullNextClientForRepresentative(int idRepresentative);
     }
 }

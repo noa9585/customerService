@@ -49,7 +49,7 @@ namespace Service1.Services
             };
         }
 
-        public TopicDto AddTopic(string name, double average, int priority)
+        public TopicDto AddTopic(string name, double average, double priority)
         {
             var newTopic = new Topic
             {
@@ -73,7 +73,7 @@ namespace Service1.Services
             };
         }
 
-        public void UpdateTopic(int id, string name, double average, int priority)
+        public void UpdateTopic(int id, string name, double average, double priority)
         {
             var existing = _repository.GetById(id);
             if (existing != null)

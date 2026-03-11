@@ -40,7 +40,7 @@ namespace WebApplication1.BackgroundServices
                         _queueManager.UpdateScore(id, score);
 
                         // 2. חישוב זמן המתנה מעודכן ועדכון האובייקט בזיכרון ה-EF
-                        s.EstimatedWaitTime = chatSessionService.CalculateWaitTime(id);
+                        s.EstimatedWaitTime = chatSessionService.CalculateWaitTime(topic.IDTopic);
 
                         // כאן אנחנו קוראים לעדכון, אבל זה מבצע שמירה ל-DB בכל סיבוב
                         sessionRepo.UpdateItem(id, s);

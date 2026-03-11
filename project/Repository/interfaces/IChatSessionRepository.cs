@@ -8,9 +8,12 @@ using System.Threading.Tasks;
 
 namespace Repository.interfaces
 {
-    public interface IChatSessionRepository:IRepository<ChatSession>
+    public interface IChatSessionRepository : IRepository<ChatSession>
     {
         List<ChatSession> GetAllWaiting();
+        List<ChatSession> GetAllActive();
+        ChatSession GetNextWaitingSession();
+
 
     }
 }

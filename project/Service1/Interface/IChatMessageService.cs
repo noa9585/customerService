@@ -17,5 +17,6 @@ namespace Service1.Interface
         void UpdateMessage(int id, int iDSession, string message, SenderType messageType, bool statusMessage);
 
         void DeleteMessage(int id);
+        List<ChatMessageDto> GetChatHistory(int sessionId);
     }
 }
