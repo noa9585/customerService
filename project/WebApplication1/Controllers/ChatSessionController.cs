@@ -26,6 +26,11 @@ namespace WebApplication1.Controllers
         {
             return Ok(_chatSessionService.GetAllSessions());
         }
+        [HttpGet("/getWaiting")]
+        public ActionResult<List<ChatSessionDto>> GetAllWaiting()
+        {
+            return Ok(_chatSessionService.GetAllWaiting());
+        }
 
         [HttpGet("{id}")]
         public ActionResult<ChatSessionDto> Get(int id)

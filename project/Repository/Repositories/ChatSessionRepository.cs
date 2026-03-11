@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Repository.Repositories
 {
-    public class ChatSessionRepository : IRepository<ChatSession>
+    public class ChatSessionRepository : IChatSessionRepository
     {
         private readonly IContext _context;
         public ChatSessionRepository(IContext context)
@@ -35,7 +35,10 @@ namespace Repository.Repositories
         {
             return _context.ChatSessions.ToList();
         }
-
+        public List<ChatSession> GetAllWaiting()
+        {
+            return _context.ChatSessions.Where(x => x.statusChat == 0).OrderBy(x=>x.EstimatedWaitTime).ToList();
+        }
         public ChatSession GetById(int id)
         {
             return _context.ChatSessions.ToList().FirstOrDefault(x => x.SessionID == id);

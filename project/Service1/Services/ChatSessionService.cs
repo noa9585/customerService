@@ -11,14 +11,14 @@ namespace Service1.Services
 {
     public class ChatSessionService : IChatSessionService
     {
-        private readonly IRepository<ChatSession> _repository;
+        private readonly IChatSessionRepository _repository;
         private readonly IRepository<Topic> _topicRepository;
         private readonly IRepository<Customer> _customerRepository;
         private readonly IRepository<Representative> _representativeRepository;
         private readonly IChatQueueManager _queueManager;
 
         public ChatSessionService(
-            IRepository<ChatSession> repository,
+            IChatSessionRepository repository,
             IRepository<Customer> customerRepository,
             IRepository<Topic> topicRepository,
             IChatQueueManager queueManager,
@@ -35,7 +35,10 @@ namespace Service1.Services
         {
             return _repository.GetAll().Select(s => MapToDto(s)).ToList();
         }
-
+        public List<ChatSessionDto> GetAllWaiting()
+        {
+            return _repository.GetAllWaiting().Select(s => MapToDto(s)).ToList() ;
+        }
         public ChatSessionDto GetSessionById(int id)
         {
             var s = _repository.GetById(id);

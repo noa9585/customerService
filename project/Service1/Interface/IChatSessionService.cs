@@ -11,11 +11,13 @@ namespace Service1.Interface
     {
         List<ChatSessionDto> GetAllSessions();
         ChatSessionDto GetSessionById(int id);
+        List<ChatSessionDto> GetAllWaiting();
         // שימוש ב-DTO להוספה
         ChatSessionDto AddSession(ChatSessionCreateDto sessionDto);
         // שימוש ב-DTO לעדכון
         void UpdateSession(int id, ChatSessionUpdateDto sessionDto);
         void DeleteSession(int id);
+
         double CalculateWaitTime(int sessionId);
     }
 }
