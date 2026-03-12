@@ -1,0 +1,115 @@
+.chat-page-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* גובה מסך מלא */
+    width: 100vw;
+    background-color: #f0f2f5;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* כותרת עליונה */
+.chat-header {
+    height: 60px;
+    background: #ffffff;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 10;
+}
+
+/* אזור ההודעות */
+.messages-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 10%; /* ריווח מהצדדים למראה דסקטופ */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.message-row {
+    display: flex;
+    flex-direction: column;
+    max-width: 60%;
+    margin-bottom: 12px;
+}
+
+/* הודעות שלי (שנשלחו על ידי) - צד שמאל תכלת */
+.message-row.sent {
+    align-self: flex-end; /* יישור לשמאל במסך עברית (LRT/RTL תלוי בקונטקסט) */
+    align-items: flex-end;
+}
+
+/* הודעות שקיבלתי - צד ימין אפור */
+.message-row.received {
+    align-self: flex-start;
+    align-items: flex-start;
+}
+
+.message-info-top {
+    font-size: 0.75rem;
+    color: #666;
+    margin-bottom: 4px;
+    display: flex;
+    gap: 8px;
+}
+
+.bubble {
+    padding: 10px 16px;
+    border-radius: 18px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+/* עיצוב בועת "שלחתי" (תכלת) */
+.sent .bubble {
+    background-color: #dcf8ff;
+    color: #000;
+    border-top-right-radius: 2px;
+}
+
+/* עיצוב בועת "קיבלתי" (אפור) */
+.received .bubble {
+    background-color: #ffffff;
+    color: #000;
+    border-top-left-radius: 2px;
+}
+
+/* אזור הקלדה בתחתית */
+.chat-footer {
+    padding: 15px 10%;
+    background: #f0f2f5;
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 25px;
+    outline: none;
+    font-size: 1rem;
+}
+
+.send-btn {
+    background-color: #0084ff;
+    color: white;
+    border: none;
+    padding: 0 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.close-chat-btn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}

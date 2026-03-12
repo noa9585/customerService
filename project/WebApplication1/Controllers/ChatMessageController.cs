@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Service1.Interface;
-using Service1.Dto.ChatMessageDto;
+using Microsoft.AspNetCore.SignalR;
 using Repository.Entities;
+using Service1.Dto.ChatMessageDto;
+using Service1.Hubs;
+using Service1.Interface;
+using Service1.Services;
 using System.Collections.Generic;
 
 namespace YourProject.Controllers
@@ -11,10 +14,12 @@ namespace YourProject.Controllers
     public class ChatMessageController : ControllerBase
     {
         private readonly IChatMessageService _chatMessageService;
+        private readonly IHubContext<ChatHub> _hubContext;
 
-        public ChatMessageController(IChatMessageService chatMessageService)
+        public ChatMessageController(IChatMessageService chatMessageService, IHubContext<ChatHub> hubContext)
         {
             _chatMessageService = chatMessageService;
+            _hubContext = hubContext;
         }
 
         // 1. שליפת כל ההודעות
@@ -54,6 +59,20 @@ namespace YourProject.Controllers
 
             // החזרת תשובה מסוג 201 Created
             return CreatedAtAction(nameof(GetById), new { id = createdMessage.MessageID }, createdMessage);
+        }
+
+
+
+        [HttpPost("send")]
+        public async Task<IActionResult> SendMessage([FromBody] ChatMessageSendDto dto)
+        {
+            var savedMessage = _chatMessageService.AddMessage(dto.IDSession,dto.Message,dto.MessageType);
+
+            // שליחת ההודעה בזמן אמת לכל מי שמחובר לשיחה הזו
+            await _hubContext.Clients.Group(dto.IDSession.ToString())
+                .SendAsync("ReceiveMessage", savedMessage);
+
+            return Ok(savedMessage);
         }
 
         // 4. עדכון הודעה קיימת

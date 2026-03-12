@@ -102,19 +102,22 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // CORS
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReact", policy =>
     {
         policy.WithOrigins("http://localhost:5173", "http://localhost:5174")
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials(); // חובה עבור SignalR!
     });
 });
-
+builder.Services.AddSignalR();
 var app = builder.Build();
 
-app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+//app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+app.UseCors("AllowReact");
 
 if (app.Environment.IsDevelopment())
 {
@@ -129,5 +132,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapHub<Service1.Hubs.ChatHub>("/chatHub");
 app.Run();

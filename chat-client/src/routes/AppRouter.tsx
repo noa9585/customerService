@@ -10,7 +10,8 @@ import WaitingRoomPage from '../pages/WaitingRoomPage';
 import RepresentativeDashboard from '../pages/RepresentativeDashboard';
 import UpdateRepresentative from '../pages/UpdateRepresentative';
 import ChatPage from '../pages/cc';
-
+import RepresentativeChatPage from '../pages/RepresentativeChatPage';
+import CustomerChatPage from '../pages/CustomerChatPage';
 /**
  * AppRouter Component
  * Manages all application routes and navigation
@@ -34,10 +35,12 @@ export const AppRouter = () => {
       <Route path="/chatt" element={<ChatPage />} />     
        <Route path="/waiting-room" element={<WaitingRoomPage />} />
       <Route path="/chat" element={<ChatView />} />
+      <Route path="/customer-chat" element={<CustomerChatPage />} />
 
       {/* Representative pages */}
       <Route path="/representative-dashboard" element={<RepresentativeDashboard />} />
       <Route path="/update-representative" element={<UpdateRepresentative />} />
+      <Route path="/representative-chat" element={<RepresentativeChatPage />} />
 
       {/* Fallback for undefined routes */}
       <Route path="*" element={<Navigate to="/contact-us" />} />

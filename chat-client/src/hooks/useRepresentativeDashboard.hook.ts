@@ -46,7 +46,7 @@ export const useRepresentativeDashboard = () => {
         setError(null);
         try {
             const res = await getNextClient(repData.idRepresentative);
-            navigate('/chatt', { state: { sessionId: res.sessionID ,SenderType:0} });
+            navigate('/representative-chat', { state: { sessionId: res.sessionID ,SenderType:0} });
         } catch (err: any) {
             if (err.response && err.response.status === 404) {
                 setError("אין לקוחות ממתינים בתור כרגע. נסה שוב בעוד כמה דקות.");

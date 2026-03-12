@@ -73,3 +73,27 @@ export const deleteMessage = async (id: number): Promise<void> => {
         throw error;
     }
 };
+
+// שליפת היסטוריה
+export const getHistory = async (sessionId: number): Promise<ChatMessage[]> => {
+    try {
+        const response = await axios.get(`${url}/history/${sessionId}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching history for session ID ${sessionId}:`, error);
+        throw error;
+
+    }
+};
+
+// // שליחת הודעה
+export const sendMessage = async (dto: ChatMessageSend): Promise<ChatMessage> => {
+    try {
+        const response = await axios.post(`${url}/send`, dto);
+        return response.data;
+    } catch (err) {
+        console.error("Error sending message:", err);
+        throw err;
+    }
+
+};
