@@ -10,6 +10,7 @@ import {
 } from '../services/representative.service'
 import axiosInstance from '../services/axios'
 import { getNextClient } from '../services/chatSession.service';
+import { SenderType } from '../types/chatMessage.types';
 
 export const useRepresentativeDashboard = () => {
     const navigate = useNavigate()
@@ -45,7 +46,7 @@ export const useRepresentativeDashboard = () => {
         setError(null);
         try {
             const res = await getNextClient(repData.idRepresentative);
-            navigate('/chat', { state: { sessionId: res.sessionID } });
+            navigate('/chatt', { state: { sessionId: res.sessionID ,SenderType:0} });
         } catch (err: any) {
             if (err.response && err.response.status === 404) {
                 setError("אין לקוחות ממתינים בתור כרגע. נסה שוב בעוד כמה דקות.");
