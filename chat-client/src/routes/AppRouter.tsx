@@ -9,7 +9,6 @@ import ChatView from '../pages/ChatView';
 import WaitingRoomPage from '../pages/WaitingRoomPage';
 import RepresentativeDashboard from '../pages/RepresentativeDashboard';
 import UpdateRepresentative from '../pages/UpdateRepresentative';
-import ChatPage from '../pages/cc';
 import RepresentativeChatPage from '../pages/RepresentativeChatPage';
 import CustomerChatPage from '../pages/CustomerChatPage';
 /**
@@ -32,7 +31,6 @@ export const AppRouter = () => {
 
       {/* Customer pages */}
       <Route path="/new-chat" element={<NewChat />} />
-      <Route path="/chatt" element={<ChatPage />} />     
        <Route path="/waiting-room" element={<WaitingRoomPage />} />
       <Route path="/chat" element={<ChatView />} />
       <Route path="/customer-chat" element={<CustomerChatPage />} />

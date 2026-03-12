@@ -180,6 +180,27 @@ namespace Service1.Services
                 return MapToDto(nextSession);
             } // כאן הנעילה משתחררת והנציג הבא יכול להיכנס
         }
+        public void EndChatSession(int sessionId)
+        {
+            var session = _repository.GetById(sessionId);
+            if (session == null)
+                throw new Exception("שיחת הצ'אט לא נמצאה.");
+            session.EndTimestamp= DateTime.Now;
+            session.statusChat = SessionStatus.Close;
+            _repository.UpdateItem(sessionId,session);
+            var rep= _representativeRepository.GetById(session.IDRepresentative.Value);
+            if (rep != null)
+                {
+                rep.IsBusy = false;
+                rep.ScoreForMonth+= 7; 
+                _representativeRepository.UpdateItem(rep.IDRepresentative, rep);
+            }
+            var totalMinutes= (session.EndTimestamp - session.ServiceStartTimestamp)?.TotalMinutes ?? 0;
+            var topic= _topicRepository.GetById(session.IDTopic);
+            var newAvg=(topic.AverageTreatTime*(topic.totalSessionsCount-1)+totalMinutes)/topic.totalSessionsCount;
+            topic.AverageTreatTime = newAvg;
+            _topicRepository.UpdateItem(topic.IDTopic, topic);
+        }
     }
 }
 
@@ -190,60 +211,3 @@ namespace Service1.Services
 
 
 
-
-//var currentSession = _repository.GetById(sessionId);
-//if (currentSession == null || currentSession.statusChat != SessionStatus.Waiting) return 0;
-
-//// 1. הכנת ה"סלוטים" של הנציגים (כמו מקודם)
-//var representatives = _representativeRepository.GetAll().Where(r => r.IsOnline).ToList();
-//if (!representatives.Any())
-//{
-//    throw new InvalidOperationException("אין נציגים מחוברים למערכת כרגע. אנא נסה שוב מאוחר יותר.");
-//}
-//var availableSlots = new List<double>();
-//foreach (var rep in representatives)
-//{
-//    var activeSession = _repository.GetAll()
-//        .FirstOrDefault(s => s.IDRepresentative == rep.IDRepresentative && s.statusChat == SessionStatus.Active);
-
-//    if (activeSession == null)
-//    {
-//        availableSlots.Add(0);
-//    }
-//    else
-//    {
-//        var topic = _topicRepository.GetById(activeSession.IDTopic);
-//        double timeSpent = (DateTime.Now - activeSession.ServiceStartTimestamp.Value).TotalMinutes;
-//        double remaining = (topic?.AverageTreatTime ?? 10) - timeSpent;
-//        availableSlots.Add(remaining > 0 ? remaining : 1);
-//    }
-//}
-
-//// 2. שליפת כל הממתינים ומיון לפי עדיפות (החלק הקריטי!)
-//// אנחנו נותנים "בונוס" של זמן למי שיש לו עדיפות גבוהה (Priority נמוך מספרית)
-//var waitingQueue = _repository.GetAll()
-//.Where(s => s.statusChat == SessionStatus.Waiting)
-//.Select(s => {
-//    var topic = _topicRepository.GetById(s.IDTopic);
-//    double totalSecondsWaiting = (DateTime.Now - s.StartTimestamp).TotalSeconds;
-
-//    // הציון הוא מכפלה של זמן ההמתנה במשקל העדיפות של הנושא
-//    double priorityScore = totalSecondsWaiting * (topic?.priorityTopics ?? 1.0);
-
-//    return new { Session = s, Score = priorityScore, Topic = topic };
-//})
-//.OrderByDescending(x => x.Score) // מי שהציון שלו הכי גבוה - הוא ראשון בתור
-//.ToList();
-
-//// 3. סימולציית שיבוץ לפי התור הממוין החדש
-//availableSlots.Sort();
-//int myIndex = waitingQueue.FindIndex(x => x.Session.SessionID == sessionId);
-
-//for (int i = 0; i < myIndex; i++)
-//{
-//    var waitTopic = _topicRepository.GetById(waitingQueue[i].Session.IDTopic);
-//    availableSlots[0] += (waitTopic?.AverageTreatTime ?? 10);
-//    availableSlots.Sort(); // הנציג שסיים עכשיו "חוזר לסוף התור" של הנציגים
-//}
-
-//return Math.Round(availableSlots[0], 1);

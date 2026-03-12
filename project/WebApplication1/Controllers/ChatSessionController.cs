@@ -14,7 +14,7 @@ namespace WebApplication1.Controllers
         private readonly IChatSessionService _chatSessionService;
         private readonly IChatQueueManager _queueManager;
         private readonly IRepresentativeService _representativeService;
-        public ChatSessionController(IChatSessionService chatSessionService,IChatQueueManager queueManager, IRepresentativeService representativeService)
+        public ChatSessionController(IChatSessionService chatSessionService, IChatQueueManager queueManager, IRepresentativeService representativeService)
         {
             _chatSessionService = chatSessionService;
             _queueManager = queueManager;
@@ -140,5 +140,20 @@ namespace WebApplication1.Controllers
                 return StatusCode(500, new { message = "אירעה שגיאה במשיכת הלקוח הבא.", details = ex.Message });
             }
         }
+        [HttpPost("close-session/{idSession}")]
+        public IActionResult CloseSession(int idSession)
+        {
+            try
+            {
+                _chatSessionService.EndChatSession(idSession);
+                
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "אירעה שגיאה בסיום השיחה.", details = ex.Message });
+            }
+        }
+
     }
 }

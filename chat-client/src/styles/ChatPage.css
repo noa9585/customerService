@@ -1,7 +1,8 @@
 .chat-page-container {
     display: flex;
     flex-direction: column;
-    height: 100vh; /* גובה מסך מלא */
+    height: 100vh;
+    /* גובה מסך מלא */
     width: 100vw;
     background-color: #f0f2f5;
     font-family: 'Segoe UI', sans-serif;
@@ -15,7 +16,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 10;
 }
 
@@ -23,7 +24,8 @@
 .messages-area {
     flex: 1;
     overflow-y: auto;
-    padding: 20px 10%; /* ריווח מהצדדים למראה דסקטופ */
+    padding: 20px 10%;
+    /* ריווח מהצדדים למראה דסקטופ */
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -38,14 +40,14 @@
 
 /* הודעות שלי (שנשלחו על ידי) - צד שמאל תכלת */
 .message-row.sent {
-    align-self: flex-end; /* יישור לשמאל במסך עברית (LRT/RTL תלוי בקונטקסט) */
-    align-items: flex-end;
+    align-self: flex-start;
+    align-items: flex-start;
 }
 
 /* הודעות שקיבלתי - צד ימין אפור */
 .message-row.received {
-    align-self: flex-start;
-    align-items: flex-start;
+    align-self: flex-end;
+    align-items: flex-end;
 }
 
 .message-info-top {
@@ -61,21 +63,31 @@
     border-radius: 18px;
     font-size: 0.95rem;
     line-height: 1.4;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    white-space: pre-wrap;
+    /* זה המפתח: הוא שומר על ירידות שורה ורווחים */
+    word-break: break-word;
+    /* מונע מטקסט ארוך מאוד לחרוג מהבועה */
 }
 
 /* עיצוב בועת "שלחתי" (תכלת) */
 .sent .bubble {
     background-color: #dcf8ff;
     color: #000;
-    border-top-right-radius: 2px;
+    border-top-left-radius: 2px;
+    /* הפינה החדה עוברת לשמאל */
+    border-top-right-radius: 18px;
+    /* הפינה המעוגלת עוברת לימין */
 }
 
 /* עיצוב בועת "קיבלתי" (אפור) */
 .received .bubble {
     background-color: #ffffff;
     color: #000;
-    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    /* הפינה החדה עוברת לימין */
+    border-top-left-radius: 18px;
+    /* הפינה המעוגלת עוברת לשמאל */
 }
 
 /* אזור הקלדה בתחתית */
@@ -88,11 +100,20 @@
 
 .chat-input {
     flex: 1;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 25px;
-    outline: none;
-    font-size: 1rem;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    resize: none;
+    /* חשוב: מונע מהמשתמש למשוך את הפינה */
+    min-height: 40px;
+    /* הגובה המקורי שרצית */
+    max-height: 150px;
+    /* מונע מהתיבה להשתלט על כל המסך */
+    line-height: 1.4;
+    font-family: inherit;
+    transition: height 0.1s ease;
+    /* אנימציה עדינה לגדילה */
 }
 
 .send-btn {
@@ -105,11 +126,74 @@
     font-weight: bold;
 }
 
-.close-chat-btn {
-    background-color: #ff4d4d;
+
+/* אזור התחתית - ה-Container הראשי */
+.chat-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 15%;
+    border-top: 1px solid #d1d7db;
+    min-height: 62px;
+    background-color: #f5f5f5;
+}
+
+/* תיבת הטקסט - תופסת את כל המקום הפנוי */
+.chat-input {
+    flex: 1;
+    padding: 12px 20px;
+    border: 1px solid #ffffff;
+    border-radius: 8px;
+    font-size: 15px;
+    background-color: #ffffff;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.chat-input:focus {
+    border: 1px solid #5a67d8;
+}
+
+/* כפתור שליחה - בגודל קבוע ופרופורציונלי */
+.send-btn {
+    padding: 10px 20px;
+    background-color: #5a67d8;
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
+    transition: background-color 0.2s;
+    height: 42px;
+    /* גובה קבוע שמתאים לאינפוט */
+    width: auto;
+    /* מונע מהכפתור להימתח */
+}
+
+.send-btn:hover:not(:disabled) {
+    background-color: #4c51bf;
+}
+
+.send-btn:disabled {
+    background-color: #cbd5e0;
+    cursor: not-allowed;
+}
+
+/* כפתור סגירת שיחה - קטן ודיסקרטי בכותרת */
+
+.close-chat-btn {
+    padding: 10px 20px;
+    background-color: #5a67d8;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    width: auto;
+}
+
+.close-chat-btn:hover {
+    opacity: 0.85;
 }

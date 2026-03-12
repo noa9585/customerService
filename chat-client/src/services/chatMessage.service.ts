@@ -24,16 +24,16 @@ export const getMessageById = async (id: number): Promise<ChatMessageChatDto> =>
         throw error;
     }
 };
-export const getMessageBySessionId = async (sessionId: number): Promise<ChatMessage[]> => {
+// export const getMessageBySessionId = async (sessionId: number): Promise<ChatMessage[]> => {
 
-    try {
-        const response = await axios.get(`${url}/history/${sessionId}`);
-        return response.data;
-    } catch (error) {
-        console.error(`Error fetching messages for session ID ${sessionId}:`, error);
-        throw error;
-    }
-}
+//     try {
+//         const response = await axios.get(`${url}/history/${sessionId}`);
+//         return response.data;
+//     } catch (error) {
+//         console.error(`Error fetching messages for session ID ${sessionId}:`, error);
+//         throw error;
+//     }
+// }
 
 // 3. הוספת הודעה חדשה
 export const addMessage = async (messageData: ChatMessageSend): Promise<ChatMessage> => {

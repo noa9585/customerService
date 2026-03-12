@@ -2,11 +2,18 @@ import { useState, useEffect, useCallback } from 'react';
 import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
 import { getHistory, sendMessage } from '../services/chatMessage.service'; // ייבוא ה-Service
 import { ChatMessageSend } from '../types/chatMessage.types';
+import { getSessionById, closeSession } from '../services/chatSession.service'
+import { getCustomerById } from '../services/customer.service'
+import { getRepresentativeById } from '../services/representative.service'
+import { useNavigate } from 'react-router-dom';
 
-export const useChat = (sessionId: number, senderType: 0|1) => {
+export const useChat = (sessionId: number, senderType: 0 | 1) => {
     const [messages, setMessages] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [connection, setConnection] = useState<HubConnection | null>(null);
+    const [representativeName, setRepresentativeName] = useState<string>('');
+    const [customerName, setCustomerName] = useState<string>('');
+    const navigate = useNavigate();
 
     // טעינת היסטוריה דרך ה-Service
     const loadHistory = useCallback(async () => {
@@ -69,15 +76,53 @@ export const useChat = (sessionId: number, senderType: 0|1) => {
             console.error("Error sending message", err);
         }
     };
+    const handleCloseSession = async () => {
+        try {
+            if (window.confirm("האם אתה בטוח שברצונך לסגור את השיחה?")) {
+                await closeSession(sessionId);
+                navigate('/dashboard');
+            }
 
-    return { messages, loading, sendMessage: handleSendMessage };
-};
+        } catch (err) {
+            console.error("Error closing session", err);
+        }
+    };
 
 
+    useEffect(() => {
+        const loadNames = async () => {
+            try {
+                const response = await getSessionById(sessionId);
+                try {
+                    const repName = await getRepresentativeById(response?.idRepresentative || 1);
+                    setRepresentativeName(repName.nameRepr);
+                } catch (error) {
+                    console.error("Error fetching representative name:", error);
+                    setRepresentativeName("נציג שירות");
+                }
+                try {
+                    const custName = await getCustomerById(response.idCustomer);
+                    setCustomerName(custName.nameCust);
+                } catch (error) {
+                    console.error("Error fetching customer name:", error);
+                    setCustomerName("הלקוח");
+                }
+
+            } catch (error) {
+                console.error("Error loading names:", error);
+                setRepresentativeName("נציג שירות");
+                setCustomerName("אתה");
+            }
+        };
+
+        if (sessionId) {
+            loadNames();
+        }
+    }, [sessionId, representativeName, customerName]);
 
 
-
-
+    return { messages, loading, sendMessage: handleSendMessage, customerName, representativeName, closeSession: handleCloseSession };
+}
 
 
 

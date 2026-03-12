@@ -85,4 +85,11 @@ export const getNextClient = async (repId: number): Promise<ChatSession> => {
         throw error;
     }
 };
-
+export const closeSession = async (idSession: number): Promise<void> => {
+    try {
+        await axios.post(`${url}/close-session/${idSession}/`);
+    } catch (error) {
+        console.error(`Error closing session ${idSession}:`, error);
+        throw error;
+    }
+};

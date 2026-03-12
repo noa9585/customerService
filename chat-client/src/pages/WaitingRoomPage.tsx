@@ -40,7 +40,7 @@ const WaitingRoomPage: React.FC = () => {
         // אם הסטטוס הפך ל-Active (1), עוברים לצ'אט
         if (currentSession.statusChat === SessionStatus.Active) {
           clearInterval(apiInterval);
-          navigate('/customer-chat', { state: { sessionId, SenderType: 1 } });
+          navigate('/customer-chat', { state: { sessionId, SenderType: 0 } });
         }
       } catch (err) {
         console.error("שגיאה בעדכון נתוני המתנה:", err);
