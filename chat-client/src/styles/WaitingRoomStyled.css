@@ -1,11 +1,11 @@
-:root{
+:root {
   --card-bg: #fff;
   --muted: #6b7280;
-  --accent: #2563eb; /* blue */
+  --accent: #2563eb;
   --surface: #f6f8fb;
 }
 
-.waiting-page{
+.waiting-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -13,10 +13,10 @@
   background: linear-gradient(180deg, #f7f9fc 0%, #ffffff 100%);
   padding: 48px 16px;
   direction: rtl;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-.wr-card{
+.wr-card {
   width: 760px;
   max-width: 96%;
   background: var(--card-bg);
@@ -27,10 +27,10 @@
   text-align: center;
 }
 
-.wr-top-accent{
+.wr-top-accent {
   height: 8px;
   width: 100%;
-  background: linear-gradient(90deg,var(--accent),#60a5fa);
+  background: linear-gradient(90deg, var(--accent), #60a5fa);
   border-top-left-radius: 18px;
   border-top-right-radius: 18px;
   position: absolute;
@@ -38,13 +38,14 @@
   left: 0;
 }
 
-.wr-avatar{
+/* מיקום מרכזי לשעון החול עם האנימציה המבוקשת */
+.wr-avatar {
   display: flex;
   justify-content: center;
   margin-top: 18px;
 }
 
-.wr-avatar-ring{
+.wr-avatar-ring {
   width: 120px;
   height: 120px;
   background: #f2f8ff;
@@ -52,10 +53,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   box-shadow: inset 0 2px 6px rgba(96,165,250,0.06);
 }
 
-.wr-badge{
+.pulse-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 4px solid #60a5fa;
+  border-radius: 999px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  70% { transform: scale(1.2); opacity: 0; }
+  100% { transform: scale(0.95); opacity: 0; }
+}
+
+.wr-badge {
   margin: 14px auto 8px;
   background: #eef5ff;
   border: none;
@@ -66,25 +83,26 @@
   cursor: default;
 }
 
-.wr-title{
+/* סגנון הכיתוב מהתמונה הראשונה */
+.wr-title {
   margin: 8px 0 6px;
   font-size: 28px;
   color: #111827;
 }
 
-.wr-sub{
+.wr-sub {
   color: var(--muted);
   margin-bottom: 22px;
 }
 
-.wr-stats{
+.wr-stats {
   display: flex;
   gap: 18px;
   justify-content: center;
   margin: 18px 0 20px;
 }
 
-.wr-stat{
+.wr-stat {
   background: #fbfdff;
   padding: 16px 20px;
   border-radius: 12px;
@@ -92,19 +110,66 @@
   box-shadow: 0 4px 10px rgba(15,23,42,0.03);
 }
 
-.stat-icon{font-size:20px;margin-bottom:6px}
-.stat-main{font-weight:700;font-size:20px;color:#0f172a}
-.stat-sub{font-size:12px;color:var(--muted);margin-top:6px}
+.stat-icon { font-size: 20px; margin-bottom: 6px; }
+.stat-main { font-weight: 700; font-size: 20px; color: #0f172a; }
+.stat-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
 
-.wr-progress-wrap{margin-top:6px}
-.wr-progress{height:10px;background:#eef2ff;border-radius:999px;overflow:hidden;margin:12px 32px}
-.wr-progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),#60a5fa);transition:width 400ms ease}
-.wr-progress-note{font-size:13px;color:var(--muted);text-align:center;margin-top:6px}
+.wr-progress-wrap { margin-top: 6px; }
 
-.wr-actions{display:flex;justify-content:center;margin-top:18px}
-.wr-cancel{background:#fff;border:1px solid #e6e9ef;padding:10px 18px;border-radius:12px;cursor:pointer;color:#333}
+.wr-progress {
+  height: 12px;
+  background: #eef2ff;
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 12px 32px;
+  position: relative;
+}
 
-@media (max-width:640px){
-  .wr-stats{flex-direction:column;align-items:center}
-  .wr-stat{width:90%}
+/* אנימציית ה"זרימה" לפס ההתקדמות */
+.wr-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #60a5fa, var(--accent));
+  background-size: 200% 100%;
+  transition: width 1s linear;
+  animation: shimmer 3s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.wr-progress-note {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 6px;
+}
+
+.wr-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.btn-cancel {
+  background: #fff;
+  border: 1px solid #e6e9ef;
+  padding: 10px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #333;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.btn-cancel:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+@media (max-width: 640px) {
+  .wr-stats { flex-direction: column; align-items: center; }
+  .wr-stat { width: 90%; }
 }

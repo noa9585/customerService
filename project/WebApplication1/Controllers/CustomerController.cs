@@ -19,6 +19,7 @@ namespace YourProject.Controllers
 
         // שליפת כל הלקוחות
         [HttpGet]
+
         public ActionResult<IEnumerable<CustomerChatDto>> GetAll()
         {
             return Ok(_customerService.GetAll());
