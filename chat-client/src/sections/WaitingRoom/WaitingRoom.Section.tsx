@@ -1,5 +1,5 @@
 import React from 'react';
-import WaitingRoomStyled from '../../pages/WaitingRoomStyled';
+import WaitingRoomStyled from '../../component/WaitingRoomStyled';
 import { ChatSession } from '../../types/chatSession.types';
 
 interface Props {
