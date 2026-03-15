@@ -1,4 +1,5 @@
-﻿using Repository.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Repository.Entities;
 using Repository.interfaces;
 using System;
 using System.Collections.Generic;
@@ -16,29 +17,34 @@ namespace Repository.Repositories
             this._context = context;
         }
 
-        public Customer AddItem(Customer item)
+        public async Task<Customer> AddItem(Customer item)
         {
-            _context.Customers.Add(item);
+            await _context.Customers.AddAsync(item);
 
-            _context.save();
+            _context.SaveAsync();
             return item;
         }
-        public void DeleteItem(int id)
+        public async Task DeleteItem(int id)
         {
-            _context.Customers.Remove(GetById(id));
-            _context.save();
+            var item =await GetById(id);
+            if(item != null)
+            {
+                _context.Customers.Remove(item);
+                await _context.SaveAsync();
+            }
+               
         }
-        public List<Customer> GetAll()
+        public async Task<List<Customer>> GetAll()
         {
-            return _context.Customers.ToList();
+            return await _context.Customers.ToListAsync();
         }
-        public Customer GetById(int id)
+        public async Task<Customer> GetById(int id)
         {
-            return _context.Customers.ToList().FirstOrDefault(x => x.IDCustomer == id);
+            return await _context.Customers.FirstOrDefaultAsync(x => x.IDCustomer == id);
         }
-        public void UpdateItem(int id, Customer item)
+        public async Task UpdateItem(int id, Customer item)
         {
-            var cust = GetById(id);
+            var cust = await GetById(id);
            cust.IDCustomer = item.IDCustomer;
             cust.NameCust = item.NameCust;
             cust.EmailCust = item.EmailCust;
@@ -46,7 +52,7 @@ namespace Repository.Repositories
             cust.StatusCust = item.StatusCust;
             cust.Role = item.Role; 
             cust.IsOnline = item.IsOnline;
-            _context.save();
+            _context.SaveAsync();
         }
     }
 }

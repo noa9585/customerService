@@ -10,44 +10,38 @@ namespace Repository.Repositories
         {
             this._context = context;
         }
-        public Representative AddItem(Representative item)
+        public async Task<Representative> AddItem(Representative item)
         {
-            _context.Representatives.Add(item);
-
-            _context.save();
+           await _context.Representatives.AddAsync(item);
+           await _context.SaveAsync();
             return item;
         }
 
 
-        public void DeleteItem(int id)
+        public async Task DeleteItem(int id)
         {
-            var item = GetById(id);
+            var item = await GetById(id);
             if (item != null)
             {
                 _context.Representatives.Remove(item);
-                _context.save();
+                _context.SaveAsync();
             }
         }
 
-        public List<Representative> GetAll()
+        public async Task<List<Representative>> GetAll()
         {
             // שימוש ב-Include כדי לוודא שרשימת השעות נטענת מה-DB
-            return _context.Representatives
-                           .Include(x => x.LHours)
-                           .ToList();
+            return await _context.Representatives .Include(x => x.LHours).ToListAsync();
         }
 
-        public Representative GetById(int id)
+        public async Task<Representative> GetById(int id)
         {
-
-            // חיפוש ישירות ב-DB עם טעינת השעות, ללא ToList מקדים
-            return _context.Representatives.Include(x => x.LHours).FirstOrDefault(x => x.IDRepresentative == id);
-            //return _context.Representatives.ToList().FirstOrDefault(x => x.IDRepresentative == id);
+            return await _context.Representatives.Include(x => x.LHours).FirstOrDefaultAsync(x => x.IDRepresentative == id);
         }
 
-        public void UpdateItem(int id, Representative item)
+        public async Task UpdateItem(int id, Representative item)
         {
-            var representative = GetById(id);
+            var representative = await GetById(id);
             //representative.IDRepresentative = item.IDRepresentative;
             representative.ScoreForMonth = item.ScoreForMonth;
             representative.NameRepr = item.NameRepr;
@@ -60,7 +54,7 @@ namespace Repository.Repositories
             representative.IsOnline=item.IsOnline;
             representative.Role = item.Role; 
             representative.LHours = item.LHours;
-            _context.save();
+            _context.SaveAsync();
         }
     }
 }

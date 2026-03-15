@@ -9,10 +9,10 @@ namespace Service1.Interface
 {
     public interface ITopicService
     {
-        List<TopicDto> GetAll();
-        TopicDto GetById(int id);
-        TopicDto AddTopic(string name,double avrage,double priority);
-        void UpdateTopic(int id, string name, double avrage, double priority);
-        void DeleteTopic(int id);
+        Task<List<TopicDto>> GetAll();
+        Task<TopicDto> GetById(int id);
+        Task<TopicDto> AddTopic(string name, double avrage, double priority);
+        Task UpdateTopic(int id, string name, double avrage, double priority);
+        Task DeleteTopic(int id);
     }
 }

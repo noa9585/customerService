@@ -20,15 +20,15 @@ namespace Service1.Services
             _mapper = mapper;
         }
 
-        public List<TopicDto> GetAll()
+        public async Task<List<TopicDto>> GetAll()
         {
-            var topics = _repository.GetAll();
+            var topics = await _repository.GetAll();
             return _mapper.Map<List<TopicDto>>(topics);
         }
 
-        public TopicDto GetById(int id)
+        public async Task<TopicDto> GetById(int id)
         {
-            var t = _repository.GetById(id);
+            var t =await _repository.GetById(id);
             if (t == null) return null;
             return _mapper.Map<TopicDto>(t);
         }
