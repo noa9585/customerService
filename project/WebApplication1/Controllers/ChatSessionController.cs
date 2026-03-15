@@ -6,6 +6,7 @@ using WebApplication1.Hubs;
 using Service1.Interface;
 using Service1.Logic;
 using Service1.Services;
+using System.Threading.Tasks;
 
 namespace WebApplication1.Controllers
 {
@@ -27,43 +28,43 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<ChatSessionDto>> GetAll()
+        public async Task<ActionResult<List<ChatSessionDto>>> GetAll()
         {
-            return Ok(_chatSessionService.GetAllSessions());
+            return Ok(await _chatSessionService.GetAllSessions());
         }
         [HttpGet("/getWaiting")]
-        public ActionResult<List<ChatSessionDto>> GetAllWaiting()
+        public async Task<ActionResult<List<ChatSessionDto>>> GetAllWaiting()
         {
-            return Ok(_chatSessionService.GetAllWaiting());
+            return Ok(await _chatSessionService.GetAllWaiting());
         }
         [HttpGet("/getActive")]
-        public ActionResult<List<ChatSessionDto>> getAllActive()
+        public async Task<ActionResult<List<ChatSessionDto>>> getAllActive()
         {
-            return Ok(_chatSessionService.GetAllActive());
+            return Ok(await _chatSessionService.GetAllActive());
         }
         [HttpGet("{id}")]
-        public ActionResult<ChatSessionDto> Get(int id)
+        public async Task<ActionResult<ChatSessionDto>> Get(int id)
         {
-            var session = _chatSessionService.GetSessionById(id);
+            var session = await _chatSessionService.GetSessionById(id);
             if (session == null) return NotFound();
             return Ok(session);
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody] ChatSessionCreateDto createDto)
+        public async Task<ActionResult> Post([FromBody] ChatSessionCreateDto createDto)
         {
             if (createDto == null) return BadRequest();
 
             try
             {
                 // 1. בדיקה מוקדמת - האם יש נציגים?
-                if (!_representativeService.HasOnlineRepresentatives())
+                if (!await _representativeService.HasOnlineRepresentatives())
                 {
                     return BadRequest(new { message = "אין נציגים מחוברים למערכת כרגע. אנא נסה שוב מאוחר יותר." });
                 }
 
                 // 2. יצירת הסשן (רק אם יש נציגים)
-                var created = _chatSessionService.AddSession(createDto);
+                var created = await _chatSessionService.AddSession(createDto);
 
                 //// 3. חישוב זמן המתנה ראשוני
                 //double estimatedWait = _chatSessionService.CalculateWaitTime(created.SessionID);
@@ -86,11 +87,11 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet("estimate/{id}")]
-        public ActionResult<double> GetWaitTimeEstimate(int id)
+        public async Task<ActionResult<double>> GetWaitTimeEstimate(int id)
         {
             try
             {
-                double estimatedMinutes = _chatSessionService.CalculateWaitTime(id);
+                double estimatedMinutes = await _chatSessionService.CalculateWaitTime(id);
                 return Ok(estimatedMinutes);
             }
             catch (InvalidOperationException ex)
@@ -150,7 +151,7 @@ namespace WebApplication1.Controllers
         {
             try
             {
-                _chatSessionService.EndChatSession(idSession);
+                await _chatSessionService.EndChatSession(idSession);
                 await _hubContext.Clients.Group(idSession.ToString()).SendAsync("ChatEnded");
 
                 return Ok();
@@ -161,11 +162,11 @@ namespace WebApplication1.Controllers
             }
         }
         [HttpPost("cancel-session/{idSession}")]
-        public IActionResult CancelSession(int idSession)
+        public async Task<IActionResult> CancelSession(int idSession)
         {
             try
             {
-                _chatSessionService.CansleChatSession(idSession);
+                await _chatSessionService.CansleChatSession(idSession);
 
                 return Ok();
             }

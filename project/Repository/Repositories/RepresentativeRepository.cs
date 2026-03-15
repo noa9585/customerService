@@ -12,8 +12,8 @@ namespace Repository.Repositories
         }
         public async Task<Representative> AddItem(Representative item)
         {
-           await _context.Representatives.AddAsync(item);
-           await _context.SaveAsync();
+            await _context.Representatives.AddAsync(item);
+            await _context.SaveAsync();
             return item;
         }
 
@@ -31,7 +31,7 @@ namespace Repository.Repositories
         public async Task<List<Representative>> GetAll()
         {
             // שימוש ב-Include כדי לוודא שרשימת השעות נטענת מה-DB
-            return await _context.Representatives .Include(x => x.LHours).ToListAsync();
+            return await _context.Representatives.Include(x => x.LHours).ToListAsync();
         }
 
         public async Task<Representative> GetById(int id)
@@ -50,9 +50,9 @@ namespace Repository.Repositories
             representative.entryHourRepr = item.entryHourRepr;
             representative.exitHourRepr = item.exitHourRepr;
             representative.StatusRepr = item.StatusRepr;
-            representative.IsBusy= item.IsBusy;
-            representative.IsOnline=item.IsOnline;
-            representative.Role = item.Role; 
+            representative.IsBusy = item.IsBusy;
+            representative.IsOnline = item.IsOnline;
+            representative.Role = item.Role;
             representative.LHours = item.LHours;
             _context.SaveAsync();
         }

@@ -21,9 +21,9 @@ namespace Repository.Repositories
         }
         public async Task<ChatSession> AddItem(ChatSession item)
         {
-             await _context.ChatSessions.AddAsync(item);
+            await _context.ChatSessions.AddAsync(item);
 
-           await _context.SaveAsync();
+            await _context.SaveAsync();
             return item;
         }
 
@@ -31,9 +31,9 @@ namespace Repository.Repositories
         {
             var item = await GetById(id);
             if (item != null)
-             {
-                 _context.ChatSessions.Remove(item);
-             }
+            {
+                _context.ChatSessions.Remove(item);
+            }
             _context.SaveAsync();
         }
 
@@ -43,7 +43,7 @@ namespace Repository.Repositories
         }
         public async Task<List<ChatSession>> GetAllWaiting()
         {
-            return await _context.ChatSessions.Where(x => x.statusChat == SessionStatus.Waiting).OrderBy(x=>x.EstimatedWaitTime).ToListAsync();
+            return await _context.ChatSessions.Where(x => x.statusChat == SessionStatus.Waiting).OrderBy(x => x.EstimatedWaitTime).ToListAsync();
         }
         public async Task<List<ChatSession>> GetAllActive()
         {
@@ -57,14 +57,14 @@ namespace Repository.Repositories
 
         public async Task UpdateItem(int id, ChatSession item)
         {
-            var chses =await GetById(id);
+            var chses = await GetById(id);
             chses.SessionID = item.SessionID;
             chses.Messages = item.Messages;
             chses.StartTimestamp = item.StartTimestamp;
             chses.ServiceStartTimestamp = item.ServiceStartTimestamp;
             chses.EndTimestamp = item.EndTimestamp;
-            chses.status=item.status;
-            chses.statusChat=item.statusChat;
+            chses.status = item.status;
+            chses.statusChat = item.statusChat;
             chses.IDCustomer = item.IDCustomer;
             chses.IDRepresentative = item.IDRepresentative;
             chses.IDTopic = item.IDTopic;
@@ -76,7 +76,7 @@ namespace Repository.Repositories
         {
             return await _context.ChatSessions
                 .Where(cs => cs.statusChat == SessionStatus.Waiting)
-                .OrderBy(cs => cs.EstimatedWaitTime) 
+                .OrderBy(cs => cs.EstimatedWaitTime)
                 .FirstOrDefaultAsync();
         }
     }

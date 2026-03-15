@@ -24,7 +24,7 @@ namespace Repository.Repositories
             var itemToDelete = await GetById(id);
             if (itemToDelete != null)
             {
-                 _context.Topics.Remove(itemToDelete);
+                _context.Topics.Remove(itemToDelete);
 
                 await _context.SaveAsync();
             }

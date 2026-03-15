@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Repository.Repositories
 {
-    public class CustomerRepository:IRepository<Customer>
+    public class CustomerRepository : IRepository<Customer>
     {
         private readonly IContext _context;
         public CustomerRepository(IContext context)
@@ -26,13 +26,13 @@ namespace Repository.Repositories
         }
         public async Task DeleteItem(int id)
         {
-            var item =await GetById(id);
-            if(item != null)
+            var item = await GetById(id);
+            if (item != null)
             {
                 _context.Customers.Remove(item);
                 await _context.SaveAsync();
             }
-               
+
         }
         public async Task<List<Customer>> GetAll()
         {
@@ -45,17 +45,17 @@ namespace Repository.Repositories
         public async Task UpdateItem(int id, Customer item)
         {
             var cust = await GetById(id);
-           cust.IDCustomer = item.IDCustomer;
+            cust.IDCustomer = item.IDCustomer;
             cust.NameCust = item.NameCust;
             cust.EmailCust = item.EmailCust;
             cust.PasswordCust = item.PasswordCust;
             cust.StatusCust = item.StatusCust;
-            cust.Role = item.Role; 
+            cust.Role = item.Role;
             cust.IsOnline = item.IsOnline;
             _context.SaveAsync();
         }
 
-       
+
     }
 }
 
