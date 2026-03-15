@@ -24,16 +24,16 @@ namespace YourProject.Controllers
 
         // 1. שליפת כל ההודעות
         [HttpGet]
-        public ActionResult<IEnumerable<ChatMessageDto>> GetAll()
+        public async Task<ActionResult<IEnumerable<ChatMessageDto>>> GetAll()
         {
-            return Ok(_chatMessageService.GetAll());
+            return  Ok(await _chatMessageService.GetAll());
         }
 
         // 2. שליפת הודעה לפי ID
         [HttpGet("{id}")]
-        public ActionResult<ChatMessageChatDto> GetById(int id)
+        public async Task<ActionResult<ChatMessageChatDto>> GetById(int id)
         {
-            var message = _chatMessageService.GetById(id);
+            var message =await _chatMessageService.GetById(id);
             if (message == null)
             {
                 return NotFound($"Message with ID {id} not found.");
@@ -43,7 +43,7 @@ namespace YourProject.Controllers
 
         // 3. הוספת הודעה חדשה - שימוש ב-DTO מתוך ה-Body
         [HttpPost]
-        public ActionResult<ChatMessageSendDto> Add([FromBody] ChatMessageSendDto messageDto)
+        public async Task<ActionResult<ChatMessageSendDto>> Add([FromBody] ChatMessageSendDto messageDto)
         {
             if (messageDto == null)
             {
@@ -51,7 +51,7 @@ namespace YourProject.Controllers
             }
 
             // שליחת הנתונים מה-DTO אל ה-Service
-            var createdMessage = _chatMessageService.AddMessage(
+            var createdMessage =await _chatMessageService.AddMessage(
                 messageDto.IDSession,
                 messageDto.Message,
                 messageDto.MessageType
@@ -66,7 +66,7 @@ namespace YourProject.Controllers
         [HttpPost("send")]
         public async Task<IActionResult> SendMessage([FromBody] ChatMessageSendDto dto)
         {
-            var savedMessage = _chatMessageService.AddMessage(dto.IDSession,dto.Message,dto.MessageType);
+            var savedMessage =await _chatMessageService.AddMessage(dto.IDSession,dto.Message,dto.MessageType);
 
             // שליחת ההודעה בזמן אמת לכל מי שמחובר לשיחה הזו
             await _hubContext.Clients.Group(dto.IDSession.ToString())
@@ -77,15 +77,15 @@ namespace YourProject.Controllers
 
         // 4. עדכון הודעה קיימת
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] ChatMessageChatDto messageDto, [FromQuery] bool statusMessage)
+        public async Task<IActionResult> Update(int id, [FromBody] ChatMessageChatDto messageDto, [FromQuery] bool statusMessage)
         {
-            var existing = _chatMessageService.GetById(id);
+            var existing =await _chatMessageService.GetById(id);
             if (existing == null)
             {
                 return NotFound();
             }
 
-            _chatMessageService.UpdateMessage(
+            await _chatMessageService.UpdateMessage(
                 id,
                 messageDto.IDSession,
                 messageDto.Message,
@@ -98,22 +98,22 @@ namespace YourProject.Controllers
 
         // 5. מחיקת הודעה
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var existing = _chatMessageService.GetById(id);
+            var existing =await _chatMessageService.GetById(id);
             if (existing == null)
             {
                 return NotFound();
             }
 
-            _chatMessageService.DeleteMessage(id);
+            await _chatMessageService.DeleteMessage(id);
             return NoContent();
         }
         // שליפת היסטוריית ההודעות לפי ID של שיחה
         [HttpGet("history/{sessionId}")]
-        public IActionResult GetChatHistory(int sessionId)
+        public async Task<IActionResult> GetChatHistory(int sessionId)
         {
-            var history = _chatMessageService.GetChatHistory(sessionId);
+            var history =await _chatMessageService.GetChatHistory(sessionId);
             return Ok(history);
         }
     }
