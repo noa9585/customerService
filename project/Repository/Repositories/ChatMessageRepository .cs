@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository.Repositories
 {
@@ -15,35 +16,39 @@ namespace Repository.Repositories
         {
             this._context = context;
         }
-        public ChatMessage AddItem(ChatMessage item)
+        public async Task<ChatMessage> AddItem(ChatMessage item)
 
         {
-            _context.ChatMessages.Add(item);
+            await _context.ChatMessages.AddAsync(item);
 
-            _context.save();
-            return item;
+            await _context.SaveAsync();
+            return  item;
         }
 
-        public void DeleteItem(int id)
+        public async Task DeleteItem(int id)
         {
-            _context.ChatMessages.Remove(GetById(id));
-            _context.save();
+            var item =await GetById(id);
+            if (item == null)
+            {
+                _context.ChatMessages.Remove(item);
+            }
+           await _context.SaveAsync();
         }
 
 
-        public List<ChatMessage> GetAll()
+        public async Task<List<ChatMessage>> GetAll()
         {
-            return _context.ChatMessages.ToList();
+            return await _context.ChatMessages.ToListAsync();
         }
 
-        public ChatMessage GetById(int id)
+        public async Task<ChatMessage> GetById(int id)
         {
-            return _context.ChatMessages.ToList().FirstOrDefault(x => x.MessageID == id);
+            return await _context.ChatMessages.FirstOrDefaultAsync(x => x.MessageID == id);
         }
 
-        public void UpdateItem(int id, ChatMessage item)
+        public async Task UpdateItem(int id, ChatMessage item)
         {
-            var chmes = GetById(id);
+            var chmes =await GetById(id);
             chmes.MessageID = item.MessageID;
             chmes.IDSession= item.IDSession;
             chmes.Message= item.Message;
@@ -52,14 +57,14 @@ namespace Repository.Repositories
             chmes.MessageType= item.MessageType;
             chmes.StatusMessage= item.StatusMessage;
           
-            _context.save();
+            _context.SaveAsync();
         }
-        public List<ChatMessage> GetMessagesBySessionId(int sessionId)
+        public async Task<List<ChatMessage>> GetMessagesBySessionId(int sessionId)
         {
-            return _context.ChatMessages
+            return await _context.ChatMessages
                 .Where(m => m.IDSession == sessionId)
                 .OrderBy(m => m.Timestamp) 
-                .ToList();
+                .ToListAsync();
         }
     }
 }

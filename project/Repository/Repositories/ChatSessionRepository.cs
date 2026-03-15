@@ -7,6 +7,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Repository.Repositories
 {
@@ -17,41 +19,45 @@ namespace Repository.Repositories
         {
             this._context = context;
         }
-        public ChatSession AddItem(ChatSession item)
+        public async Task<ChatSession> AddItem(ChatSession item)
         {
-            _context.ChatSessions.Add(item);
+             await _context.ChatSessions.AddAsync(item);
 
-            _context.save();
+           await _context.SaveAsync();
             return item;
         }
 
-        public void DeleteItem(int id)
+        public async Task DeleteItem(int id)
         {
-            _context.ChatSessions.Remove(GetById(id));
-            _context.save();
+            var item = await GetById(id);
+            if (item != null)
+             {
+                 _context.ChatSessions.Remove(item);
+             }
+            _context.SaveAsync();
         }
 
-        public List<ChatSession> GetAll()
+        public async Task<List<ChatSession>> GetAll()
         {
-            return _context.ChatSessions.ToList();
+            return await _context.ChatSessions.ToListAsync();
         }
-        public List<ChatSession> GetAllWaiting()
+        public async Task<List<ChatSession>> GetAllWaiting()
         {
-            return _context.ChatSessions.Where(x => x.statusChat == SessionStatus.Waiting).OrderBy(x=>x.EstimatedWaitTime).ToList();
+            return await _context.ChatSessions.Where(x => x.statusChat == SessionStatus.Waiting).OrderBy(x=>x.EstimatedWaitTime).ToListAsync();
         }
-        public List<ChatSession> GetAllActive()
+        public async Task<List<ChatSession>> GetAllActive()
         {
-            return _context.ChatSessions.Where(x => x.statusChat == SessionStatus.Active).OrderBy(x => x.SessionID).ToList();
-        }
-
-        public ChatSession GetById(int id)
-        {
-            return _context.ChatSessions.ToList().FirstOrDefault(x => x.SessionID == id);
+            return await _context.ChatSessions.Where(x => x.statusChat == SessionStatus.Active).OrderBy(x => x.SessionID).ToListAsync();
         }
 
-        public void UpdateItem(int id, ChatSession item)
+        public async Task<ChatSession> GetById(int id)
         {
-            var chses = GetById(id);
+            return await _context.ChatSessions.FirstOrDefaultAsync(x => x.SessionID == id);
+        }
+
+        public async Task UpdateItem(int id, ChatSession item)
+        {
+            var chses =await GetById(id);
             chses.SessionID = item.SessionID;
             chses.Messages = item.Messages;
             chses.StartTimestamp = item.StartTimestamp;
@@ -63,15 +69,15 @@ namespace Repository.Repositories
             chses.IDRepresentative = item.IDRepresentative;
             chses.IDTopic = item.IDTopic;
             chses.EstimatedWaitTime = item.EstimatedWaitTime;
-            _context.save();
+            _context.SaveAsync();
         }
 
-        public ChatSession GetNextWaitingSession()
+        public async Task<ChatSession> GetNextWaitingSession()
         {
-            return _context.ChatSessions
+            return await _context.ChatSessions
                 .Where(cs => cs.statusChat == SessionStatus.Waiting)
                 .OrderBy(cs => cs.EstimatedWaitTime) 
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
         }
     }
 }
