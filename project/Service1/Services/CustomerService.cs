@@ -20,30 +20,30 @@ namespace Service1.Services
             _mapper = mapper;
         }
 
-        public List<CustomerChatDto> GetAll()
+        public async Task<List<CustomerChatDto>> GetAll()
         {
-            var customers = _repository.GetAll();
+            var customers = await _repository.GetAll();
             // מיפוי מרשימת ישויות לרשימת DTO
             return _mapper.Map<List<CustomerChatDto>>(customers);
         }
 
-        public CustomerChatDto GetById(int id)
+        public async Task <CustomerChatDto> GetById(int id)
         {
-            var t = _repository.GetById(id);
+            var t =await _repository.GetById(id);
             if (t == null) return null;
 
             return _mapper.Map<CustomerChatDto>(t);
         }
 
 
-        public CustomerRegisterDto GetByIdToUpdate(int id)
+        public async Task <CustomerRegisterDto> GetByIdToUpdate(int id)
         {
-            var r = _repository.GetById(id);
+            var r =await _repository.GetById(id);
             if (r == null) return null;
 
            return _mapper.Map<CustomerRegisterDto>(r);
         }
-        public CustomerChatDto AddCustomer(string name, string email, string password)
+        public async Task <CustomerChatDto> AddCustomer(string name, string email, string password)
 
         {
 
@@ -56,53 +56,53 @@ namespace Service1.Services
             newCustomer.StatusCust = true; // ברירת מחדל
             newCustomer.IsOnline = false; // ברירת מחדל
             newCustomer.Role = "Customer";
-            var saveCustomer = _repository.AddItem(newCustomer);
+            var saveCustomer =await _repository.AddItem(newCustomer);
            return _mapper.Map<CustomerChatDto>(saveCustomer);
         }
 
-        public void UpdateCustomer(int id, string name, string email, string PasswordCust)
+        public async Task UpdateCustomer(int id, string name, string email, string PasswordCust)
         {
-            var existing = _repository.GetById(id);
+            var existing = await _repository.GetById(id);
             if (existing != null)
             {
                 existing.NameCust = name;
                 existing.EmailCust = email;
                 existing.PasswordCust = PasswordCust;
-                _repository.UpdateItem(id, existing);
+               await _repository.UpdateItem(id, existing);
             }
         }
 
-        public void DeleteCustomer(int id)
+        public async Task DeleteCustomer(int id)
         {
-            var customer = _repository.GetById(id);
+            var customer = await _repository.GetById(id);
             if (customer != null)
             {
                 customer.StatusCust = false;
-                _repository.UpdateItem(id, customer);
+                await _repository.UpdateItem(id, customer);
             }
             // _repository.DeleteItem(id);
         }
 
-        public CustomerChatDto Login(CustomerLoginDto customerLoginDto)
+        public async Task<CustomerChatDto> Login(CustomerLoginDto customerLoginDto)
         {
             // שליפת כל הלקוחות מה-Repository
-            var customer = _repository.GetAll()
+            var customer = (await _repository.GetAll())
                 .FirstOrDefault(c => c.EmailCust == customerLoginDto.EmailCust && c.PasswordCust == customerLoginDto.PasswordCust);
 
             // אם לא נמצא לקוח מתאים
             if (customer == null) return null;
             customer.IsOnline = true; // סימון הלקוח כפעיל כרגע במערכת
-                _repository.UpdateItem(customer.IDCustomer, customer);
+               await _repository.UpdateItem(customer.IDCustomer, customer);
 
             var customerDto = _mapper.Map<CustomerChatDto>(customer);
             customerDto.Token = _tokenService.GenerateTokenForCustomer(customer);
             return customerDto;
 
         }
-        public CustomerChatDto Register(CustomerRegisterDto registerDto)
+        public async Task <CustomerChatDto> Register(CustomerRegisterDto registerDto)
         {
             // 1. בדיקה אם האימייל כבר תפוס
-            var existingCustomer = _repository.GetAll()
+            var existingCustomer =(await _repository.GetAll())
                 .FirstOrDefault(c => c.EmailCust == registerDto.EmailCust);
 
             if (existingCustomer != null)
@@ -117,20 +117,20 @@ namespace Service1.Services
             newCustomer.Role = "Customer";
 
             // 3. שמירה בבסיס הנתונים
-            var savedCustomer = _repository.AddItem(newCustomer);
+            var savedCustomer =await _repository.AddItem(newCustomer);
             var resultDto = _mapper.Map<CustomerChatDto>(savedCustomer);
             resultDto.Token = _tokenService.GenerateTokenForCustomer(savedCustomer);
             // 4. יצירת DTO והוספת טוקן
             return resultDto;
         }
-        public void Logout(int id)
+        public async Task Logout(int id)
         {
-            var customer = _repository.GetById(id);
+            var customer = await _repository.GetById(id);
             if (customer != null)
             {
                 // סימון הלקוח כלא פעיל כרגע במערכת
                 customer.IsOnline = false;
-                _repository.UpdateItem(id, customer);
+               await _repository.UpdateItem(id, customer);
             }
         }
     }
