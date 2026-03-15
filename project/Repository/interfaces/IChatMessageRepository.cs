@@ -10,6 +10,6 @@ namespace Repository.interfaces
 {
     public interface IChatMessageRepository: IRepository<ChatMessage>
     {
-        List<ChatMessage> GetMessagesBySessionId(int sessionId);
+        Task<List<ChatMessage>> GetMessagesBySessionId(int sessionId);
     }
 }

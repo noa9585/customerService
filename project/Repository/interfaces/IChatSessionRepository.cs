@@ -10,9 +10,9 @@ namespace Repository.interfaces
 {
     public interface IChatSessionRepository : IRepository<ChatSession>
     {
-        List<ChatSession> GetAllWaiting();
-        List<ChatSession> GetAllActive();
-        ChatSession GetNextWaitingSession();
+        Task<List<ChatSession>> GetAllWaiting();
+        Task<List<ChatSession>> GetAllActive();
+        Task<ChatSession> GetNextWaitingSession();
 
 
     }
