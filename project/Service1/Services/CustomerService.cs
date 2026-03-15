@@ -32,14 +32,7 @@ namespace Service1.Services
             var t = _repository.GetById(id);
             if (t == null) return null;
 
-            return new CustomerChatDto
-            {
-                IDCustomer = t.IDCustomer,
-                NameCust = t.NameCust,
-                EmailCust = t.EmailCust,
-                Role = t.Role,
-                isOnline = t.IsOnline,
-            };
+            return _mapper.Map<CustomerChatDto>(t);
         }
 
 
@@ -48,36 +41,23 @@ namespace Service1.Services
             var r = _repository.GetById(id);
             if (r == null) return null;
 
-            return new CustomerRegisterDto
-            {
-                EmailCust = r.EmailCust,
-                NameCust = r.NameCust,
-                PasswordCust = r.PasswordCust,
-            };
+           return _mapper.Map<CustomerRegisterDto>(r);
         }
         public CustomerChatDto AddCustomer(string name, string email, string password)
 
         {
-            var newCustomer = new Customer
+
+            var newCustomer = _mapper.Map<Customer>(new CustomerRegisterDto
             {
                 NameCust = name,
                 EmailCust = email,
                 PasswordCust = password,
-                StatusCust = true, // ברירת מחדל
-                IsOnline=false, // ברירת מחדל
-                Role = "Customer",
-            };
-
+            });
+            newCustomer.StatusCust = true; // ברירת מחדל
+            newCustomer.IsOnline = false; // ברירת מחדל
+            newCustomer.Role = "Customer";
             var saveCustomer = _repository.AddItem(newCustomer);
-
-
-            return new CustomerChatDto
-            {
-                IDCustomer = saveCustomer.IDCustomer,
-                NameCust = saveCustomer.NameCust,
-                EmailCust = saveCustomer.EmailCust,
-                Role = saveCustomer.Role,
-            };
+           return _mapper.Map<CustomerChatDto>(saveCustomer);
         }
 
         public void UpdateCustomer(int id, string name, string email, string PasswordCust)
@@ -113,16 +93,11 @@ namespace Service1.Services
             if (customer == null) return null;
             customer.IsOnline = true; // סימון הלקוח כפעיל כרגע במערכת
                 _repository.UpdateItem(customer.IDCustomer, customer);
-            // יצירת DTO והוספת טוקן
-            return new CustomerChatDto
-            {
-                IDCustomer = customer.IDCustomer,
-                NameCust = customer.NameCust,
-                EmailCust = customer.EmailCust,
-                Role = customer.Role,
-                isOnline = customer.IsOnline,
-                Token = _tokenService.GenerateTokenForCustomer(customer)
-            };
+
+            var customerDto = _mapper.Map<CustomerChatDto>(customer);
+            customerDto.Token = _tokenService.GenerateTokenForCustomer(customer);
+            return customerDto;
+
         }
         public CustomerChatDto Register(CustomerRegisterDto registerDto)
         {
