@@ -1,11 +1,11 @@
 import React from 'react';
-import { useCustomerAuth } from '../hooks/useRepresentativeLogin.hook'; // וודא שהנתיב נכון
+import {  useRepresentativeAuth } from '../hooks/useRepresentativeLogin.hook'; // וודא שהנתיב נכון
 import '../styles/CustomerLogin.css'; // נשתמש בעיצוב שהכנו קודם
 import { Link } from 'react-router-dom';
 
 const RepresentativeLogin: React.FC = () => {
     // שליפת הנתונים מה-Hook
-    const { formData, setFormData, error, loading, handleSubmit } = useCustomerAuth();
+    const { formData, setFormData, error, loading, handleSubmit } = useRepresentativeAuth();
     return (
         <div className="chat-card">
             <div className="logo-container">

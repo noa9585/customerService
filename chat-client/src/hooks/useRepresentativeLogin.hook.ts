@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { loginRepresentative } from '../services/representative.service';
-import { RepresentativeLogin} from '../types/representative.types';
-import{setTokenRep}from '../utils/auth'
-export const useCustomerAuth = () => {
+import { RepresentativeLogin } from '../types/representative.types';
+import { setTokenRep } from '../utils/auth'
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../store/slices/authSlice';
+export const useRepresentativeAuth = () => {
     const [formData, setFormData] = useState<RepresentativeLogin>({
         emailRepr: '',
         passwordRepr: ''
     });
+    const dispatch = useDispatch();
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -15,11 +18,14 @@ export const useCustomerAuth = () => {
         setLoading(true);
         try {
             const user = await loginRepresentative(formData);
-            if(user.token) {
+            if (user.token) {
                 // localStorage.setItem('representativeToken', user.token);
                 setTokenRep(user.token)
-                // console.log("Token stored in localStorage:", user.token);
-            }   
+                dispatch(setCredentials({
+                    user: user,
+                    userType: 'representative'
+                }));
+            }
             return user;
         } catch (err) {
             setError("אימייל או סיסמה שגויים. נסה שוב.");

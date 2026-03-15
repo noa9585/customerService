@@ -2,11 +2,14 @@ import { useState } from 'react';
 import { loginCustomer } from '../services/customer.service';
 import { CustomerLogin as CustomerLoginType } from '../types/customer.types';
 import { setToken } from '../utils/auth'
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../store/slices/authSlice';
 export const useCustomerAuth = () => {
     const [formData, setFormData] = useState<CustomerLoginType>({
         emailCust: '',
         passwordCust: ''
     });
+    const dispatch = useDispatch();
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -20,6 +23,10 @@ export const useCustomerAuth = () => {
             if (response.token) {
                 // localStorage.setItem('token', response.token);
                 setToken(response.token)
+                dispatch(setCredentials({ 
+                    user: response, 
+                    userType: 'customer' 
+                }));
             }
             return response;
         } catch (err) {
