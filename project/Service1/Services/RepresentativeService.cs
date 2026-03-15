@@ -104,7 +104,7 @@ namespace Service1.Services
         public async Task<RepresentativeDto> Login(RepresentativeLoginDto loginDto)
         {
             // חיפוש הנציג לפי אימייל וסיסמה מתוך ה-DTO
-            var representative =await _repository.GetAll()
+            var representative =(await _repository.GetAll())
                 .FirstOrDefault(r => r.EmailRepr == loginDto.EmailRepr && r.PasswordRepr == loginDto.PasswordRepr);
 
             if (representative == null) return null;
@@ -114,7 +114,7 @@ namespace Service1.Services
             var currentTime = TimeOnly.FromDateTime(DateTime.Now);
 
             var newWorkSession = new WorkTime(today, currentTime);
-            representative.LHours.Add(newWorkSession);
+             representative.LHours.Add(newWorkSession);
             // עדכון סטטוס ל-Online
             representative.IsOnline = true;
 
@@ -128,7 +128,7 @@ namespace Service1.Services
         public async Task<RepresentativeDto> Register(RepresentativeRegisterDto registerDto)
         {
             // 1. בדיקה אם קיים נציג עם אותו אימייל
-            var existing =await _repository.GetAll()
+            var existing =(await _repository.GetAll())
                 .FirstOrDefault(r => r.EmailRepr == registerDto.EmailRepr);
 
             if (existing != null)
@@ -160,9 +160,9 @@ namespace Service1.Services
             return _mapper.Map<RepresentativeDto>(newRep);
 
         }
-        public void Logout(int id)
+        public async Task Logout(int id)
         {
-            var representative = _repository.GetById(id);
+            var representative = await _repository.GetById(id);
             if (representative == null) return;
 
             // עדכון הסטטוסים
@@ -177,34 +177,34 @@ namespace Service1.Services
                 lastEntry.SetExitHourRepr(TimeOnly.FromDateTime(DateTime.Now));
             }
 
-            _repository.UpdateItem(id, representative);
+            await _repository.UpdateItem(id, representative);
         }
-        public void ToggleBreak(int id)
+        public async Task ToggleBreak(int id)
         {
-            var representative = _repository.GetById(id);
+            var representative = await _repository.GetById(id);
             if (representative != null)
             {
                 representative.IsOnline = false;
                 representative.IsBusy = false;
 
-                _repository.UpdateItem(id, representative);
+                await  _repository.UpdateItem(id, representative);
             }
         }
-        public void ReturnFromBreak(int id)
+        public async Task ReturnFromBreak(int id)
         {
-            var representative = _repository.GetById(id);
+            var representative =await _repository.GetById(id);
             if (representative != null)
             {
                 representative.IsOnline = true;
                 representative.IsBusy = false;
 
-                _repository.UpdateItem(id, representative);
+               await _repository.UpdateItem(id, representative);
             }
         }
-        public bool HasOnlineRepresentatives()
+        public async Task<bool> HasOnlineRepresentatives()
         {
             // בודק אם יש לפחות נציג אחד שמוגדר כ-Online
-            return _repository.GetAll().Any(r => r.IsOnline && r.StatusRepr);
+            return (await _repository.GetAll()).Any(r => r.IsOnline && r.StatusRepr);
         }
     }
 }
