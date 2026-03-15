@@ -29,24 +29,24 @@ namespace Service1.Services
             _mapper = mapper;
         }
 
-        public List<RepresentativeDto> GetAll()
+        public async Task<List<RepresentativeDto>> GetAll()
         {
-            var representatives = _repository.GetAll();
+            var representatives =await _repository.GetAll();
             // מיפוי מרשימת ישויות לרשימת DTO
             return _mapper.Map<List<RepresentativeDto>>(representatives);
 
         }
 
-        public RepresentativeDto GetById(int id)
+        public async Task<RepresentativeDto> GetById(int id)
         {
-            var r = _repository.GetById(id);
+            var r =  await _repository.GetById(id);
             if (r == null) return null;
 
             return _mapper.Map<RepresentativeDto>(r);
         }
-        public RepresentativeUpdateDto GetByIdToUpdate(int id)
+        public async Task<RepresentativeUpdateDto> GetByIdToUpdate(int id)
         {
-            var r = _repository.GetById(id);
+            var r = await _repository.GetById(id);
             if (r == null) return null;
 
             return new RepresentativeUpdateDto
@@ -56,7 +56,7 @@ namespace Service1.Services
                 PasswordRepr=r.PasswordRepr,
             };
         }
-        public RepresentativeDto AddRepresentative(string name, string email, string passward)
+        public async Task<RepresentativeDto> AddRepresentative(string name, string email, string passward)
         {
             var newRepresentative = new Representative
             {
@@ -74,21 +74,21 @@ namespace Service1.Services
                 Role = "Representative"
             };
 
-            var savedRepresentative = _repository.AddItem(newRepresentative);
+            var savedRepresentative =await _repository.AddItem(newRepresentative);
             Console.WriteLine(savedRepresentative.IDRepresentative);
             return _mapper.Map<RepresentativeDto>(savedRepresentative);
         }
 
 
-        public void UpdateRepresentative(int id, string name, string email, string passward)
+        public async Task UpdateRepresentative(int id, string name, string email, string passward)
         {
-            var existing = _repository.GetById(id);
+            var existing =await _repository.GetById(id);
             if (existing != null)
             {
                 existing.EmailRepr = email;
                 existing.NameRepr = name;
                 existing.PasswordRepr = passward;
-                _repository.UpdateItem(id, existing);
+               await _repository.UpdateItem(id, existing);
             }
         }
 
@@ -96,15 +96,15 @@ namespace Service1.Services
 
 
 
-        public void DeleteRepresentative(int id)
+        public async Task DeleteRepresentative(int id)
         {
-            _repository.DeleteItem(id);
+           await _repository.DeleteItem(id);
         }
 
-        public RepresentativeDto Login(RepresentativeLoginDto loginDto)
+        public async Task<RepresentativeDto> Login(RepresentativeLoginDto loginDto)
         {
             // חיפוש הנציג לפי אימייל וסיסמה מתוך ה-DTO
-            var representative = _repository.GetAll()
+            var representative =await _repository.GetAll()
                 .FirstOrDefault(r => r.EmailRepr == loginDto.EmailRepr && r.PasswordRepr == loginDto.PasswordRepr);
 
             if (representative == null) return null;
@@ -119,16 +119,16 @@ namespace Service1.Services
             representative.IsOnline = true;
 
             // שמירת השינויים בבסיס הנתונים
-            _repository.UpdateItem(representative.IDRepresentative, representative);
+         await   _repository.UpdateItem(representative.IDRepresentative, representative);
             
             // החזרת הנתונים המעודכנים
             return _mapper.Map<RepresentativeDto>(representative);
         }
         // בתוך IRepresentativeService.cs
-        public RepresentativeDto Register(RepresentativeRegisterDto registerDto)
+        public async Task<RepresentativeDto> Register(RepresentativeRegisterDto registerDto)
         {
             // 1. בדיקה אם קיים נציג עם אותו אימייל
-            var existing = _repository.GetAll()
+            var existing =await _repository.GetAll()
                 .FirstOrDefault(r => r.EmailRepr == registerDto.EmailRepr);
 
             if (existing != null)
@@ -154,7 +154,7 @@ namespace Service1.Services
             };
 
             // 3. שמירה ב-Repository
-            var savedRep = _repository.AddItem(newRep);
+            var savedRep =await _repository.AddItem(newRep);
 
             // 4. החזרת DTO נקי (ללא סיסמה)
             return _mapper.Map<RepresentativeDto>(newRep);

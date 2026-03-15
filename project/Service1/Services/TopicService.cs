@@ -33,7 +33,7 @@ namespace Service1.Services
             return _mapper.Map<TopicDto>(t);
         }
 
-        public TopicDto AddTopic(string name, double average, double priority)
+        public async Task<TopicDto> AddTopic(string name, double average, double priority)
         {
             var newTopic = new Topic
             {
@@ -44,26 +44,26 @@ namespace Service1.Services
                 totalSessionsCount=0
             };
 
-            var savedTopic = _repository.AddItem(newTopic);
+            var savedTopic =await _repository.AddItem(newTopic);
 
             return _mapper.Map<TopicDto>(savedTopic);
         }
 
-        public void UpdateTopic(int id, string name, double average, double priority)
+        public async Task UpdateTopic(int id, string name, double average, double priority)
         {
-            var existing = _repository.GetById(id);
+            var existing = await _repository.GetById(id);
             if (existing != null)
             {
                 existing.NameTopic = name;
                 existing.AverageTreatTime = average;
                 existing.priorityTopics = priority;
-                _repository.UpdateItem(id, existing);
+               await _repository.UpdateItem(id, existing);
             }
         }
 
-        public void DeleteTopic(int id)
+        public async Task DeleteTopic(int id)
         {
-            _repository.DeleteItem(id);
+           await _repository.DeleteItem(id);
         }
 
       

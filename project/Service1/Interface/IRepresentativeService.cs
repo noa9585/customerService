@@ -8,17 +8,17 @@ namespace Service1.Interface
 {
     public interface IRepresentativeService
     {
-        List<RepresentativeDto> GetAll();
-        RepresentativeDto GetById(int id);
-        RepresentativeUpdateDto GetByIdToUpdate(int id);
-        RepresentativeDto AddRepresentative(string name,string email, string passward);
-        void UpdateRepresentative(int id,string name, string email, string passward);
-        void DeleteRepresentative(int id);
-        RepresentativeDto Login(RepresentativeLoginDto loginDto);
-        RepresentativeDto Register(RepresentativeRegisterDto registerDto);
-        void Logout(int id);
-        void ToggleBreak(int id);
-        void ReturnFromBreak(int id);
-        bool HasOnlineRepresentatives();
+      Task  <List<RepresentativeDto>> GetAll();
+       Task <RepresentativeDto> GetById(int id);
+        Task<RepresentativeUpdateDto> GetByIdToUpdate(int id);
+        Task<RepresentativeDto> AddRepresentative(string name,string email, string passward);
+        Task UpdateRepresentative(int id,string name, string email, string passward);
+        Task DeleteRepresentative(int id);
+        Task<RepresentativeDto> Login(RepresentativeLoginDto loginDto);
+        Task<RepresentativeDto> Register(RepresentativeRegisterDto registerDto);
+        Task Logout(int id);
+        Task ToggleBreak(int id);
+        Task ReturnFromBreak(int id);
+        Task<bool>  HasOnlineRepresentatives();
     }
 }
