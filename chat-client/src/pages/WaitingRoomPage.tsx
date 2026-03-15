@@ -9,7 +9,7 @@ const WaitingRoomPage: React.FC = () => {
   const { sessionId, initialWait } = location.state || {};
   
   // שימוש ב-Hook שמעדכן את כל הלוגיקה והשמות
-  const { session, elapsed, customerName, waitTime, cancel } = useWaitingRoom(sessionId, initialWait);
+  const { session, elapsed, customerName, waitTime, onCancel } = useWaitingRoom(sessionId, initialWait);
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc' }}>
@@ -18,7 +18,7 @@ const WaitingRoomPage: React.FC = () => {
         customerName={customerName}
         elapsed={elapsed} 
         waitTime={waitTime} 
-        onCancel={cancel}
+        onCancel={onCancel}
       />
     </div>
   );

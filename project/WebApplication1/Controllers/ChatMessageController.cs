@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using Repository.Entities;
 using Service1.Dto.ChatMessageDto;
-using Service1.Hubs;
+using WebApplication1.Hubs;
 using Service1.Interface;
 using Service1.Services;
 using System.Collections.Generic;

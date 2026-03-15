@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Service1.Interface;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Service1.Dto.CustomerDto;
-using Microsoft.AspNetCore.Authorization;
+using Service1.Dto.RepresentativeDto;
+using Service1.Interface;
+using Service1.Services;
 
 namespace YourProject.Controllers
 {
@@ -36,7 +38,16 @@ namespace YourProject.Controllers
             }
             return Ok(customer);
         }
-
+        [HttpGet("updateByID/{id}")]
+        public ActionResult<CustomerChatDto> GetByIdToUpdeate(int id)
+        {
+            var customer = _customerService.GetByIdToUpdate(id);
+            if (customer == null)
+            {
+                return NotFound($"customer with ID {id} not found.");
+            }
+            return Ok(customer);
+        }
         // הוספת לקוח חדש (ישאירו מוגן; אם רוצים לאפשר הרשמה פתוחה השתמשו ב-Register)
         [HttpPost]
         public ActionResult<CustomerChatDto> Add([FromBody] CustomerRegisterDto customerRegisterDto)

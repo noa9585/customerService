@@ -93,3 +93,11 @@ export const closeSession = async (idSession: number): Promise<void> => {
         throw error;
     }
 };
+export const cancelSession = async (idSession: number): Promise<void> => {
+    try {
+        await axios.post(`${url}/cancel-session/${idSession}/`);
+    } catch (error) {
+        console.error(`Error canceling session ${idSession}:`, error);
+        throw error;
+    }
+};

@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../../styles/ChatPage.css';
-import { SenderType } from '../../types/chatMessage.types';
+import { SenderType, ChatMessageSend } from '../../types/chatMessage.types';
 
-interface Message {
-    messageID?: number;
-    message: string;
-    messageType: SenderType.Representative | SenderType.Customer;
-    timestamp: string;
-    senderName?: string;
-}
-
+// interface Message {
+//     messageID?: number;
+//     message: string;
+//     messageType: SenderType.Representative | SenderType.Customer;
+//     timestamp: string | Date;
+//     senderName?: string;
+//     idSession: number;
+// }
 interface ChatSectionProps {
-    messages: Message[];
+    messages: ChatMessageSend[];
     onSendMessage: (text: string) => void;
     onCloseChat?: () => void;
     myType: SenderType.Representative | SenderType.Customer;
@@ -38,7 +38,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
-    // פונקציית התאמת גובה (הייתה חסרה)
+    // פונקציית התאמת גובה
     const adjustHeight = () => {
         const textarea = textAreaRef.current;
         if (textarea) {
@@ -51,7 +51,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({
         adjustHeight();
     }, [input]);
 
-    // פונקציית שליחה מאוחדת (הייתה כפולה)
+    // פונקציית שליחה מאוחדת 
     const handleSend = () => {
         if (input.trim()) {
             onSendMessage(input);
@@ -66,9 +66,10 @@ const ChatSection: React.FC<ChatSectionProps> = ({
         <div className="chat-page-container">
             <header className="chat-header">
                 <h3>צ'אט עם {otherPartyName}</h3>
+                <h3>מזהה שיחה #{messages.at(1)?.idSession}</h3>
                 {isRepresentative && (
                     <button className="close-chat-btn" onClick={onCloseChat}>
-                   ☎️ סגור שיחה
+                        ☎️ סגור שיחה
                     </button>
                 )}
             </header>

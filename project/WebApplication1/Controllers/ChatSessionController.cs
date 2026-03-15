@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Repository.Entities;
 using Service1.Dto.ChatSessionDto;
+using WebApplication1.Hubs;
 using Service1.Interface;
 using Service1.Logic;
 using Service1.Services;
@@ -14,11 +16,14 @@ namespace WebApplication1.Controllers
         private readonly IChatSessionService _chatSessionService;
         private readonly IChatQueueManager _queueManager;
         private readonly IRepresentativeService _representativeService;
-        public ChatSessionController(IChatSessionService chatSessionService, IChatQueueManager queueManager, IRepresentativeService representativeService)
+        private readonly IHubContext<ChatHub> _hubContext;
+
+        public ChatSessionController(IChatSessionService chatSessionService, IChatQueueManager queueManager, IRepresentativeService representativeService, IHubContext<ChatHub> hubContext)
         {
             _chatSessionService = chatSessionService;
             _queueManager = queueManager;
             _representativeService = representativeService;
+            _hubContext = hubContext;
         }
 
         [HttpGet]
@@ -141,17 +146,32 @@ namespace WebApplication1.Controllers
             }
         }
         [HttpPost("close-session/{idSession}")]
-        public IActionResult CloseSession(int idSession)
+        public async Task<IActionResult> CloseSession(int idSession)
         {
             try
             {
                 _chatSessionService.EndChatSession(idSession);
-                
+                await _hubContext.Clients.Group(idSession.ToString()).SendAsync("ChatEnded");
+
                 return Ok();
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "אירעה שגיאה בסיום השיחה.", details = ex.Message });
+            }
+        }
+        [HttpPost("cancel-session/{idSession}")]
+        public IActionResult CancelSession(int idSession)
+        {
+            try
+            {
+                _chatSessionService.CansleChatSession(idSession);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "אירעה שגיאה בביטול השיחה.", details = ex.Message });
             }
         }
 

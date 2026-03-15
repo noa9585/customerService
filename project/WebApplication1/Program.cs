@@ -132,5 +132,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<Service1.Hubs.ChatHub>("/chatHub");
+app.MapHub<WebApplication1.Hubs.ChatHub>("/chatHub");
 app.Run();

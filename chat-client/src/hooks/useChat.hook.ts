@@ -52,7 +52,13 @@ export const useChat = (sessionId: number, senderType: 0 | 1) => {
                             return [...prev, message];
                         });
                     });
-
+                    connection.on("ChatEnded", () => {
+                        console.log("The session was closed by the representative.");
+                        if (senderType === 0) { // רק אם זה לקוח (Customer)
+                            alert("השיחה נסגרה על ידי נציג השירות. תודה שפנית אלינו!");
+                            navigate('/new-chat'); // הפניה לדף החדש
+                        }
+                    });
                     loadHistory();
                 })
                 .catch(e => console.error("SignalR Connection Error: ", e));
@@ -80,7 +86,7 @@ export const useChat = (sessionId: number, senderType: 0 | 1) => {
         try {
             if (window.confirm("האם אתה בטוח שברצונך לסגור את השיחה?")) {
                 await closeSession(sessionId);
-                navigate('/dashboard');
+                navigate('/representative-dashboard');
             }
 
         } catch (err) {

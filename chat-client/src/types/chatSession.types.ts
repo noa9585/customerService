@@ -5,6 +5,7 @@ export enum SessionStatus {
     Waiting = 0,
     Active = 1,
     Close = 2,
+    Cancel = 3
 }
 
 // תואם ל-ChatSessionCreateDto

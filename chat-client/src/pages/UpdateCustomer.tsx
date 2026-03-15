@@ -1,9 +1,8 @@
-// UpdateRepresentative.tsx - מותאם לדאשבורד, אייקון מוצמד לצד ונקי לחלוטין
 import React, { useState } from 'react';
 import '../styles/UpdateRepresentative.css';
-import { useUpdateRepresentative } from '../hooks/useUpdateRepresentative.hook';
+import { useUpdateCustomer } from '../hooks/useUpdateCustomer.hook';
 
-const UpdateRepresentative: React.FC = () => {
+const UpdateCustomer: React.FC = () => {
     const {
         formData,
         handleChange,
@@ -11,7 +10,7 @@ const UpdateRepresentative: React.FC = () => {
         handleCancel,
         loading,
         error
-    } = useUpdateRepresentative();
+    } = useUpdateCustomer();
 
     // סטייט לניהול תצוגת הסיסמה
     const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +23,7 @@ const UpdateRepresentative: React.FC = () => {
                     <div className="header-icon">⚙️</div>
                     <div className="header-texts">
                         <h1>עדכון פרטים אישיים</h1>
-                        <p>ערוך את פרטי ההתחברות שלך למערכת הנציגים</p>
+                        <p>ערוך את פרטי ההתחברות שלך למערכת </p>
                     </div>
                 </header>
 
@@ -38,9 +37,9 @@ const UpdateRepresentative: React.FC = () => {
                                 <label className="input-label">שם מלא</label>
                                 <input
                                     type="text"
-                                    name="nameRepr"
+                                    name="nameCust"
                                     className="rep-input"
-                                    value={formData.nameRepr || ''}
+                                    value={formData.nameCust || ''}
                                     onChange={handleChange}
                                     placeholder="הזן את שמך המלא"
                                     required
@@ -51,9 +50,9 @@ const UpdateRepresentative: React.FC = () => {
                                 <label className="input-label">כתובת אימייל</label>
                                 <input
                                     type="email"
-                                    name="emailRepr"
+                                    name="emailCust"
                                     className="rep-input"
-                                    value={formData.emailRepr || ''}
+                                    value={formData.emailCust || ''}
                                     onChange={handleChange}
                                     placeholder="example@email.com"
                                     required
@@ -69,9 +68,9 @@ const UpdateRepresentative: React.FC = () => {
                                 <div className="password-input-wrapper">
                                     <input
                                         type={showPassword ? "text" : "password"}
-                                        name="passwordRepr"
+                                        name="passwordCust"
                                         className="rep-input"
-                                        value={formData.passwordRepr || ''}
+                                        value={formData.passwordCust || ''}
                                         onChange={handleChange}
                                         placeholder="אם אין ברצונך לשנות סיסמה, השאר את השדה ריק"
                                         dir="ltr"
@@ -116,4 +115,4 @@ const UpdateRepresentative: React.FC = () => {
     );
 };
 
-export default UpdateRepresentative;
+export default UpdateCustomer;

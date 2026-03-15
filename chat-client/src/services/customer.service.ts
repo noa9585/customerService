@@ -26,6 +26,16 @@ export const getCustomerById = async (id: number): Promise<CustomerChat> => {
     }
 };
 
+
+export const getCustomerByIdToUpdate = async (id: number): Promise<CustomerRegister> => {
+    try {
+        const response = await axios.get(`${url}/updateByID/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching customer with ID ${id}:`, error);
+        throw error;
+    }
+};
 // הוספת לקוח חדש (HttpPost - הפונקציה Add בקונטרולר)
 export const addCustomer = async (customerData: CustomerRegister): Promise<CustomerChat> => {
     try {

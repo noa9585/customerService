@@ -22,5 +22,7 @@ namespace Service1.Interface
         double CalculateWaitTime(int sessionId);
         ChatSessionDto PullNextClientForRepresentative(int idRepresentative);
         void EndChatSession(int sessionId);
+        void CansleChatSession(int sessionId);
+
     }
 }

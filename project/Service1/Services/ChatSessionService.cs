@@ -201,6 +201,18 @@ namespace Service1.Services
             topic.AverageTreatTime = newAvg;
             _topicRepository.UpdateItem(topic.IDTopic, topic);
         }
+        public void CansleChatSession(int sessionId)
+        {
+            var session = _repository.GetById(sessionId);
+            if (session == null)
+                throw new Exception("שיחת הצ'אט לא נמצאה.");
+            session.statusChat= SessionStatus.Cancel;
+            session.EndTimestamp = DateTime.Now;
+            _repository.UpdateItem(sessionId, session);
+             var topic = _topicRepository.GetById(session.IDTopic);
+            topic.totalSessionsCount--; 
+            _topicRepository.UpdateItem(topic.IDTopic, topic);
+        }
     }
 }
 

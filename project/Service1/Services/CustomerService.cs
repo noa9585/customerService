@@ -1,6 +1,7 @@
 ﻿using Repository.Entities;
 using Repository.interfaces;
 using Service1.Dto.CustomerDto;
+using Service1.Dto.RepresentativeDto;
 using Service1.Interface;
 
 namespace Service1.Services
@@ -46,6 +47,19 @@ namespace Service1.Services
             };
         }
 
+
+        public CustomerRegisterDto GetByIdToUpdate(int id)
+        {
+            var r = _repository.GetById(id);
+            if (r == null) return null;
+
+            return new CustomerRegisterDto
+            {
+                EmailCust = r.EmailCust,
+                NameCust = r.NameCust,
+                PasswordCust = r.PasswordCust,
+            };
+        }
         public CustomerChatDto AddCustomer(string name, string email, string password)
 
         {

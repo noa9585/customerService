@@ -11,6 +11,7 @@ import RepresentativeDashboard from '../pages/RepresentativeDashboard';
 import UpdateRepresentative from '../pages/UpdateRepresentative';
 import RepresentativeChatPage from '../pages/RepresentativeChatPage';
 import CustomerChatPage from '../pages/CustomerChatPage';
+import UpdateCustomer from '../pages/UpdateCustomer';
 /**
  * AppRouter Component
  * Manages all application routes and navigation
@@ -33,6 +34,7 @@ export const AppRouter = () => {
       <Route path="/new-chat" element={<NewChat />} />
        <Route path="/waiting-room" element={<WaitingRoomPage />} />
       <Route path="/chat" element={<ChatView />} />
+      <Route path="/update-customer" element={<UpdateCustomer />} />
       <Route path="/customer-chat" element={<CustomerChatPage />} />
 
       {/* Representative pages */}

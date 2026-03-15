@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace Service1.Hubs
+namespace WebApplication1.Hubs
 {
     public class ChatHub : Hub
     {
@@ -14,6 +14,10 @@ namespace Service1.Hubs
         public async Task SendMessageToGroup(int sessionId, object message)
         {
             await Clients.Group(sessionId.ToString()).SendAsync("ReceiveMessage", message);
+        }
+        public async Task EndChat(int sessionId)
+        {
+            await Clients.Group(sessionId.ToString()).SendAsync("ChatEnded");
         }
     }
 }

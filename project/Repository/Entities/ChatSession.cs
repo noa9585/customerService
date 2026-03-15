@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Repository.Entities
 {
-    public enum SessionStatus { Waiting,Active,Close}
+    public enum SessionStatus { Waiting,Active,Close,Cancel}
     public class ChatSession
     {
         [Key]

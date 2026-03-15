@@ -2,32 +2,32 @@ import { useCallback, useEffect, useState } from "react";
 import parseJwt from '../utils/jwt';
 import { useNavigate } from "react-router-dom";
 import {
-    getRepresentativeById,
-    getRepresentativeByIdToUpdate,
-    updateRepresentative
-} from "../services/representative.service";
-import { RepresentativeUpdate } from "../types/representative.types";
+    getCustomerById,
+    getCustomerByIdToUpdate,
+    updateCustomer
+} from "../services/customer.service";
+import { CustomerRegister } from "../types/customer.types";
 
-export const useUpdateRepresentative = () => {
+export const useUpdateCustomer = () => {
     // מזהה הנציג נשמר כדי שנוכל להשתמש בו ב-Submit
-    const [repId, setRepId] = useState<number | null>(null);
+    const [custId, setCustId] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
 
     // הגדרת הטופס ההתחלתי (ריק)
-    const [formData, setFormData] = useState<RepresentativeUpdate>({
-        nameRepr: '',
-        emailRepr: '',
-        passwordRepr: ''
+    const [formData, setFormData] = useState<CustomerRegister>({
+        nameCust: '',
+        emailCust: '',
+        passwordCust: ''
     });
 
     // פונקציית הטעינה
     const loadData = useCallback(async () => {
         try {
-            const token = localStorage.getItem('representativeToken');
+            const token = localStorage.getItem('token');
             if (!token) {
-                navigate('/RepresentativeLogin');
+                navigate('/login');
                 return;
             }
 
@@ -35,21 +35,21 @@ export const useUpdateRepresentative = () => {
             if (!decoded || !decoded.sub) throw new Error("Token invalid");
 
             const id = Number(decoded.sub);
-            setRepId(id);
+            setCustId(id);
 
-            // שולפים את נתוני הנציג מהשרת
-            const representative = await getRepresentativeById(id);
+            // שולפים את נתוני הלקוח מהשרת
+            const customer = await getCustomerById(id);
 
             // 💡 התיקון המרכזי: עדכון ה-formData מיד כשהנתונים מגיעים
             setFormData({
-                nameRepr: representative.nameRepr || '',
-                emailRepr: representative.emailRepr || '',
-                passwordRepr: '' // לא נהוג למשוך סיסמה מהשרת, נשאיר ריק. אם הוא מקליד, נעדכן.
+                nameCust: customer.nameCust || '',
+                emailCust: customer.emailCust || '',
+                passwordCust: '' // לא נהוג למשוך סיסמה מהשרת, נשאיר ריק. אם הוא מקליד, נעדכן.
             });
 
         } catch (err) {
             console.error(err);
-            navigate('/RepresentativeLogin');
+            navigate('/login');
         } finally {
             setLoading(false);
         }
@@ -73,19 +73,18 @@ export const useUpdateRepresentative = () => {
         setLoading(true);
 
         try {
-            if (!repId) throw new Error("לא נמצא מזהה משתמש");
+            if (!custId) throw new Error("לא נמצא מזהה משתמש");
 
             // שולח לשרת. אם השאיר סיסמה ריקה, אל תשלח אותה!
             const dataToUpdate = { ...formData };
-            if (!dataToUpdate.passwordRepr || dataToUpdate.passwordRepr.trim() === '') {
-                dataToUpdate.passwordRepr = (await getRepresentativeByIdToUpdate(repId)).passwordRepr;
+            if (!dataToUpdate.passwordCust || dataToUpdate.passwordCust.trim() === '') {
+                dataToUpdate.passwordCust = (await getCustomerByIdToUpdate(custId)).passwordCust;
             }
 
-            await updateRepresentative(repId, dataToUpdate as RepresentativeUpdate);
+            await updateCustomer(custId, dataToUpdate as CustomerRegister);
 
-            // אחרי הצלחה - חזור לדאשבורד
             alert("הפרטים עודכנו בהצלחה!");
-            navigate('/representative-dashboard');
+            navigate('/contact-us');
 
         } catch (err: any) {
             const errorMessage = err.response?.data?.message || "אירעה שגיאה בעדכון הפרטים.";
@@ -96,7 +95,7 @@ export const useUpdateRepresentative = () => {
     };
 
     const handleCancel = () => {
-        navigate('/representative-dashboard');
+        navigate('/contact-us');
     };
 
     return {
