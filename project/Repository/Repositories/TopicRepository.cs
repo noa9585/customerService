@@ -49,7 +49,7 @@ namespace Repository.Repositories
             topic.priorityTopics = item.priorityTopics;
             topic.StatusTopic = item.StatusTopic;
             topic.totalSessionsCount = item.totalSessionsCount;
-            _context.SaveAsync();
+            await _context.SaveAsync();
         }
     }
 }

@@ -66,7 +66,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({
         <div className="chat-page-container">
             <header className="chat-header">
                 <h3>צ'אט עם {otherPartyName}</h3>
-                <h3>מזהה שיחה #{messages.at(1)?.idSession}</h3>
+                <h3>מזהה שיחה #{messages[0]?.idSession}</h3>
                 {isRepresentative && (
                     <button className="close-chat-btn" onClick={onCloseChat}>
                         ☎️ סגור שיחה

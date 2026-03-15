@@ -128,14 +128,22 @@ namespace Service1.Services
                     return 0.5;
                 else
                 {
-                    var min =(await _topicRepository.GetById(acvivSessions.First().IDTopic)).AverageTreatTime;
-                    var now = DateTime.Now;
+                    var allTopics = await _topicRepository.GetAll();
+                    double min= double.MaxValue;
+                    DateTime now = DateTime.Now;
                     foreach (var session in acvivSessions)
                     {
-                        var minutes = (now - session.ServiceStartTimestamp.Value).TotalMinutes;
-                        minutes =(await _topicRepository.GetById(session.IDTopic)).AverageTreatTime - minutes;
-                        if (minutes < min)
-                            min = minutes;
+                        if (session.ServiceStartTimestamp.HasValue)
+                        {
+                            var minutes = (now - session.ServiceStartTimestamp.Value).TotalMinutes;
+                            var topic = allTopics.FirstOrDefault(t => t.IDTopic == session.IDTopic);
+                            if (topic != null)
+                            {
+                                minutes = topic.AverageTreatTime - minutes;
+                                if (minutes < min)
+                                    min = minutes;
+                            }
+                        }
                     }
                     if (min < 0.5)
                         min = 0.5;
@@ -181,12 +189,15 @@ namespace Service1.Services
             session.EndTimestamp = DateTime.Now;
             session.statusChat = SessionStatus.Close;
             await _repository.UpdateItem(sessionId, session);
-            var rep =await _representativeRepository.GetById(session.IDRepresentative.Value);
-            if (rep != null)
+            if (session.IDRepresentative.HasValue)
             {
-                rep.IsBusy = false;
-                rep.ScoreForMonth += 7;
-                await _representativeRepository.UpdateItem(rep.IDRepresentative, rep);
+                var rep = await _representativeRepository.GetById(session.IDRepresentative.Value);
+                if (rep != null)
+                {
+                    rep.IsBusy = false;
+                    rep.ScoreForMonth += 7;
+                    await _representativeRepository.UpdateItem(rep.IDRepresentative, rep);
+                }
             }
             var totalMinutes = (session.EndTimestamp - session.ServiceStartTimestamp)?.TotalMinutes ?? 0;
             var topic =await _topicRepository.GetById(session.IDTopic);

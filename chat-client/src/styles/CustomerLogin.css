@@ -80,3 +80,27 @@ button:hover {
 
 .footer-text { margin-top: 20px; font-size: 13px; color: #64748b; }
 .footer-text a { color: var(--primary); text-decoration: none; font-weight: 600; }
+/* קישור כניסת נציג — דיסקרטי בתחתית */
+.staff-login-divider {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 16px 0 12px;
+}
+
+.staff-login-link {
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.staff-login-link a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px dashed #cbd5e1;
+  transition: color 0.2s;
+}
+
+.staff-login-link a:hover {
+  color: #64748b;
+}

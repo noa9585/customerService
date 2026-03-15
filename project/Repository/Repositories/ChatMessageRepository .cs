@@ -28,7 +28,7 @@ namespace Repository.Repositories
         public async Task DeleteItem(int id)
         {
             var item = await GetById(id);
-            if (item == null)
+            if (item != null)
             {
                 _context.ChatMessages.Remove(item);
             }
@@ -57,7 +57,7 @@ namespace Repository.Repositories
             chmes.MessageType = item.MessageType;
             chmes.StatusMessage = item.StatusMessage;
 
-            _context.SaveAsync();
+           await _context.SaveAsync();
         }
         public async Task<List<ChatMessage>> GetMessagesBySessionId(int sessionId)
         {

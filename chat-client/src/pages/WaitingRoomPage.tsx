@@ -1,23 +1,29 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { useWaitingRoom } from '../hooks/useWaitingRoom.hook';
 import WaitingRoomSection from '../sections/WaitingRoom/WaitingRoom.Section';
+import { RootState } from '../store/index';
+import { CustomerChat } from '../types/customer.types';
 
 const WaitingRoomPage: React.FC = () => {
   const location = useLocation();
-  // חילוץ sessionId וזמן התחלתי מה-State של הראוטר
   const { sessionId, initialWait } = location.state || {};
-  
-  // שימוש ב-Hook שמעדכן את כל הלוגיקה והשמות
-  const { session, elapsed, customerName, waitTime, onCancel } = useWaitingRoom(sessionId, initialWait);
+
+  const { session, elapsed, waitTime, onCancel } = useWaitingRoom(sessionId, initialWait);
+
+  // שם לקוח מה-Store
+  const { user } = useSelector((state: RootState) => state.auth);
+  const currentUser = user as CustomerChat | null;
+  const customerName = currentUser?.nameCust || 'לקוח יקר';
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc' }}>
-      <WaitingRoomSection 
-        session={session} 
+      <WaitingRoomSection
+        session={session}
         customerName={customerName}
-        elapsed={elapsed} 
-        waitTime={waitTime} 
+        elapsed={elapsed}
+        waitTime={waitTime}
         onCancel={onCancel}
       />
     </div>
@@ -25,8 +31,6 @@ const WaitingRoomPage: React.FC = () => {
 };
 
 export default WaitingRoomPage;
-
-
 
 // import React, { useEffect, useState } from 'react';
 // import { useLocation, useNavigate } from 'react-router-dom';

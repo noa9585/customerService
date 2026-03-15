@@ -1,18 +1,21 @@
+// useContactUs_hook.ts — משתמש ב-Redux במקום localStorage
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/index';
 
-// Hook to encapsulate ContactUs actions (navigation based on token)
 export const useContactActions = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   const handleStart = useCallback(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
+    // ✅ קורא מ-Redux במקום localStorage.getItem('token')
+    if (isAuthenticated) {
       navigate('/new-chat');
     } else {
       navigate('/login');
     }
-  }, [navigate]);
+  }, [navigate, isAuthenticated]);
 
   return { handleStart };
 };

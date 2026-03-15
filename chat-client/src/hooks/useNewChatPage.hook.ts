@@ -1,125 +1,194 @@
+// useNewChatPage.hook.ts — קצר, משתמש ב-Slices
 import { useCallback, useEffect, useState } from 'react';
-
-import { getAllTopics } from '../services/topic.service'
-import { Topic } from '../types/chat';
-import { ChatMessage } from '../types/chatMessage.types'
-import { getDecodedToken } from '../utils/auth';
-import { createSession } from '../services/chatSession.service'
-import { addMessage } from '../services/chatMessage.service'
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { AppDispatch, RootState } from '../store/index';
+import { fetchTopics, } from '../store/slices/Topic.slice';
+import { createSessionThunk } from '../store/slices/Chatsession.slice';
+import { sendMessageThunk } from '../store/slices/Chatmessage.slice';
+import { CustomerChat } from '../types/customer.types';
+import { SenderType } from '../types/chatMessage.types';
 
 export const useNewChatPage = (onSuccess?: (data: any) => void) => {
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const [form, setForm] = useState<ChatMessage>({ messageID: 0, idSession: 0, message: '', timestamp: new Date(), idSend: 0, messageType: 0, statusMessage: false });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const [topics, setTopics] = useState<Topic[]>([]);
+  const { user } = useSelector((state: RootState) => state.auth);
+  const currentUser = user as CustomerChat | null;
+
+  const { topics, loading: topicsLoading, error: topicsError } = useSelector(
+    (state: RootState) => state.topic
+  );
+  const { loading, error } = useSelector((state: RootState) => state.chatSession);
+
+  const [message, setMessage] = useState('');
   const [selectedTopic, setSelectedTopic] = useState<number | string>('');
-  const [topicsError, setTopicsError] = useState<string | null>(null);
-  const [decodedToken, setDecodedToken] = useState<any | null>(null);
 
   useEffect(() => {
-    // decode token from localStorage (if present) so pages can access user info
-    try {
-      const decoded = getDecodedToken();
-      if (decoded) {
-        setDecodedToken(decoded);
-      }
-    } catch (e) {
-      console.warn('No token to decode or decode failed', e);
-    }
-
-    let mounted = true;
-    getAllTopics()
-      .then(res => {
-        if (!mounted) return;
-        if (Array.isArray(res)) {
-          setTopics(res);
-        } else {
-          console.error('Unexpected topics response:', res);
-          setTopicsError('נתוני הנושאים לא הגיעו בפורמט תקין');
-        }
-      })
-      .catch(err => {
-        console.error('Error loading topics', err);
-        setTopicsError('לא ניתן להתחבר לשרת. ודא שה-Backend רץ ושכתובת ה-API נכונה.');
-      });
-
-    return () => { mounted = false; };
-  }, []);
-
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const target = e.target as HTMLInputElement;
-    const { name, value } = target;
-    setForm(prev => ({ ...prev, [name]: value }));
-  }, []);
-
+    dispatch(fetchTopics());
+  }, [dispatch]);
 
   const openSession = useCallback(async (e?: React.FormEvent) => {
-    if (e)
-      e.preventDefault();
-    setError(null)
-    const messageContent = form.message;
-    if (!messageContent || !selectedTopic) {
-      setError('אנא מלא את כל השדות הנדרשים');
-      return;
-    }
+    if (e) e.preventDefault();
+    if (!message || !selectedTopic) return;
+    if (!currentUser?.idCustomer) return;
 
-    if (!decodedToken || !decodedToken.sub) {
-      setError("שגיאת אימות אנא התחבר מחדש");
-      return;
-    }
-    setLoading(true)
-    try {
+    const sessionResult = await dispatch(createSessionThunk({
+      idCustomer: currentUser.idCustomer,
+      idTopic: Number(selectedTopic),
+    }));
 
-      const newSession = await createSession({
-        idCustomer: Number(decodedToken.sub),
-        idTopic: Number(selectedTopic),
-      })
-      //const sessionId = newSession.session.sessionID
-      const newMessage = addMessage({
-        message: messageContent,
+    if (createSessionThunk.fulfilled.match(sessionResult)) {
+      const newSession = sessionResult.payload;
+      dispatch(sendMessageThunk({
+        message,
         idSession: newSession.sessionID,
         timestamp: new Date().toISOString(),
-        messageType: 0
-      })
-      navigate('/waiting-room', { 
-                state: { 
-                    sessionId: newSession.sessionID,
-                    initialWait: newSession.estimatedWaitTime 
-                } 
-            });
-      if (onSuccess) onSuccess(newSession)
-      setForm(prev => ({ ...prev, message: '' }))
-      setSelectedTopic('')
-
+        messageType: SenderType.Customer,
+      }));
+      navigate('/waiting-room', {
+        state: { sessionId: newSession.sessionID, initialWait: newSession.estimatedWaitTime },
+      });
+      if (onSuccess) onSuccess(newSession);
+      setMessage('');
+      setSelectedTopic('');
     }
-
-    catch (err: any) {
-      // אם השרת החזיר BadRequest עם { message: "..." }, זה יוצג למשתמש
-      console.error('Failed to open session or send message', err)
-
-      const serverMessage = err.response?.data?.message;
-      setError(serverMessage || 'אירעה שגיאה בחיבור. נסה שוב מאוחר יותר.');
-    }
-    finally {
-      setLoading(false)
-    }
-
-  }, [form.message, selectedTopic, decodedToken,navigate, onSuccess]); // חשוב להוסיף את התלויות כאן כדי שהערכים יהיו מעודכנים
+  }, [message, selectedTopic, currentUser, dispatch, navigate, onSuccess]);
 
   return {
-    form,
-    setForm,
-    loading,
-    error,
-    handleChange,
-    topics,
-    selectedTopic,
-    setSelectedTopic,
-    topicsError,
-    decodedToken,
-    openSession,
+    message, setMessage,
+    topics, selectedTopic, setSelectedTopic,
+    topicsLoading, topicsError,
+    loading, error,
+    currentUser, openSession,
   };
 };
+
+
+
+
+// import { useCallback, useEffect, useState } from 'react';
+
+// import { getAllTopics } from '../services/topic.service'
+// import { Topic } from '../types/chat';
+// import { ChatMessage } from '../types/chatMessage.types'
+// import { getDecodedToken } from '../utils/auth';
+// import { createSession } from '../services/chatSession.service'
+// import { addMessage } from '../services/chatMessage.service'
+// import { useNavigate } from 'react-router-dom';
+
+// export const useNewChatPage = (onSuccess?: (data: any) => void) => {
+//   const navigate = useNavigate();
+//   const [form, setForm] = useState<ChatMessage>({ messageID: 0, idSession: 0, message: '', timestamp: new Date(), idSend: 0, messageType: 0, statusMessage: false });
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState<string | null>(null);
+
+//   const [topics, setTopics] = useState<Topic[]>([]);
+//   const [selectedTopic, setSelectedTopic] = useState<number | string>('');
+//   const [topicsError, setTopicsError] = useState<string | null>(null);
+//   const [decodedToken, setDecodedToken] = useState<any | null>(null);
+
+//   useEffect(() => {
+//     // decode token from localStorage (if present) so pages can access user info
+//     try {
+//       const decoded = getDecodedToken();
+//       if (decoded) {
+//         setDecodedToken(decoded);
+//       }
+//     } catch (e) {
+//       console.warn('No token to decode or decode failed', e);
+//     }
+
+//     let mounted = true;
+//     getAllTopics()
+//       .then(res => {
+//         if (!mounted) return;
+//         if (Array.isArray(res)) {
+//           setTopics(res);
+//         } else {
+//           console.error('Unexpected topics response:', res);
+//           setTopicsError('נתוני הנושאים לא הגיעו בפורמט תקין');
+//         }
+//       })
+//       .catch(err => {
+//         console.error('Error loading topics', err);
+//         setTopicsError('לא ניתן להתחבר לשרת. ודא שה-Backend רץ ושכתובת ה-API נכונה.');
+//       });
+
+//     return () => { mounted = false; };
+//   }, []);
+
+//   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+//     const target = e.target as HTMLInputElement;
+//     const { name, value } = target;
+//     setForm(prev => ({ ...prev, [name]: value }));
+//   }, []);
+
+
+//   const openSession = useCallback(async (e?: React.FormEvent) => {
+//     if (e)
+//       e.preventDefault();
+//     setError(null)
+//     const messageContent = form.message;
+//     if (!messageContent || !selectedTopic) {
+//       setError('אנא מלא את כל השדות הנדרשים');
+//       return;
+//     }
+
+//     if (!decodedToken || !decodedToken.sub) {
+//       setError("שגיאת אימות אנא התחבר מחדש");
+//       return;
+//     }
+//     setLoading(true)
+//     try {
+
+//       const newSession = await createSession({
+//         idCustomer: Number(decodedToken.sub),
+//         idTopic: Number(selectedTopic),
+//       })
+//       //const sessionId = newSession.session.sessionID
+//       const newMessage = addMessage({
+//         message: messageContent,
+//         idSession: newSession.sessionID,
+//         timestamp: new Date().toISOString(),
+//         messageType: 0
+//       })
+//       navigate('/waiting-room', { 
+//                 state: { 
+//                     sessionId: newSession.sessionID,
+//                     initialWait: newSession.estimatedWaitTime 
+//                 } 
+//             });
+//       if (onSuccess) onSuccess(newSession)
+//       setForm(prev => ({ ...prev, message: '' }))
+//       setSelectedTopic('')
+
+//     }
+
+//     catch (err: any) {
+//       // אם השרת החזיר BadRequest עם { message: "..." }, זה יוצג למשתמש
+//       console.error('Failed to open session or send message', err)
+
+//       const serverMessage = err.response?.data?.message;
+//       setError(serverMessage || 'אירעה שגיאה בחיבור. נסה שוב מאוחר יותר.');
+//     }
+//     finally {
+//       setLoading(false)
+//     }
+
+//   }, [form.message, selectedTopic, decodedToken,navigate, onSuccess]); // חשוב להוסיף את התלויות כאן כדי שהערכים יהיו מעודכנים
+
+//   return {
+//     form,
+//     setForm,
+//     loading,
+//     error,
+//     handleChange,
+//     topics,
+//     selectedTopic,
+//     setSelectedTopic,
+//     topicsError,
+//     decodedToken,
+//     openSession,
+//   };
+// };

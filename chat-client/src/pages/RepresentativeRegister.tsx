@@ -3,9 +3,9 @@ import { registerRepresentative } from '../services/representative.service';
 import { RepresentativeRegister as RepresentativeRegisterType} from '../types/representative.types';
 import '../styles/CustomerRegister.css'; // ייבוא הקובץ שהפרדנו
 import { Link } from 'react-router-dom';
-import { useCustomerAuth } from '../hooks/useRepresentativeRegister';
+import { useRepresentativeRegister } from '../hooks/useRepresentativeRegister';
 const RepresentativeRegister: React.FC = () => {
-       const { formData, setFormData, error, loading, handleSubmit } = useCustomerAuth();
+       const { formData, setFormData, error, loading, handleSubmit } = useRepresentativeRegister();
     return (
         <div className="register-container">
             <div className="chat-card">

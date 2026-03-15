@@ -85,7 +85,7 @@ namespace Service1.Services
             customer.IsOnline = true; // סימון הלקוח כפעיל כרגע במערכת
             await _repository.UpdateItem(customer.IDCustomer, customer);
             var customerDto = _mapper.Map<CustomerChatDto>(customer);
-            customerDto.Token = _tokenService.GenerateTokenForCustomer(customer);
+            customerDto.Token =  _tokenService.GenerateTokenForCustomer(customer);
             return customerDto;
         }
         public async Task<CustomerChatDto> Register(CustomerRegisterDto registerDto)
@@ -102,7 +102,7 @@ namespace Service1.Services
             newCustomer.Role = "Customer";
             var savedCustomer = await _repository.AddItem(newCustomer);
             var resultDto = _mapper.Map<CustomerChatDto>(savedCustomer);
-            resultDto.Token = _tokenService.GenerateTokenForCustomer(savedCustomer);
+            resultDto.Token =  _tokenService.GenerateTokenForCustomer(savedCustomer);
             return resultDto;
         }
         public async Task Logout(int id)

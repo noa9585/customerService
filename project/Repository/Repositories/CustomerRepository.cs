@@ -36,7 +36,7 @@ namespace Repository.Repositories
         }
         public async Task<List<Customer>> GetAll()
         {
-            return await _context.Customers.ToListAsync();
+            return await _context.Customers.Where(c => c.StatusCust).ToListAsync();
         }
         public async Task<Customer> GetById(int id)
         {
@@ -52,7 +52,7 @@ namespace Repository.Repositories
             cust.StatusCust = item.StatusCust;
             cust.Role = item.Role;
             cust.IsOnline = item.IsOnline;
-            _context.SaveAsync();
+            await _context.SaveAsync();
         }
 
 

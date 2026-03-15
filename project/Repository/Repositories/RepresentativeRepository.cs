@@ -54,7 +54,7 @@ namespace Repository.Repositories
             representative.IsOnline = item.IsOnline;
             representative.Role = item.Role;
             representative.LHours = item.LHours;
-            _context.SaveAsync();
+            await _context.SaveAsync();
         }
     }
 }

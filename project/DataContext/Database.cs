@@ -22,14 +22,14 @@ namespace DataContext
 
         public DbSet<Topic> Topics { get; set; }
 
-        public void save()
+        public async Task SaveAsync()
         {
-           SaveChanges();   
+           await SaveChangesAsync();   
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=DESKTOP-1VUANBN;Database=DBCustomerService;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true");
-           //optionsBuilder.UseSqlServer("Server=YAEL;Database=DBCustomerService;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true");
+            //optionsBuilder.UseSqlServer("Server=DESKTOP-1VUANBN;Database=DBCustomerService;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true");
+           optionsBuilder.UseSqlServer("Server=YAEL;Database=DBCustomerService;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true");
         }
     }
 }

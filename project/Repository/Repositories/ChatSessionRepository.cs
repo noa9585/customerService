@@ -69,7 +69,7 @@ namespace Repository.Repositories
             chses.IDRepresentative = item.IDRepresentative;
             chses.IDTopic = item.IDTopic;
             chses.EstimatedWaitTime = item.EstimatedWaitTime;
-            _context.SaveAsync();
+            await _context.SaveAsync();
         }
 
         public async Task<ChatSession> GetNextWaitingSession()

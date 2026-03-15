@@ -1,85 +1,155 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { getSessionById,cancelSession } from '../services/chatSession.service';
-import { ChatSession, SessionStatus } from '../types/chatSession.types';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getCustomerById } from '../services/customer.service';
+import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
+import { AppDispatch, RootState } from '../store/index';
+import { cancelSessionThunk, fetchSessionById } from '../store/slices/Chatsession.slice';
 
 export const useWaitingRoom = (sessionId: number, initialWait: number) => {
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const [session, setSession] = useState<ChatSession | null>(null);
-  const [customerName, setCustomerName] = useState<string>('לקוח יקר'); // State ייעודי לשם
-  const [waitTime, setWaitTime] = useState<number | string>(initialWait || 'מחשב...');
   const [elapsed, setElapsed] = useState(0);
-  const isInitialFetchDone = useRef(false);
-  const calculateElapsed = (startTime?: string | Date) => {
-  if (!startTime) return 0;
-  const start = new Date(startTime).getTime();
-  const now = new Date().getTime();
-  return Math.floor((now - start) / 1000); // החזרת ההפרש בשניות
-};
-  const updateStatus = useCallback(async () => {
-    try {
-      const data = await getSessionById(sessionId);
-      setSession(data);
-    if (data.startTimestamp) {
-      setElapsed(calculateElapsed(data.startTimestamp));
-    }
-      // שליפת שם הלקוח רק אם הוא עוד לא נשמר
-      if (data && customerName === 'לקוח יקר') {
-        try {
-          const name = await getCustomerById(data.idCustomer);
-          setCustomerName(name.nameCust || `לקוח #${data.idCustomer}`);
-        } catch (err) {
-          setCustomerName(`לקוח #${data.idCustomer}`);
-        }
-      }
-      
-      if (data.statusChat === SessionStatus.Active) {
-        navigate('/customer-chat', { state: { sessionId, SenderType: 0 } });
-      }
-    } catch (err) {
-      console.error("Error updating wait status:", err);
-    }
-  }, [sessionId, navigate, customerName]);
+  const [connection, setConnection] = useState<HubConnection | null>(null);
 
+  // ✅ session מה-Store — לצורך הצגת מזהה וסטטוס
+  const { activeSession: session } = useSelector((state: RootState) => state.chatSession);
+
+  // שליפה חד פעמית של ה-session בטעינה
   useEffect(() => {
-    if (!sessionId) {
-      navigate('/new-chat');
-      return;
-    }
+    if (!sessionId) { navigate('/new-chat'); return; }
+    dispatch(fetchSessionById(sessionId));
+  }, [sessionId, dispatch, navigate]);
 
-    if (!isInitialFetchDone.current) {
-      updateStatus();
-      isInitialFetchDone.current = true;
-    }
+  // חיבור SignalR
+  useEffect(() => {
+    if (!sessionId) return;
 
-    const timer = setInterval(() => setElapsed(prev => prev + 1), 1000);
-    const apiInterval = setInterval(updateStatus, 10000);
+    const newConnection = new HubConnectionBuilder()
+      .withUrl('https://localhost:7260/chatHub')
+      .withAutomaticReconnect()
+      .build();
 
-    return () => {
-      clearInterval(timer);
-      clearInterval(apiInterval);
-    };
-  }, [sessionId, updateStatus, navigate]);
-const handleCancel = useCallback(async () => {
-    try {
+    newConnection.start()
+      .then(() => {
+        newConnection.invoke('JoinChat', sessionId);
 
+        // ✅ מאזין להודעה מהשרת — מיידי כשנציג שולף את השיחה
+        newConnection.on('SessionStarted', () => {
+          navigate('/customer-chat', {
+            state: { sessionId, SenderType: 0 },
+          });
+        });
 
- if (window.confirm("האם אתה בטוח שברצונך לסגור את השיחה?")) {
-await cancelSession(sessionId);
-      navigate('/new-chat');
-            }
-    } catch (err) {
-      console.error("שגיאה בביטול הפנייה:", err);
-    }
+        // במקרה שהשיחה בוטלה
+        newConnection.on('ChatEnded', () => {
+          alert('הפנייה בוטלה. אנא פתח פנייה חדשה.');
+          navigate('/new-chat');
+        });
+      })
+      .catch((e) => console.error('SignalR Connection Error:', e));
+
+    setConnection(newConnection);
+    return () => { newConnection.stop(); };
   }, [sessionId, navigate]);
-  return {
-    session,
-    elapsed,
-    customerName, // מחזירים את השם מה-State
-    waitTime,
-onCancel: handleCancel,  };
+
+  // טיימר
+  useEffect(() => {
+    const timer = setInterval(() => setElapsed((prev) => prev + 1), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const onCancel = async () => {
+    if (window.confirm('האם אתה בטוח שברצונך לבטל את הפנייה?')) {
+      await dispatch(cancelSessionThunk(sessionId));
+      navigate('/new-chat');
+    }
+  };
+
+  return { session, elapsed, waitTime: initialWait, onCancel };
 };
+
+// import { useEffect, useState, useCallback, useRef } from 'react';
+// import { getSessionById,cancelSession } from '../services/chatSession.service';
+// import { ChatSession, SessionStatus } from '../types/chatSession.types';
+// import { useNavigate } from 'react-router-dom';
+// import { getCustomerById } from '../services/customer.service';
+
+// export const useWaitingRoom = (sessionId: number, initialWait: number) => {
+//   const navigate = useNavigate();
+//   const [session, setSession] = useState<ChatSession | null>(null);
+//   const [customerName, setCustomerName] = useState<string>('לקוח יקר'); // State ייעודי לשם
+//   const [waitTime, setWaitTime] = useState<number | string>(initialWait || 'מחשב...');
+//   const [elapsed, setElapsed] = useState(0);
+//   const isInitialFetchDone = useRef(false);
+//   const calculateElapsed = (startTime?: string | Date) => {
+//   if (!startTime) return 0;
+//   const start = new Date(startTime).getTime();
+//   const now = new Date().getTime();
+//   return Math.floor((now - start) / 1000); // החזרת ההפרש בשניות
+// };
+//   const updateStatus = useCallback(async () => {
+//     try {
+//       const data = await getSessionById(sessionId);
+//       setSession(data);
+//     if (data.startTimestamp) {
+//       setElapsed(calculateElapsed(data.startTimestamp));
+//     }
+//       // שליפת שם הלקוח רק אם הוא עוד לא נשמר
+//       if (data && customerName === 'לקוח יקר') {
+//         try {
+//           const name = await getCustomerById(data.idCustomer);
+//           setCustomerName(name.nameCust || `לקוח #${data.idCustomer}`);
+//         } catch (err) {
+//           setCustomerName(`לקוח #${data.idCustomer}`);
+//         }
+//       }
+      
+//       if (data.statusChat === SessionStatus.Active) {
+//         navigate('/customer-chat', { state: { sessionId, SenderType: 0 } });
+//       }
+//     } catch (err) {
+//       console.error("Error updating wait status:", err);
+//     }
+//   }, [sessionId, navigate, customerName]);
+
+//   useEffect(() => {
+//     if (!sessionId) {
+//       navigate('/new-chat');
+//       return;
+//     }
+
+//     if (!isInitialFetchDone.current) {
+//       updateStatus();
+//       isInitialFetchDone.current = true;
+//     }
+
+//     const timer = setInterval(() => setElapsed(prev => prev + 1), 1000);
+//     const apiInterval = setInterval(updateStatus, 10000);
+
+//     return () => {
+//       clearInterval(timer);
+//       clearInterval(apiInterval);
+//     };
+//   }, [sessionId, updateStatus, navigate]);
+// const handleCancel = useCallback(async () => {
+//     try {
+
+
+//  if (window.confirm("האם אתה בטוח שברצונך לסגור את השיחה?")) {
+// await cancelSession(sessionId);
+//       navigate('/new-chat');
+//             }
+//     } catch (err) {
+//       console.error("שגיאה בביטול הפנייה:", err);
+//     }
+//   }, [sessionId, navigate]);
+//   return {
+//     session,
+//     elapsed,
+//     customerName, // מחזירים את השם מה-State
+//     waitTime,
+// onCancel: handleCancel,  };
+// };
 
 
 

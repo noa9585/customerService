@@ -22,7 +22,7 @@ namespace Service1.Services
         private readonly IMapper _mapper;
 
         // הזרקת ה-Repository דרך הבנאי
-        public RepresentativeService(IRepository<Representative> repository,ITokenService tokenService, IMapper mapper)
+        public RepresentativeService(IRepository<Representative> repository, ITokenService tokenService, IMapper mapper)
         {
             _repository = repository;
             _tokenService = tokenService;
@@ -31,7 +31,7 @@ namespace Service1.Services
 
         public async Task<List<RepresentativeDto>> GetAll()
         {
-            var representatives =await _repository.GetAll();
+            var representatives = await _repository.GetAll();
             // מיפוי מרשימת ישויות לרשימת DTO
             return _mapper.Map<List<RepresentativeDto>>(representatives);
 
@@ -39,7 +39,7 @@ namespace Service1.Services
 
         public async Task<RepresentativeDto> GetById(int id)
         {
-            var r =  await _repository.GetById(id);
+            var r = await _repository.GetById(id);
             if (r == null) return null;
 
             return _mapper.Map<RepresentativeDto>(r);
@@ -53,7 +53,7 @@ namespace Service1.Services
             {
                 EmailRepr = r.EmailRepr,
                 NameRepr = r.NameRepr,
-                PasswordRepr=r.PasswordRepr,
+                PasswordRepr = r.PasswordRepr,
             };
         }
         public async Task<RepresentativeDto> AddRepresentative(string name, string email, string passward)
@@ -74,7 +74,7 @@ namespace Service1.Services
                 Role = "Representative"
             };
 
-            var savedRepresentative =await _repository.AddItem(newRepresentative);
+            var savedRepresentative = await _repository.AddItem(newRepresentative);
             Console.WriteLine(savedRepresentative.IDRepresentative);
             return _mapper.Map<RepresentativeDto>(savedRepresentative);
         }
@@ -82,53 +82,46 @@ namespace Service1.Services
 
         public async Task UpdateRepresentative(int id, string name, string email, string passward)
         {
-            var existing =await _repository.GetById(id);
+            var existing = await _repository.GetById(id);
             if (existing != null)
             {
                 existing.EmailRepr = email;
                 existing.NameRepr = name;
                 existing.PasswordRepr = passward;
-               await _repository.UpdateItem(id, existing);
+                await _repository.UpdateItem(id, existing);
             }
         }
-
-
-
-
-
         public async Task DeleteRepresentative(int id)
         {
-           await _repository.DeleteItem(id);
+            await _repository.DeleteItem(id);
         }
 
         public async Task<RepresentativeDto> Login(RepresentativeLoginDto loginDto)
         {
-            // חיפוש הנציג לפי אימייל וסיסמה מתוך ה-DTO
-            var representative =(await _repository.GetAll())
+            var representative = (await _repository.GetAll())
                 .FirstOrDefault(r => r.EmailRepr == loginDto.EmailRepr && r.PasswordRepr == loginDto.PasswordRepr);
-
-            if (representative == null) return null;
-
-           
+           if (representative == null) return null;
             var today = DateOnly.FromDateTime(DateTime.Now);
             var currentTime = TimeOnly.FromDateTime(DateTime.Now);
 
             var newWorkSession = new WorkTime(today, currentTime);
-             representative.LHours.Add(newWorkSession);
+            representative.LHours.Add(newWorkSession);
             // עדכון סטטוס ל-Online
             representative.IsOnline = true;
 
             // שמירת השינויים בבסיס הנתונים
-         await   _repository.UpdateItem(representative.IDRepresentative, representative);
-            
+            await _repository.UpdateItem(representative.IDRepresentative, representative);
+
             // החזרת הנתונים המעודכנים
-            return _mapper.Map<RepresentativeDto>(representative);
+            var dto = _mapper.Map<RepresentativeDto>(representative);
+            dto.Token = _tokenService.GenerateTokenForRepresentative(representative);
+            return dto;
         }
         // בתוך IRepresentativeService.cs
         public async Task<RepresentativeDto> Register(RepresentativeRegisterDto registerDto)
         {
             // 1. בדיקה אם קיים נציג עם אותו אימייל
-            var existing =(await _repository.GetAll())
+            var existing = (await _repository.GetAll())
                 .FirstOrDefault(r => r.EmailRepr == registerDto.EmailRepr);
 
             if (existing != null)
@@ -154,11 +147,12 @@ namespace Service1.Services
             };
 
             // 3. שמירה ב-Repository
-            var savedRep =await _repository.AddItem(newRep);
+            var savedRep = await _repository.AddItem(newRep);
 
             // 4. החזרת DTO נקי (ללא סיסמה)
-            return _mapper.Map<RepresentativeDto>(newRep);
-
+            var dto = _mapper.Map<RepresentativeDto>(savedRep);
+            dto.Token = _tokenService.GenerateTokenForRepresentative(savedRep);
+            return dto;
         }
         public async Task Logout(int id)
         {
@@ -187,23 +181,22 @@ namespace Service1.Services
                 representative.IsOnline = false;
                 representative.IsBusy = false;
 
-                await  _repository.UpdateItem(id, representative);
+                await _repository.UpdateItem(id, representative);
             }
         }
         public async Task ReturnFromBreak(int id)
         {
-            var representative =await _repository.GetById(id);
+            var representative = await _repository.GetById(id);
             if (representative != null)
             {
                 representative.IsOnline = true;
                 representative.IsBusy = false;
 
-               await _repository.UpdateItem(id, representative);
+                await _repository.UpdateItem(id, representative);
             }
         }
         public async Task<bool> HasOnlineRepresentatives()
         {
-            // בודק אם יש לפחות נציג אחד שמוגדר כ-Online
             return (await _repository.GetAll()).Any(r => r.IsOnline && r.StatusRepr);
         }
     }

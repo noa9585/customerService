@@ -10,7 +10,7 @@ using Service1.Logic;
 using Service1.Services;
 using System.Text;
 using Service1.Mapping;
-using WebApplication1.BackgroundServices;
+//using WebApplication1.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,7 +42,7 @@ builder.Services.AddScoped<IChatSessionService, ChatSessionService>();
 
 // Queue manager and background worker
 builder.Services.AddSingleton<IChatQueueManager, ChatQueueManager>();
-builder.Services.AddHostedService<QueueUpdateWorker>();
+//builder.Services.AddHostedService<QueueUpdateWorker>();
 
 // Token service
 builder.Services.AddSingleton<ITokenService, TokenService>();

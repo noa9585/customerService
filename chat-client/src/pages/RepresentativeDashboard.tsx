@@ -13,7 +13,6 @@ const RepresentativeDashboard: React.FC = () => {
     const { 
         repData, 
         loading, 
-        actionLoading, 
         error, 
         handleGetNextClient, 
         handleToggleBreak, 
@@ -24,7 +23,7 @@ const RepresentativeDashboard: React.FC = () => {
         <RepresentativeDashboardSection
             repData={repData}
             loading={loading}
-            actionLoading={actionLoading}
+            actionLoading={loading}
             error={error}
             handleGetNextClient={handleGetNextClient}
             handleToggleBreak={handleToggleBreak}
