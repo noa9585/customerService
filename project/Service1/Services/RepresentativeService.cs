@@ -9,6 +9,9 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
+using Service1.Dto.CustomerDto;
+
 namespace Service1.Services
 {
     public class RepresentativeService : IRepresentativeService
@@ -16,52 +19,30 @@ namespace Service1.Services
 
         private readonly IRepository<Representative> _repository;
         private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
 
         // הזרקת ה-Repository דרך הבנאי
-        public RepresentativeService(IRepository<Representative> repository,ITokenService tokenService)
+        public RepresentativeService(IRepository<Representative> repository,ITokenService tokenService, IMapper mapper)
         {
             _repository = repository;
             _tokenService = tokenService;
+            _mapper = mapper;
         }
 
         public List<RepresentativeDto> GetAll()
         {
             var representatives = _repository.GetAll();
             // מיפוי מרשימת ישויות לרשימת DTO
-            return representatives.Select(r => new RepresentativeDto
-            {
-                IDRepresentative = r.IDRepresentative,
-                EmailRepr = r.EmailRepr,
-                NameRepr = r.NameRepr,
-                entryHourRepr = r.entryHourRepr,
-                exitHourRepr = r.exitHourRepr,
-                IsBusy = r.IsBusy,
-                IsOnline = r.IsOnline,
-                ScoreForMonth = r.ScoreForMonth,
-                StatusRepr = r.StatusRepr,
-                Role = r.Role,
-            }).ToList();
-        }
+            return _mapper.Map<List<RepresentativeDto>>(representatives);
 
+        }
 
         public RepresentativeDto GetById(int id)
         {
             var r = _repository.GetById(id);
             if (r == null) return null;
 
-            return new RepresentativeDto
-            {
-                IDRepresentative = r.IDRepresentative,
-                EmailRepr = r.EmailRepr,
-                NameRepr = r.NameRepr,
-                entryHourRepr = r.entryHourRepr,
-                exitHourRepr = r.exitHourRepr,
-                IsBusy = r.IsBusy,
-                IsOnline = r.IsOnline,
-                ScoreForMonth = r.ScoreForMonth,
-                StatusRepr = r.StatusRepr,
-                Role = r.Role,
-            };
+            return _mapper.Map<RepresentativeDto>(r);
         }
         public RepresentativeUpdateDto GetByIdToUpdate(int id)
         {
@@ -95,12 +76,7 @@ namespace Service1.Services
 
             var savedRepresentative = _repository.AddItem(newRepresentative);
             Console.WriteLine(savedRepresentative.IDRepresentative);
-            return new RepresentativeDto
-            {
-                IDRepresentative = savedRepresentative.IDRepresentative,
-                EmailRepr = savedRepresentative.EmailRepr,
-                NameRepr = savedRepresentative.NameRepr,
-            };
+            return _mapper.Map<RepresentativeDto>(savedRepresentative);
         }
 
 
@@ -144,20 +120,9 @@ namespace Service1.Services
 
             // שמירת השינויים בבסיס הנתונים
             _repository.UpdateItem(representative.IDRepresentative, representative);
-
+            
             // החזרת הנתונים המעודכנים
-            return new RepresentativeDto
-            {
-                IDRepresentative = representative.IDRepresentative,
-                NameRepr = representative.NameRepr,
-                EmailRepr = representative.EmailRepr,
-                IsOnline = representative.IsOnline,
-                IsBusy = representative.IsBusy,
-                entryHourRepr = representative.entryHourRepr, 
-                exitHourRepr = representative.exitHourRepr,
-                Role = "Representative",
-                Token=_tokenService.GenerateTokenForRepresentative(representative)
-            };
+            return _mapper.Map<RepresentativeDto>(representative);
         }
         // בתוך IRepresentativeService.cs
         public RepresentativeDto Register(RepresentativeRegisterDto registerDto)
@@ -192,14 +157,8 @@ namespace Service1.Services
             var savedRep = _repository.AddItem(newRep);
 
             // 4. החזרת DTO נקי (ללא סיסמה)
-            return new RepresentativeDto
-            {
-                IDRepresentative = savedRep.IDRepresentative,
-                NameRepr = savedRep.NameRepr,
-                EmailRepr = savedRep.EmailRepr,
-                Role = "Representative",
-                Token = _tokenService.GenerateTokenForRepresentative(savedRep)
-            };
+            return _mapper.Map<RepresentativeDto>(newRep);
+
         }
         public void Logout(int id)
         {

@@ -5,6 +5,7 @@ using Repository.Entities;
 using Repository.interfaces;
 using Service1.Dto.ChatMessageDto;
 using Service1.Interface;
+using AutoMapper;
 
 namespace Service1.Services
 {
@@ -12,26 +13,21 @@ namespace Service1.Services
     {
         private readonly IChatMessageRepository _repository;
         private readonly IChatSessionRepository _sessionRepository; // הוספת השורה הזו
+        private readonly IMapper _mapper;
+
 
         // עדכון הבנאי לקבלת שני הפרמטרים
-        public ChatMessageService(IChatMessageRepository repository, IChatSessionRepository sessionRepository)
+        public ChatMessageService(IChatMessageRepository repository, IChatSessionRepository sessionRepository, IMapper mapper)
         {
             _repository = repository;
             _sessionRepository = sessionRepository;
+            _mapper = mapper;
         }
 
         public List<ChatMessageDto> GetAll()
         {
             var messages = _repository.GetAll();
-            return messages.Select(m => new ChatMessageDto
-            {
-                MessageID = m.MessageID,
-                Message = m.Message,
-                Timestamp = m.Timestamp,
-                IDSend = m.IDSend,
-                IDSession = m.IDSession,
-                MessageType = m.MessageType
-            }).ToList();
+            return _mapper.Map<List<ChatMessageDto>>(messages);
         }
 
         public ChatMessageChatDto GetById(int id)
@@ -39,15 +35,7 @@ namespace Service1.Services
             var m = _repository.GetById(id);
             if (m == null) return null;
 
-            return new ChatMessageChatDto
-            {
-                Message = m.Message,
-                Timestamp = m.Timestamp,
-                IDSend = m.IDSend,
-                MessageType = m.MessageType,
-                IDSession = m.IDSession
-                
-            };
+            return _mapper.Map<ChatMessageChatDto>(m);
         }
 
         public ChatMessageDto AddMessage(int iDSession, string message, SenderType messageType)
@@ -70,16 +58,7 @@ namespace Service1.Services
 
             var savedMessage = _repository.AddItem(newMessage);
 
-            return new ChatMessageDto
-            {
-                MessageID = savedMessage.MessageID,
-                IDSession = iDSession,
-                IDSend= savedMessage.IDSend,
-                Message = savedMessage.Message,
-                Timestamp = savedMessage.Timestamp,
-                MessageType = savedMessage.MessageType,
-                StatusMessage= savedMessage.StatusMessage
-            };
+            return _mapper.Map<ChatMessageDto>(savedMessage);
         }
 
 
@@ -113,14 +92,7 @@ namespace Service1.Services
         public List<ChatMessageDto> GetChatHistory(int sessionId)
         {
             var messages = _repository.GetMessagesBySessionId(sessionId);
-            return messages.Select(m => new ChatMessageDto
-            {
-                MessageID = m.MessageID,
-                Message = m.Message,
-                Timestamp = m.Timestamp,
-                MessageType = m.MessageType, // 'Representative' או 'Customer'
-                IDSession = m.IDSession
-            }).ToList();
+            return _mapper.Map<List<ChatMessageDto>>(messages);
         }
     }
 }
