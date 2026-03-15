@@ -17,8 +17,8 @@ namespace Repository.interfaces
         public DbSet<Customer> Customers { get; set; }
 
         public DbSet<Topic> Topics { get; set; }
+        Task SaveAsync();
 
-
-        public void save();
+        //public void save();
     }
 }

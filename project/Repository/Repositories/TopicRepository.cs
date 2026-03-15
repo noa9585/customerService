@@ -1,6 +1,7 @@
 ﻿using Repository.Entities;
 using Repository.interfaces;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository.Repositories
 {
@@ -11,22 +12,22 @@ namespace Repository.Repositories
         {
             this._context = context;
         }
-        public Topic AddItem(Topic item)
+        public async Task<Topic> AddItem(Topic item)
         {
-            _context.Topics.Add(item);
-            _context.save();
-            return item;
+            await _context.Topics.AddAsync(item);
+            await _context.save();
+            return  item;
         }
 
-        public void DeleteItem(int id)
+        public async void DeleteItem(int id)
         {
             _context.Topics.Remove(GetById(id));
-            _context.save();
+           await _context.save();
         }
 
-        public List<Topic> GetAll()
+        public async Task<List<Topic>> GetAll()
         {
-            return _context.Topics.ToList();
+            return await _context.Topics.ToListAsync();
         }
 
         public Topic GetById(int id)
