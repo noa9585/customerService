@@ -60,10 +60,6 @@ namespace Service1.Services
 
             return _mapper.Map<ChatMessageDto>(savedMessage);
         }
-
-
-    
-
         public void UpdateMessage(int id, int iDSession, string message, SenderType messageType, bool statusMessage)
         {
             var session = _sessionRepository.GetById(iDSession);

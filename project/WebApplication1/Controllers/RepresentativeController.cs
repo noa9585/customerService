@@ -6,7 +6,7 @@ namespace WebApplication1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RepresentativeController:ControllerBase
+    public class RepresentativeController : ControllerBase
     {
         private readonly IRepresentativeService _representativeService;
 
@@ -16,15 +16,15 @@ namespace WebApplication1.Controllers
         }
         // שליפת כל הנציגים
         [HttpGet]
-        public ActionResult<IEnumerable<RepresentativeChatDto>> GetAll()
+        public async Task<ActionResult<IEnumerable<RepresentativeChatDto>>> GetAll()
         {
-            return Ok(_representativeService.GetAll());
+            return Ok(await _representativeService.GetAll());
         }
         // שליפת נציג לפי ID
         [HttpGet("{id}")]
-        public ActionResult<RepresentativeChatDto> GetById(int id)
+        public async Task<ActionResult<RepresentativeChatDto>> GetById(int id)
         {
-            var representative = _representativeService.GetById(id);
+            var representative = await _representativeService.GetById(id);
             if (representative == null)
             {
                 return NotFound($"Representative with ID {id} not found.");
@@ -32,11 +32,11 @@ namespace WebApplication1.Controllers
             return Ok(representative);
         }
 
-        
+
         [HttpGet("updateByID/{id}")]
-        public ActionResult<RepresentativeChatDto> GetByIdToUpdeate(int id)
+        public async Task<ActionResult<RepresentativeChatDto>> GetByIdToUpdate(int id)
         {
-            var representative = _representativeService.GetByIdToUpdate(id);
+            var representative = await _representativeService.GetByIdToUpdate(id);
             if (representative == null)
             {
                 return NotFound($"Representative with ID {id} not found.");
@@ -45,51 +45,51 @@ namespace WebApplication1.Controllers
         }
         // הוספת נציג חדש
         [HttpPost]
-        public ActionResult<RepresentativeDto> Add([FromBody] RepresentativeRegisterDto representativeDto)
+        public async Task<ActionResult<RepresentativeDto>> Add([FromBody] RepresentativeRegisterDto representativeDto)
         {
             if (representativeDto == null)
             {
                 return BadRequest();
             }
 
-            var newrepresentative= _representativeService.AddRepresentative(representativeDto.NameRepr,representativeDto.EmailRepr, representativeDto.PasswordRepr);
+            var newrepresentative = await _representativeService.AddRepresentative(representativeDto.NameRepr, representativeDto.EmailRepr, representativeDto.PasswordRepr);
             return CreatedAtAction(nameof(GetById), new { id = newrepresentative.IDRepresentative }, newrepresentative);
         }
         // עדכון נציג קיים
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] RepresentativeRegisterDto representativeDto)
+        public async Task<IActionResult> Update(int id, [FromBody] RepresentativeRegisterDto representativeDto)
         {
-            var existing = _representativeService.GetById(id);
+            var existing = await _representativeService.GetById(id);
             if (existing == null)
             {
                 return NotFound();
             }
 
-            _representativeService.UpdateRepresentative(id,representativeDto.NameRepr,representativeDto.EmailRepr,representativeDto.PasswordRepr );
+            await _representativeService.UpdateRepresentative(id, representativeDto.NameRepr, representativeDto.EmailRepr, representativeDto.PasswordRepr);
             return NoContent();
         }
 
         // מחיקת נציג
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var existing = _representativeService.GetById(id);
+            var existing = await _representativeService.GetById(id);
             if (existing == null)
             {
                 return NotFound();
             }
 
-            _representativeService.DeleteRepresentative(id);
+            await _representativeService.DeleteRepresentative(id);
             return NoContent();
         }
         //התחברות
         [AllowAnonymous]
         [HttpPost("login")]
-        public ActionResult<RepresentativeDto> Login([FromBody] RepresentativeLoginDto loginDto)
+        public async Task<ActionResult<RepresentativeDto>> Login([FromBody] RepresentativeLoginDto loginDto)
         {
             if (loginDto == null) return BadRequest("נתוני התחברות חסרים");
 
-            var result = _representativeService.Login(loginDto);
+            var result = await _representativeService.Login(loginDto);
 
             if (result == null)
             {
@@ -100,13 +100,13 @@ namespace WebApplication1.Controllers
         }
         [AllowAnonymous]
         [HttpPost("register")]
-        public ActionResult<RepresentativeDto> Register([FromBody] RepresentativeRegisterDto regDto)
+        public async Task<ActionResult<RepresentativeDto>> Register([FromBody] RepresentativeRegisterDto regDto)
         {
             if (regDto == null) return BadRequest("נתונים חסרים");
 
             try
             {
-                var result = _representativeService.Register(regDto);
+                var result = await _representativeService.Register(regDto);
                 // החזרת קוד 201 Created עם הנתיב לשליפת הנציג
                 return CreatedAtAction(nameof(GetById), new { id = result.IDRepresentative }, result);
             }
@@ -116,39 +116,39 @@ namespace WebApplication1.Controllers
             }
         }
         [HttpPost("logout/{id}")]
-        public IActionResult Logout(int id)
+        public async Task<IActionResult> Logout(int id)
         {
-            var representative = _representativeService.GetById(id);
+            var representative = await _representativeService.GetById(id);
             if (representative == null)
             {
                 return NotFound("נציג לא נמצא");
             }
 
-            _representativeService.Logout(id);
+            await _representativeService.Logout(id);
             return Ok(new { message = "התנתקת בהצלחה" });
         }
         [HttpPut("ToggleBreak/{id}")]
-        public IActionResult ToggleBreak(int id)
+        public async Task<IActionResult> ToggleBreak(int id)
         {
-            var existing = _representativeService.GetById(id);
+            var existing = await _representativeService.GetById(id);
             if (existing == null)
             {
                 return NotFound("נציג לא נמצא");
             }
 
-            _representativeService.ToggleBreak(id);
+            await _representativeService.ToggleBreak(id);
             return Ok(new { message = "יצאת להפסקה בהצלחה" });
         }
         [HttpPut("return-from-break/{id}")]
-        public IActionResult ReturnFromBreak(int id)
+        public async Task<IActionResult> ReturnFromBreak(int id)
         {
-            var existing = _representativeService.GetById(id);
+            var existing = await _representativeService.GetById(id);
             if (existing == null)
             {
                 return NotFound("נציג לא נמצא");
             }
 
-            _representativeService.ReturnFromBreak(id);
+            await _representativeService.ReturnFromBreak(id);
             return Ok(new { message = "חזרת מהפסקה, הנך זמין לקבלת שיחות" });
         }
     }

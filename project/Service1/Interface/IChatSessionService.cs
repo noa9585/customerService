@@ -13,16 +13,12 @@ namespace Service1.Interface
         Task<ChatSessionDto> GetSessionById(int id);
         Task<List<ChatSessionDto>> GetAllWaiting();
         Task<List<ChatSessionDto>> GetAllActive();
-        // שימוש ב-DTO להוספה
         Task<ChatSessionDto> AddSession(ChatSessionCreateDto sessionDto);
-        // שימוש ב-DTO לעדכון
         Task UpdateSession(int id, ChatSessionUpdateDto sessionDto);
         Task DeleteSession(int id);
-
         Task<double> CalculateWaitTime(int sessionId);
         Task<ChatSessionDto> PullNextClientForRepresentative(int idRepresentative);
         Task EndChatSession(int sessionId);
         Task CansleChatSession(int sessionId);
-
     }
 }

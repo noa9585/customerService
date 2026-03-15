@@ -13,9 +13,8 @@ namespace Service1.Interface
         Task<List<CustomerChatDto>> GetAll();
         Task<CustomerChatDto> GetById(int id);
         Task<CustomerRegisterDto> GetByIdToUpdate(int id);
-
         Task<CustomerChatDto> AddCustomer(string name, string email, string password);
-        Task UpdateCustomer(int id,string name, string email,string password);
+        Task UpdateCustomer(int id, string name, string email, string password);
         Task DeleteCustomer(int id);
         Task<CustomerChatDto> Login(CustomerLoginDto customerLoginDto);
         Task<CustomerChatDto> Register(CustomerRegisterDto registerDto);

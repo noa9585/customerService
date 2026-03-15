@@ -17,16 +17,17 @@ namespace WebApplication1.Controllers
 
         // שליפת כל הנושאים
         [HttpGet]
-        public ActionResult<IEnumerable<TopicDto>> GetAll()
+        public async Task<ActionResult<IEnumerable<TopicDto>>> GetAll()
         {
-            return Ok(_topicService.GetAll());
+            var topics = await _topicService.GetAll();
+            return Ok(topics);
         }
 
         // שליפת נושא לפי ID
         [HttpGet("{id}")]
-        public ActionResult<TopicDto> GetById(int id)
+        public async Task<ActionResult<TopicDto>> GetById(int id)
         {
-            var topic = _topicService.GetById(id);
+            var topic = await _topicService.GetById(id);
             if (topic == null)
             {
                 return NotFound($"Topic with ID {id} not found.");
@@ -36,42 +37,41 @@ namespace WebApplication1.Controllers
 
         // הוספת נושא חדש
         [HttpPost]
-        public ActionResult<TopicDto> Add([FromBody] TopicAddDto topicDto)
+        public async Task<ActionResult<TopicDto>> Add([FromBody] TopicAddDto topicDto)
         {
             if (topicDto == null)
             {
                 return BadRequest();
             }
 
-            var newTopic = _topicService.AddTopic(topicDto.NameTopic, topicDto.AverageTreatTime, topicDto.priorityTopics);
+            var newTopic = await _topicService.AddTopic(topicDto.NameTopic, topicDto.AverageTreatTime, topicDto.priorityTopics);
             return CreatedAtAction(nameof(GetById), new { id = newTopic.IDTopic }, newTopic);
         }
-
         // עדכון נושא קיים
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] TopicAddDto topicDto)
+        public async Task<IActionResult> Update(int id, [FromBody] TopicAddDto topicDto)
         {
-            var existing = _topicService.GetById(id);
+            var existing = await _topicService.GetById(id);
             if (existing == null)
             {
                 return NotFound();
             }
 
-            _topicService.UpdateTopic(id, topicDto.NameTopic, topicDto.AverageTreatTime, topicDto.priorityTopics);
+            await _topicService.UpdateTopic(id, topicDto.NameTopic, topicDto.AverageTreatTime, topicDto.priorityTopics);
             return NoContent();
         }
 
         // מחיקת נושא
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var existing = _topicService.GetById(id);
+            var existing = await _topicService.GetById(id);
             if (existing == null)
             {
                 return NotFound();
             }
 
-            _topicService.DeleteTopic(id);
+            await _topicService.DeleteTopic(id);
             return NoContent();
         }
     }

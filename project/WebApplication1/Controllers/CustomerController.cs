@@ -22,16 +22,16 @@ namespace YourProject.Controllers
         // שליפת כל הלקוחות
         [HttpGet]
 
-        public ActionResult<IEnumerable<CustomerChatDto>> GetAll()
+        public async Task<ActionResult<IEnumerable<CustomerChatDto>>> GetAll()
         {
-            return Ok(_customerService.GetAll());
+            return Ok(await _customerService.GetAll());
         }
 
         // שליפת לקוח לפי ID
         [HttpGet("{id}")]
-        public ActionResult<CustomerChatDto> GetById(int id)
+        public async Task<ActionResult<CustomerChatDto>> GetById(int id)
         {
-            var customer = _customerService.GetById(id);
+            var customer = await _customerService.GetById(id);
             if (customer == null)
             {
                 return NotFound($"Customer with ID {id} not found.");
@@ -39,61 +39,60 @@ namespace YourProject.Controllers
             return Ok(customer);
         }
         [HttpGet("updateByID/{id}")]
-        public ActionResult<CustomerChatDto> GetByIdToUpdeate(int id)
+        public async Task<ActionResult<CustomerChatDto>> GetByIdToUpdeate(int id)
         {
-            var customer = _customerService.GetByIdToUpdate(id);
+            var customer = await _customerService.GetByIdToUpdate(id);
             if (customer == null)
             {
                 return NotFound($"customer with ID {id} not found.");
             }
             return Ok(customer);
         }
-        // הוספת לקוח חדש (ישאירו מוגן; אם רוצים לאפשר הרשמה פתוחה השתמשו ב-Register)
         [HttpPost]
-        public ActionResult<CustomerChatDto> Add([FromBody] CustomerRegisterDto customerRegisterDto)
+        public async Task<ActionResult<CustomerChatDto>> Add([FromBody] CustomerRegisterDto customerRegisterDto)
         {
             if (customerRegisterDto == null)
             {
                 return BadRequest();
             }
 
-            var newCustomer = _customerService.AddCustomer(customerRegisterDto.NameCust, customerRegisterDto.EmailCust, customerRegisterDto.PasswordCust);
+            var newCustomer = await _customerService.AddCustomer(customerRegisterDto.NameCust, customerRegisterDto.EmailCust, customerRegisterDto.PasswordCust);
             return CreatedAtAction(nameof(GetById), new { id = newCustomer.IDCustomer }, newCustomer);
         }
 
         // עדכון לקוח קיים
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] CustomerRegisterDto customerRegisterDto)
+        public async Task<IActionResult> Update(int id, [FromBody] CustomerRegisterDto customerRegisterDto)
         {
-            var existing = _customerService.GetById(id);
+            var existing = await _customerService.GetById(id);
             if (existing == null)
             {
                 return NotFound();
             }
 
-            _customerService.UpdateCustomer(id, customerRegisterDto.NameCust, customerRegisterDto.EmailCust, customerRegisterDto.PasswordCust);
+            await _customerService.UpdateCustomer(id, customerRegisterDto.NameCust, customerRegisterDto.EmailCust, customerRegisterDto.PasswordCust);
             return NoContent();
         }
 
         // מחיקת לקוח
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var existing = _customerService.GetById(id);
+            var existing = await _customerService.GetById(id);
             if (existing == null)
             {
                 return NotFound();
             }
 
-            _customerService.DeleteCustomer(id);
+            await _customerService.DeleteCustomer(id);
             return NoContent();
         }
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public ActionResult<CustomerChatDto> Login([FromBody] CustomerLoginDto loginDto)
+        public async Task<ActionResult<CustomerChatDto>> Login([FromBody] CustomerLoginDto loginDto)
         {
-            var customer = _customerService.Login(loginDto);
+            var customer = await _customerService.Login(loginDto);
 
             if (customer == null)
             {
@@ -105,13 +104,13 @@ namespace YourProject.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public ActionResult<CustomerChatDto> Register([FromBody] CustomerRegisterDto registerDto)
+        public async Task<ActionResult<CustomerChatDto>> Register([FromBody] CustomerRegisterDto registerDto)
         {
             if (registerDto == null) return BadRequest();
 
             try
             {
-                var result = _customerService.Register(registerDto);
+                var result = await _customerService.Register(registerDto);
                 return CreatedAtAction(nameof(GetById), new { id = result.IDCustomer }, result);
             }
             catch (Exception ex)
@@ -120,15 +119,15 @@ namespace YourProject.Controllers
             }
         }
         [HttpPut("logout/{id}")]
-        public IActionResult Logout(int id)
+        public async Task<IActionResult> Logout(int id)
         {
-            var existing = _customerService.GetById(id);
+            var existing = await _customerService.GetById(id);
             if (existing == null)
             {
                 return NotFound("לקוח לא נמצא");
             }
 
-            _customerService.Logout(id);
+            await _customerService.Logout(id);
             return Ok(new { message = "התנתקת מהמערכת בהצלחה" });
         }
     }
