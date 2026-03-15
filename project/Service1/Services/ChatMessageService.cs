@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Repository.Entities;
@@ -24,23 +25,23 @@ namespace Service1.Services
             _mapper = mapper;
         }
 
-        public List<ChatMessageDto> GetAll()
+        public async Task<List<ChatMessageDto>> GetAll()
         {
-            var messages = _repository.GetAll();
+            var messages = await _repository.GetAll();
             return _mapper.Map<List<ChatMessageDto>>(messages);
         }
 
-        public ChatMessageChatDto GetById(int id)
+        public async Task<ChatMessageChatDto> GetById(int id)
         {
-            var m = _repository.GetById(id);
+            var m = await _repository.GetById(id);
             if (m == null) return null;
 
             return _mapper.Map<ChatMessageChatDto>(m);
         }
 
-        public ChatMessageDto AddMessage(int iDSession, string message, SenderType messageType)
+        public async Task<ChatMessageDto> AddMessage(int iDSession, string message, SenderType messageType)
         {
-            var session = _sessionRepository.GetById(iDSession);
+            var session = await _sessionRepository.GetById(iDSession);
 
             if (session == null)
             {
@@ -56,19 +57,23 @@ namespace Service1.Services
                 IDSend = messageType == SenderType.Customer ? session.IDCustomer : session.IDRepresentative ?? 0
             };
 
-            var savedMessage = _repository.AddItem(newMessage);
+            var savedMessage = await _repository.AddItem(newMessage);
 
             return _mapper.Map<ChatMessageDto>(savedMessage);
         }
-        public void UpdateMessage(int id, int iDSession, string message, SenderType messageType, bool statusMessage)
+
+
+
+
+        public async Task UpdateMessage(int id, int iDSession, string message, SenderType messageType, bool statusMessage)
         {
-            var session = _sessionRepository.GetById(iDSession);
+            var session = await _sessionRepository.GetById(iDSession);
 
             if (session == null)
             {
                 throw new Exception("Session not found"); // הגנה למקרה שה-ID לא קיים
             }
-            var existing = _repository.GetById(id);
+            var existing = await _repository.GetById(id);
             if (existing != null)
             {
                 existing.IDSession = iDSession;
@@ -77,17 +82,17 @@ namespace Service1.Services
                 existing.MessageType = messageType;
                 existing.StatusMessage = statusMessage;
 
-                _repository.UpdateItem(id, existing);
+                await _repository.UpdateItem(id, existing);
             }
         }
 
-        public void DeleteMessage(int id)
+        public async Task DeleteMessage(int id)
         {
-            _repository.DeleteItem(id);
+            await _repository.DeleteItem(id);
         }
-        public List<ChatMessageDto> GetChatHistory(int sessionId)
+        public async Task<List<ChatMessageDto>> GetChatHistory(int sessionId)
         {
-            var messages = _repository.GetMessagesBySessionId(sessionId);
+            var messages = await _repository.GetMessagesBySessionId(sessionId);
             return _mapper.Map<List<ChatMessageDto>>(messages);
         }
     }
