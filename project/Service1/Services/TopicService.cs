@@ -5,48 +5,32 @@ using Repository.Entities;
 using Repository.interfaces; // וודאי שזה השם המדויק של ה-Namespace
 using Service1.Dto.TopicDto;
 using Service1.Interface;
+using AutoMapper;
 
 namespace Service1.Services
 {
     public class TopicService : ITopicService
     {
         private readonly IRepository<Topic> _repository;
-
+        private readonly IMapper _mapper;
         // הזרקת ה-Repository דרך הבנאי
-        public TopicService(IRepository<Topic> repository)
+        public TopicService(IRepository<Topic> repository, IMapper mapper) // עדכון הבנאי
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         public List<TopicDto> GetAll()
         {
             var topics = _repository.GetAll();
-            // מיפוי מרשימת ישויות לרשימת DTO
-            return topics.Select(t => new TopicDto
-            {
-                IDTopic = t.IDTopic,
-                NameTopic = t.NameTopic,
-                AverageTreatTime = t.AverageTreatTime,
-                priorityTopics = t.priorityTopics,
-                StatusTopic = t.StatusTopic,
-                totalSessionsCount=t.totalSessionsCount
-            }).ToList();
+            return _mapper.Map<List<TopicDto>>(topics);
         }
 
         public TopicDto GetById(int id)
         {
             var t = _repository.GetById(id);
             if (t == null) return null;
-
-            return new TopicDto
-            {
-                IDTopic = t.IDTopic,
-                NameTopic = t.NameTopic,
-                AverageTreatTime = t.AverageTreatTime,
-                priorityTopics = t.priorityTopics,
-                StatusTopic = t.StatusTopic,
-                totalSessionsCount=t.totalSessionsCount
-            };
+            return _mapper.Map<TopicDto>(t);
         }
 
         public TopicDto AddTopic(string name, double average, double priority)
@@ -62,15 +46,7 @@ namespace Service1.Services
 
             var savedTopic = _repository.AddItem(newTopic);
 
-            return new TopicDto
-            {
-                IDTopic = savedTopic.IDTopic,
-                NameTopic = savedTopic.NameTopic,
-                AverageTreatTime = savedTopic.AverageTreatTime,
-                priorityTopics = savedTopic.priorityTopics,
-                StatusTopic = savedTopic.StatusTopic,
-                totalSessionsCount=savedTopic.totalSessionsCount
-            };
+            return _mapper.Map<TopicDto>(savedTopic);
         }
 
         public void UpdateTopic(int id, string name, double average, double priority)

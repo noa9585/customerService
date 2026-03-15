@@ -3,33 +3,28 @@ using Repository.interfaces;
 using Service1.Dto.CustomerDto;
 using Service1.Dto.RepresentativeDto;
 using Service1.Interface;
-
+using AutoMapper;
 namespace Service1.Services
 {
     public class CustomerService : ICustomerService
     {
         private readonly IRepository<Customer> _repository;
         private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
 
         // הזרקת ה-Repository ו-TokenService דרך הבנאי
-        public CustomerService(IRepository<Customer> repository, ITokenService tokenService)
+        public CustomerService(IRepository<Customer> repository, ITokenService tokenService, IMapper mapper)
         {
             _repository = repository;
             _tokenService = tokenService;
+            _mapper = mapper;
         }
 
         public List<CustomerChatDto> GetAll()
         {
             var customers = _repository.GetAll();
             // מיפוי מרשימת ישויות לרשימת DTO
-            return customers.Select(t => new CustomerChatDto
-            {
-                IDCustomer = t.IDCustomer,
-                NameCust = t.NameCust,
-                EmailCust = t.EmailCust,
-                Role = t.Role,
-                isOnline = t.IsOnline,
-            }).ToList();
+            return _mapper.Map<List<CustomerChatDto>>(customers);
         }
 
         public CustomerChatDto GetById(int id)
@@ -139,31 +134,19 @@ namespace Service1.Services
             {
                 throw new Exception("משתמש עם אימייל זה כבר קיים במערכת");
             }
-            
+
+            var newCustomer = _mapper.Map<Customer>(registerDto);
             // 2. יצירת ישות לקוח חדשה מה-DTO
-            var newCustomer = new Customer
-            {
-                NameCust = registerDto.NameCust,
-                EmailCust = registerDto.EmailCust,
-                PasswordCust = registerDto.PasswordCust,
-                StatusCust = true, // לקוח פעיל כברירת מחדל
-                IsOnline = true, //  מקוון כברירת מחדל
-                Role = "Customer" // הגדרת תפקיד
-            };
+            newCustomer.StatusCust = true;
+            newCustomer.IsOnline = true;
+            newCustomer.Role = "Customer";
 
             // 3. שמירה בבסיס הנתונים
             var savedCustomer = _repository.AddItem(newCustomer);
-
+            var resultDto = _mapper.Map<CustomerChatDto>(savedCustomer);
+            resultDto.Token = _tokenService.GenerateTokenForCustomer(savedCustomer);
             // 4. יצירת DTO והוספת טוקן
-            return new CustomerChatDto
-            {
-                IDCustomer = savedCustomer.IDCustomer,
-                NameCust = savedCustomer.NameCust,
-                EmailCust = savedCustomer.EmailCust,
-                Role = savedCustomer.Role,
-                isOnline = savedCustomer.IsOnline,
-                Token = _tokenService.GenerateTokenForCustomer(savedCustomer)
-            };
+            return resultDto;
         }
         public void Logout(int id)
         {
