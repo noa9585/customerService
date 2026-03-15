@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Repository.Entities;
@@ -33,7 +32,7 @@ namespace Service1.Services
 
         public async Task<ChatMessageChatDto> GetById(int id)
         {
-            var m = await _repository.GetById(id);
+            var m =await _repository.GetById(id);
             if (m == null) return null;
 
             return _mapper.Map<ChatMessageChatDto>(m);
@@ -57,23 +56,23 @@ namespace Service1.Services
                 IDSend = messageType == SenderType.Customer ? session.IDCustomer : session.IDRepresentative ?? 0
             };
 
-            var savedMessage = await _repository.AddItem(newMessage);
+            var savedMessage =await _repository.AddItem(newMessage);
 
             return _mapper.Map<ChatMessageDto>(savedMessage);
         }
 
 
-
+    
 
         public async Task UpdateMessage(int id, int iDSession, string message, SenderType messageType, bool statusMessage)
         {
-            var session = await _sessionRepository.GetById(iDSession);
+            var session =await _sessionRepository.GetById(iDSession);
 
             if (session == null)
             {
                 throw new Exception("Session not found"); // הגנה למקרה שה-ID לא קיים
             }
-            var existing = await _repository.GetById(id);
+            var existing =await _repository.GetById(id);
             if (existing != null)
             {
                 existing.IDSession = iDSession;
@@ -82,15 +81,15 @@ namespace Service1.Services
                 existing.MessageType = messageType;
                 existing.StatusMessage = statusMessage;
 
-                await _repository.UpdateItem(id, existing);
+               await _repository.UpdateItem(id, existing);
             }
         }
 
         public async Task DeleteMessage(int id)
         {
-            await _repository.DeleteItem(id);
+           await _repository.DeleteItem(id);
         }
-        public async Task<List<ChatMessageDto>> GetChatHistory(int sessionId)
+        public  async Task<List<ChatMessageDto>> GetChatHistory(int sessionId)
         {
             var messages = await _repository.GetMessagesBySessionId(sessionId);
             return _mapper.Map<List<ChatMessageDto>>(messages);
