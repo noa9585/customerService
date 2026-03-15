@@ -54,6 +54,8 @@ namespace Repository.Repositories
             cust.IsOnline = item.IsOnline;
             _context.SaveAsync();
         }
+
+       
     }
 }
 

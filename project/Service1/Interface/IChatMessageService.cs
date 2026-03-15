@@ -7,16 +7,11 @@ namespace Service1.Interface
 {
     public interface IChatMessageService
     {
-        List<ChatMessageDto> GetAll();
-        ChatMessageChatDto GetById(int id);
-
-        // הוספה: מחזיר את האובייקט שנוצר
-        ChatMessageDto AddMessage(int iDSession, string message, SenderType messageType);
-
-        // עדכון: הוספתי id כדי שנדע איזו הודעה לעדכן
-        void UpdateMessage(int id, int iDSession, string message, SenderType messageType, bool statusMessage);
-
-        void DeleteMessage(int id);
-        List<ChatMessageDto> GetChatHistory(int sessionId);
+        Task<List<ChatMessageDto>> GetAll();
+        Task<ChatMessageChatDto> GetById(int id);
+        Task<ChatMessageDto> AddMessage(int iDSession, string message, SenderType messageType);
+        Task UpdateMessage(int id, int iDSession, string message, SenderType messageType, bool statusMessage);
+        Task DeleteMessage(int id);
+        Task<List<ChatMessageDto>> GetChatHistory(int sessionId);
     }
 }

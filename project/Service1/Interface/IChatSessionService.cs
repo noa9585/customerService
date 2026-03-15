@@ -9,20 +9,20 @@ namespace Service1.Interface
 {
     public interface IChatSessionService
     {
-        List<ChatSessionDto> GetAllSessions();
-        ChatSessionDto GetSessionById(int id);
-        List<ChatSessionDto> GetAllWaiting();
-        List<ChatSessionDto> GetAllActive();
+        Task<List<ChatSessionDto>> GetAllSessions();
+        Task<ChatSessionDto> GetSessionById(int id);
+        Task<List<ChatSessionDto>> GetAllWaiting();
+        Task<List<ChatSessionDto>> GetAllActive();
         // שימוש ב-DTO להוספה
-        ChatSessionDto AddSession(ChatSessionCreateDto sessionDto);
+        Task<ChatSessionDto> AddSession(ChatSessionCreateDto sessionDto);
         // שימוש ב-DTO לעדכון
-        void UpdateSession(int id, ChatSessionUpdateDto sessionDto);
-        void DeleteSession(int id);
+        Task UpdateSession(int id, ChatSessionUpdateDto sessionDto);
+        Task DeleteSession(int id);
 
-        double CalculateWaitTime(int sessionId);
-        ChatSessionDto PullNextClientForRepresentative(int idRepresentative);
-        void EndChatSession(int sessionId);
-        void CansleChatSession(int sessionId);
+        Task<double> CalculateWaitTime(int sessionId);
+        Task<ChatSessionDto> PullNextClientForRepresentative(int idRepresentative);
+        Task EndChatSession(int sessionId);
+        Task CansleChatSession(int sessionId);
 
     }
 }

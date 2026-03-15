@@ -10,16 +10,16 @@ namespace Service1.Interface
 {
     public interface ICustomerService
     {
-        List<CustomerChatDto> GetAll();
-        CustomerChatDto GetById(int id);
-        CustomerRegisterDto GetByIdToUpdate(int id);
+        Task<List<CustomerChatDto>> GetAll();
+        Task<CustomerChatDto> GetById(int id);
+        Task<CustomerRegisterDto> GetByIdToUpdate(int id);
 
-        CustomerChatDto AddCustomer(string name, string email, string password);
-        void UpdateCustomer(int id,string name, string email,string password);
-        void DeleteCustomer(int id);
-        CustomerChatDto Login(CustomerLoginDto customerLoginDto);
-        CustomerChatDto Register(CustomerRegisterDto registerDto);
-        void Logout(int id);
+        Task<CustomerChatDto> AddCustomer(string name, string email, string password);
+        Task UpdateCustomer(int id,string name, string email,string password);
+        Task DeleteCustomer(int id);
+        Task<CustomerChatDto> Login(CustomerLoginDto customerLoginDto);
+        Task<CustomerChatDto> Register(CustomerRegisterDto registerDto);
+        Task Logout(int id);
 
     }
 }
