@@ -48,14 +48,14 @@ namespace Repository.Repositories
 
         public async Task UpdateItem(int id, ChatMessage item)
         {
-            var chmes = await GetById(id);
-            chmes.MessageID = item.MessageID;
-            chmes.IDSession = item.IDSession;
-            chmes.Message = item.Message;
-            chmes.Timestamp = item.Timestamp;
-            chmes.IDSend = item.IDSend;
-            chmes.MessageType = item.MessageType;
-            chmes.StatusMessage = item.StatusMessage;
+            var existingMessage = await GetById(id);
+            existingMessage.MessageID = item.MessageID;
+            existingMessage.IDSession = item.IDSession;
+            existingMessage.Message = item.Message;
+            existingMessage.Timestamp = item.Timestamp;
+            existingMessage.IDSend = item.IDSend;
+            existingMessage.MessageType = item.MessageType;
+            existingMessage.StatusMessage = item.StatusMessage;
 
            await _context.SaveAsync();
         }

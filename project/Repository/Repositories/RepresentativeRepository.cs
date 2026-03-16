@@ -24,7 +24,7 @@ namespace Repository.Repositories
             if (item != null)
             {
                 _context.Representatives.Remove(item);
-                _context.SaveAsync();
+                await _context.SaveAsync();
             }
         }
 

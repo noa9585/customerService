@@ -21,7 +21,7 @@ namespace Repository.Repositories
         {
             await _context.Customers.AddAsync(item);
 
-            _context.SaveAsync();
+            await _context.SaveAsync();
             return item;
         }
         public async Task DeleteItem(int id)

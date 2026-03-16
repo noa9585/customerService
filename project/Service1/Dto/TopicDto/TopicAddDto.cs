@@ -9,6 +9,8 @@ namespace Service1.Dto.TopicDto
 {
     public class TopicAddDto
     {
+        [Required]
+        [MaxLength(200)]
         public string NameTopic { get; set; }
         public double AverageTreatTime { get; set; }
         public double priorityTopics { get; set; }

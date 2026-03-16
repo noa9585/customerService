@@ -20,14 +20,15 @@ namespace YourProject.Controllers
         }
 
         // שליפת כל הלקוחות
+        [Authorize(Roles = "Admin")]
         [HttpGet]
-
         public async Task<ActionResult<IEnumerable<CustomerChatDto>>> GetAll()
         {
             return Ok(await _customerService.GetAll());
         }
 
         // שליפת לקוח לפי ID
+        [Authorize(Roles = "Admin,Representative,Customer")]
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomerChatDto>> GetById(int id)
         {
@@ -38,6 +39,8 @@ namespace YourProject.Controllers
             }
             return Ok(customer);
         }
+
+        [Authorize(Roles = "Customer")]
         [HttpGet("updateByID/{id}")]
         public async Task<ActionResult<CustomerChatDto>> GetByIdToUpdeate(int id)
         {
@@ -48,33 +51,39 @@ namespace YourProject.Controllers
             }
             return Ok(customer);
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<CustomerChatDto>> Add([FromBody] CustomerRegisterDto customerRegisterDto)
         {
             if (customerRegisterDto == null)
-            {
                 return BadRequest();
-            }
-
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             var newCustomer = await _customerService.AddCustomer(customerRegisterDto.NameCust, customerRegisterDto.EmailCust, customerRegisterDto.PasswordCust);
             return CreatedAtAction(nameof(GetById), new { id = newCustomer.IDCustomer }, newCustomer);
         }
 
         // עדכון לקוח קיים
+        [Authorize(Roles = "Customer")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] CustomerRegisterDto customerRegisterDto)
         {
+            if (customerRegisterDto == null)
+                return BadRequest();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             var existing = await _customerService.GetById(id);
             if (existing == null)
             {
                 return NotFound();
             }
-
             await _customerService.UpdateCustomer(id, customerRegisterDto.NameCust, customerRegisterDto.EmailCust, customerRegisterDto.PasswordCust);
             return NoContent();
         }
 
         // מחיקת לקוח
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -107,7 +116,8 @@ namespace YourProject.Controllers
         public async Task<ActionResult<CustomerChatDto>> Register([FromBody] CustomerRegisterDto registerDto)
         {
             if (registerDto == null) return BadRequest();
-
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             try
             {
                 var result = await _customerService.Register(registerDto);
@@ -118,6 +128,8 @@ namespace YourProject.Controllers
                 return BadRequest(ex.Message); // יחזיר שגיאה אם האימייל קיים
             }
         }
+
+        [Authorize(Roles = "Admin,Customer")]
         [HttpPut("logout/{id}")]
         public async Task<IActionResult> Logout(int id)
         {

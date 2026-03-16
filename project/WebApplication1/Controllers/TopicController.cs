@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Service1.Interface;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Service1.Dto.TopicDto;
+using Service1.Interface;
 
 namespace WebApplication1.Controllers
 {
@@ -16,6 +17,7 @@ namespace WebApplication1.Controllers
         }
 
         // שליפת כל הנושאים
+        [Authorize(Roles = "Admin,Representative,Customer")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TopicDto>>> GetAll()
         {
@@ -24,6 +26,7 @@ namespace WebApplication1.Controllers
         }
 
         // שליפת נושא לפי ID
+        [Authorize(Roles = "Admin,Representative,Customer")]
         [HttpGet("{id}")]
         public async Task<ActionResult<TopicDto>> GetById(int id)
         {
@@ -36,21 +39,24 @@ namespace WebApplication1.Controllers
         }
 
         // הוספת נושא חדש
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<TopicDto>> Add([FromBody] TopicAddDto topicDto)
         {
             if (topicDto == null)
-            {
                 return BadRequest();
-            }
-
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             var newTopic = await _topicService.AddTopic(topicDto.NameTopic, topicDto.AverageTreatTime, topicDto.priorityTopics);
             return CreatedAtAction(nameof(GetById), new { id = newTopic.IDTopic }, newTopic);
         }
         // עדכון נושא קיים
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] TopicAddDto topicDto)
         {
+            if (topicDto == null) return BadRequest();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var existing = await _topicService.GetById(id);
             if (existing == null)
             {
@@ -62,6 +68,7 @@ namespace WebApplication1.Controllers
         }
 
         // מחיקת נושא
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -70,7 +77,6 @@ namespace WebApplication1.Controllers
             {
                 return NotFound();
             }
-
             await _topicService.DeleteTopic(id);
             return NoContent();
         }

@@ -9,10 +9,16 @@ namespace Service1.Dto.RepresentativeDto
 {
     public class RepresentativeRegisterDto
     {
+        [Required]
+        [MaxLength(100)]
         public string NameRepr { get; set; }
+        [Required]
+        [MaxLength(100)]
+        [EmailAddress]
         public string EmailRepr { get; set; }
+        [Required]
+        [MaxLength(50)]
+        [MinLength(6)]
         public string PasswordRepr { get; set; }
-        //public string? Role { get; set; }
-
     }
 }

@@ -13,9 +13,6 @@ namespace Repository.Entities
     {
         [Key]
         public int SessionID {  get; set; }
-        
-
-
         public virtual List<ChatMessage> Messages { get; set; }// רשימת הודעות
         public DateTime StartTimestamp { get; set; } // תאריך ושעת פתיחת פניה 
         public DateTime? ServiceStartTimestamp { get; set; } // תאריך ושעת התחלת עם נציג
@@ -25,7 +22,6 @@ namespace Repository.Entities
         public bool status { get; set; }
         public int? IDRepresentative { get; set; }
         [ForeignKey("IDRepresentative")]
-
         public virtual Representative Representative { get; set; }
         public int IDCustomer { get; set; }
         [ForeignKey("IDCustomer")]

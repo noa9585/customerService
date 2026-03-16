@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Service1.Dto.ChatSessionDto;
 using Service1.Interface;
@@ -23,22 +24,31 @@ namespace WebApplication1.Controllers
             _representativeService = representativeService;
             _hubContext = hubContext;
         }
-
+        [Authorize(Roles = "Admin,Representative")]
         [HttpGet]
         public async Task<ActionResult<List<ChatSessionDto>>> GetAll()
         {
             return Ok(await _chatSessionService.GetAllSessions());
         }
+
+        // שליפת כל הסשנים במצב "ממתין" (Waiting)
+        [Authorize(Roles = "Admin,Representative")]
         [HttpGet("getWaiting")]
         public async Task<ActionResult<List<ChatSessionDto>>> GetAllWaiting()
         {
             return Ok(await _chatSessionService.GetAllWaiting());
         }
+
+        // שליפת כל הסשנים במצב "פעיל" (Active)
+        [Authorize(Roles = "Admin,Representative")]
         [HttpGet("getActive")]
         public async Task<ActionResult<List<ChatSessionDto>>> getAllActive()
         {
             return Ok(await _chatSessionService.GetAllActive());
         }
+
+        //שליפת סשן לפי ID
+        [Authorize(Roles = "Admin,Representative,Customer")]
         [HttpGet("{id}")]
         public async Task<ActionResult<ChatSessionDto>> Get(int id)
         {
@@ -47,6 +57,8 @@ namespace WebApplication1.Controllers
             return Ok(session);
         }
 
+
+        [Authorize(Roles = "Customer")]
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] ChatSessionCreateDto createDto)
         {
@@ -77,6 +89,7 @@ namespace WebApplication1.Controllers
             }
         }
 
+        [Authorize(Roles = "Customer")]
         [HttpGet("estimate/{id}")]
         public async Task<ActionResult<double>> GetWaitTimeEstimate(int id)
         {
@@ -98,6 +111,8 @@ namespace WebApplication1.Controllers
             }
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] ChatSessionUpdateDto updateDto)
         {
@@ -110,6 +125,7 @@ namespace WebApplication1.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
@@ -120,24 +136,8 @@ namespace WebApplication1.Controllers
             return NoContent();
         }
 
-        //[HttpPost("get-next-client/{idRepresetative}")]
-        //public async Task<IActionResult> GetNextClient(int idRepresetative)
-        //{
-        //    try
-        //    {
-        //        var sessionDto =await _chatSessionService.PullNextClientForRepresentative(idRepresetative);
-        //        if (sessionDto == null)
-        //        {
-        //            return NotFound(new { message = "אין לקוחות ממתינים בתור כרגע." });
-        //        }
-        //        return Ok(sessionDto);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new { message = "אירעה שגיאה במשיכת הלקוח הבא.", details = ex.Message });
-        //    }
-        //}
-        [HttpPost("get-next-client/{id}")] // שימוש ב-id קצר וברור
+        [Authorize(Roles = "Representative")]
+        [HttpPost("get-next-client/{id}")]
         public async Task<IActionResult> GetNextClient(int id)
         {
             try
@@ -163,6 +163,8 @@ namespace WebApplication1.Controllers
                 });
             }
         }
+
+        [Authorize(Roles = "Representative")]
         [HttpPost("close-session/{idSession}")]
         public async Task<IActionResult> CloseSession(int idSession)
         {
@@ -178,6 +180,8 @@ namespace WebApplication1.Controllers
                 return StatusCode(500, new { message = "אירעה שגיאה בסיום השיחה.", details = ex.Message });
             }
         }
+
+        [Authorize(Roles = "Admin,Customer")]
         [HttpPost("cancel-session/{idSession}")]
         public async Task<IActionResult> CancelSession(int idSession)
         {
