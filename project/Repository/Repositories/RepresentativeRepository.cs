@@ -23,7 +23,8 @@ namespace Repository.Repositories
             var item = await GetById(id);
             if (item != null)
             {
-                _context.Representatives.Remove(item);
+                item.StatusRepr = false;
+                //_context.Representatives.Remove(item);
                 await _context.SaveAsync();
             }
         }
@@ -31,12 +32,12 @@ namespace Repository.Repositories
         public async Task<List<Representative>> GetAll()
         {
             // שימוש ב-Include כדי לוודא שרשימת השעות נטענת מה-DB
-            return await _context.Representatives.Include(x => x.LHours).ToListAsync();
+            return await _context.Representatives.Where(r=>r.StatusRepr).Include(x => x.LHours).ToListAsync();
         }
 
         public async Task<Representative> GetById(int id)
         {
-            return await _context.Representatives.Include(x => x.LHours).FirstOrDefaultAsync(x => x.IDRepresentative == id);
+            return await _context.Representatives.Include(x => x.LHours).FirstOrDefaultAsync(x => x.IDRepresentative == id&&x.StatusRepr);
         }
 
         public async Task UpdateItem(int id, Representative item)

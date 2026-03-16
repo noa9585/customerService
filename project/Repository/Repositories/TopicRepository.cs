@@ -24,7 +24,8 @@ namespace Repository.Repositories
             var itemToDelete = await GetById(id);
             if (itemToDelete != null)
             {
-                _context.Topics.Remove(itemToDelete);
+                itemToDelete.StatusTopic = false;
+                //_context.Topics.Remove(itemToDelete);
 
                 await _context.SaveAsync();
             }
@@ -32,12 +33,12 @@ namespace Repository.Repositories
 
         public async Task<List<Topic>> GetAll()
         {
-            return await _context.Topics.ToListAsync();
+            return await _context.Topics.Where(t => t.StatusTopic == true).ToListAsync();
         }
 
         public async Task<Topic> GetById(int id)
         {
-            return await _context.Topics.FirstOrDefaultAsync(x => x.IDTopic == id);
+            return await _context.Topics.FirstOrDefaultAsync(x => x.IDTopic == id&&x.StatusTopic);
         }
 
         public async Task UpdateItem(int id, Topic item)
