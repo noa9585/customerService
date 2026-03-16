@@ -6,6 +6,8 @@
   direction: rtl;
   width: 100%;
   box-sizing: border-box;
+    align-self: stretch; 
+
 }
 
 .footer-inner {

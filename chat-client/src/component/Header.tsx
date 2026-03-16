@@ -68,9 +68,9 @@ const Header: React.FC = () => {
                                 <Link to="/update-representative" className="header-link">עדכון פרטים</Link>
                             </>
                         )}
-                        {userType === 'admin' && (
+                        {/* {userType === 'admin' && (
                             <Link to="/admin" className="header-link">ניהול</Link>
-                        )}
+                        )} */}
                     </nav>
                 )}
 

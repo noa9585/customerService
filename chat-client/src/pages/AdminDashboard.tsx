@@ -35,11 +35,11 @@ const AdminDashboard: React.FC = () => {
   } = useAdminDashboard();
 
   const tabs: { id: AdminTab; label: string; icon: string }[] = [
-    { id: 'overview',        label: 'סקירה כללית', icon: '📊' },
-    { id: 'topics',          label: 'נושאי פנייה', icon: '📋' },
-    { id: 'representatives', label: 'נציגים',       icon: '👨‍💼' },
-    { id: 'customers',       label: 'לקוחות',       icon: '👥' },
-    { id: 'sessions',        label: 'שיחות',        icon: '💬' },
+    { id: 'overview', label: 'סקירה כללית', icon: '📊' },
+    { id: 'topics', label: 'נושאי פנייה', icon: '📋' },
+    { id: 'representatives', label: 'נציגים', icon: '👨‍💼' },
+    { id: 'customers', label: 'לקוחות', icon: '👥' },
+    { id: 'sessions', label: 'שיחות', icon: '💬' },
   ];
 
   return (
@@ -83,14 +83,14 @@ const AdminDashboard: React.FC = () => {
             <h2 className="section-title">סקירה כללית</h2>
             <div className="overview-grid">
               {[
-                { icon: '📋', value: stats.totalTopics,        label: 'נושאי פנייה' },
+                { icon: '📋', value: stats.totalTopics, label: 'נושאי פנייה' },
                 { icon: '👨‍💼', value: stats.totalRepresentatives, label: 'נציגים רשומים' },
-                { icon: '🟢', value: stats.onlineReps,         label: 'נציגים מחוברים', hi: true },
-                { icon: '👥', value: stats.totalCustomers,     label: 'לקוחות רשומים' },
-                { icon: '⏳', value: stats.waitingSessions,    label: 'ממתינים לנציג', hi: true },
-                { icon: '💬', value: stats.activeSessions,     label: 'שיחות פעילות' },
-              ].map(({ icon, value, label, hi }) => (
-                <div key={label} className={`ov-card ${hi ? 'ov-card-highlight' : ''}`}>
+                { icon: '🟢', value: stats.onlineReps, label: 'נציגים מחוברים' },
+                { icon: '👥', value: stats.totalCustomers, label: 'לקוחות רשומים' },
+                { icon: '⏳', value: stats.waitingSessions, label: 'ממתינים לנציג' },
+                { icon: '💬', value: stats.activeSessions, label: 'שיחות פעילות' },
+              ].map(({ icon, value, label, }) => (
+                <div key={label} className={`ov-card  ? 'ov-card-highlight' : ''}`}>
                   <div className="ov-icon">{icon}</div>
                   <div className="ov-value">{value}</div>
                   <div className="ov-label">{label}</div>
@@ -244,21 +244,21 @@ const AdminDashboard: React.FC = () => {
                   {sessions.length === 0
                     ? <tr><td colSpan={7} className="td-empty">אין שיחות במערכת</td></tr>
                     : sessions.map((s: ChatSession) => {
-                        const { label, cls } = sessionStatusLabel(s.statusChat);
-                        return (
-                          <tr key={s.sessionID}>
-                            <td className="td-id">{s.sessionID}</td>
-                            <td>{s.idCustomer}</td>
-                            <td>{s.idRepresentative ?? '—'}</td>
-                            <td>{s.idTopic}</td>
-                            <td><span className={`badge ${cls}`}>{label}</span></td>
-                            <td>{s.estimatedWaitTime.toFixed(1)}</td>
-                            <td className="td-date">
-                              {new Date(s.startTimestamp).toLocaleString('he-IL')}
-                            </td>
-                          </tr>
-                        );
-                      })
+                      const { label, cls } = sessionStatusLabel(s.statusChat);
+                      return (
+                        <tr key={s.sessionID}>
+                          <td className="td-id">{s.sessionID}</td>
+                          <td>{s.idCustomer}</td>
+                          <td>{s.idRepresentative ?? '—'}</td>
+                          <td>{s.idTopic}</td>
+                          <td><span className={`badge ${cls}`}>{label}</span></td>
+                          <td>{s.estimatedWaitTime.toFixed(1)}</td>
+                          <td className="td-date">
+                            {new Date(s.startTimestamp).toLocaleString('he-IL')}
+                          </td>
+                        </tr>
+                      );
+                    })
                   }
                 </tbody>
               </table>
@@ -294,13 +294,20 @@ const AdminDashboard: React.FC = () => {
               />
             </div>
             <div className="modal-field">
-              <label>עדיפות (1–5)</label>
+              <label>עדיפות (0-1)</label>
               <input
-                type="number" min={1} max={5} step={0.1}
+                type="range" min={0} max={1} step={0.2}
                 value={topicForm.priorityTopics}
                 onChange={e => setTopicForm({ ...topicForm, priorityTopics: Number(e.target.value) })}
               />
-              <span className="field-hint">1 = נמוכה, 5 = גבוהה</span>
+              <div className="range-labels" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                <span>0 (נמוכה)</span>
+                <span>0.2</span>
+                <span>0.4</span>
+                <span>0.6</span>
+                <span>0.8</span>
+                <span>1 (גבוהה)</span>
+              </div>
             </div>
 
             <div className="modal-actions">
