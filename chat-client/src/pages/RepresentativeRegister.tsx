@@ -1,17 +1,57 @@
+// RepresentativeRegister.tsx
 import React from 'react';
 import { useRepresentativeRegister } from '../hooks/useRepresentativeRegister';
 import AuthRegisterForm from '../component/AuthRegisterForm';
+import { Link } from 'react-router-dom';
+import '../styles/CustomerRegister.css';
 
 const RepresentativeRegister: React.FC = () => {
-  const { formData, setFormData, error, loading, handleSubmit } = useRepresentativeRegister();
+  const { formData, setFormData, error, loading, handleSubmit, registered } = useRepresentativeRegister();
+
+  // ✅ מסך אישור המתנה לאחר הרשמה מוצלחת
+  if (registered) {
+    return (
+      <div className="register-container" dir="rtl">
+        <div className="chat-card" style={{ textAlign: 'center', padding: '48px 32px' }}>
+          <div style={{ fontSize: '56px', marginBottom: '16px' }}>⏳</div>
+          <h2 style={{ color: '#0f172a', marginBottom: '12px', fontSize: '22px' }}>
+            הבקשה נשלחה בהצלחה!
+          </h2>
+          <p style={{ color: '#64748b', lineHeight: '1.7', marginBottom: '24px', fontSize: '15px' }}>
+            בקשת ההצטרפות שלך התקבלה ומחכה לאישור מנהל המערכת.
+            <br />
+            לאחר האישור תוכל להתחבר ולהתחיל לעבוד.
+          </p>
+          <div style={{
+            background: '#fef9c3', border: '1px solid #fde047',
+            borderRadius: '12px', padding: '14px 20px',
+            color: '#713f12', fontSize: '14px', marginBottom: '28px'
+          }}>
+            💡 שמור את פרטי ההתחברות שלך — תזדקק להם כאשר תאושר
+          </div>
+          <Link
+            to="/RepresentativeLogin"
+            style={{
+              display: 'inline-block', padding: '12px 32px',
+              background: '#1d4ed8', color: '#fff',
+              borderRadius: '10px', textDecoration: 'none',
+              fontWeight: '600', fontSize: '15px'
+            }}
+          >
+            עבור לדף הכניסה
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <AuthRegisterForm
-      title="יצירת חשבון נציג"
+      title="הצטרפות כנציג"
       fields={[
-        { name: 'nameRepr', label: 'שם מלא', type: 'text', value: formData.nameRepr, placeholder: 'ישראל ישראלי' },
-        { name: 'emailRepr', label: 'אימייל', type: 'email', value: formData.emailRepr, placeholder: 'example@mail.com' },
-        { name: 'passwordRepr', label: 'סיסמה', type: 'password', value: formData.passwordRepr, placeholder: 'לפחות 6 תווים' },
+        { name: 'nameRepr',     label: 'שם מלא',  type: 'text',     value: formData.nameRepr,     placeholder: 'ישראל ישראלי' },
+        { name: 'emailRepr',    label: 'אימייל',   type: 'email',    value: formData.emailRepr,    placeholder: 'example@mail.com' },
+        { name: 'passwordRepr', label: 'סיסמה',    type: 'password', value: formData.passwordRepr, placeholder: 'לפחות 6 תווים' },
       ]}
       onChange={(field, value) => setFormData({ ...formData, [field]: value })}
       onSubmit={handleSubmit}
@@ -25,10 +65,6 @@ const RepresentativeRegister: React.FC = () => {
 };
 
 export default RepresentativeRegister;
-
-
-
-
 
 
 

@@ -3,7 +3,7 @@ using Repository.Entities;
 using Repository.interfaces;
 namespace Repository.Repositories
 {
-    public class RepresentativeRepository : IRepository<Representative>
+    public class RepresentativeRepository : IRepresentativeRepository
     {
         private readonly IContext _context;
         public RepresentativeRepository(IContext context)
@@ -56,6 +56,11 @@ namespace Repository.Repositories
             representative.Role = item.Role;
             representative.LHours = item.LHours;
             await _context.SaveAsync();
+        }
+        public async Task<List<Representative>> GetAllPending()
+        {
+            return await _context.Representatives.Where(r => r.Role=="Waiting").Include(x => x.LHours).ToListAsync();
+
         }
     }
 }

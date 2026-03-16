@@ -1,14 +1,58 @@
-import { useAuthForm } from './useAuthForm.hook';
+// useRepresentativeLogin_hook.ts — מטפל ב-WAITING / DENIED
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { AppDispatch } from '../store/index';
+import { setCredentials } from '../store/slices/authSlice';
+import { setTokenRep } from '../utils/auth';
 import { loginRepresentative } from '../services/representative.service';
 import { RepresentativeLogin } from '../types/representative.types';
 
 export const useRepresentativeAuth = () => {
-  return useAuthForm<RepresentativeLogin>({
-    initialValues: { emailRepr: '', passwordRepr: '' },
-    userType: 'representative',
-    navigateTo: '/representative-dashboard',
-    onSubmit: loginRepresentative,
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState<RepresentativeLogin>({
+    emailRepr: '',
+    passwordRepr: '',
   });
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const response = await loginRepresentative(formData);
+
+      if (response.token) {
+        setTokenRep(response.token);
+        localStorage.setItem('representativeUser', JSON.stringify(response));
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+
+      dispatch(setCredentials({ user: response, userType: 'representative' }));
+      navigate('/representative-dashboard');
+
+    } catch (err: any) {
+      // ✅ השרת מחזיר 403 עם { code, message } לנציגים שלא אושרו
+      const data = err.response?.data;
+      if (err.response?.status === 403 && data?.code === 'WAITING') {
+        setError(data.message);
+      } else if (err.response?.status === 403 && data?.code === 'DENIED') {
+        setError(data.message);
+      } else {
+        setError('אימייל או סיסמה שגויים. נסה שוב.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { formData, setFormData, error, loading, handleSubmit };
 };
 
 // import { useState } from 'react';

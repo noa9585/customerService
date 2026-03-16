@@ -21,6 +21,7 @@ namespace WebApplication1.Controllers
         {
             return Ok(await _representativeService.GetAll());
         }
+
         // שליפת נציג לפי ID
         [Authorize(Roles = "Admin,Representative,Customer")]
         [HttpGet("{id}")]
@@ -94,15 +95,32 @@ namespace WebApplication1.Controllers
         public async Task<ActionResult<RepresentativeDto>> Login([FromBody] RepresentativeLoginDto loginDto)
         {
             if (loginDto == null) return BadRequest("נתוני התחברות חסרים");
-
-            var result = await _representativeService.Login(loginDto);
-
-            if (result == null)
+            try
             {
-                return Unauthorized("אימייל או סיסמה שגויים");
+                var result = await _representativeService.Login(loginDto);
+                if (result == null) return Unauthorized("אימייל או סיסמה שגויים");
+                return Ok(result);
             }
-
-            return Ok(result);
+            catch (InvalidOperationException ex) when (ex.Message == "WAITING")
+            {
+                return StatusCode(403, new
+                {
+                    code = "WAITING",
+                    message = "בקשת ההצטרפות שלך ממתינה לאישור מנהל. נודיע לך בהקדם."
+                });
+            }
+            catch (InvalidOperationException ex) when (ex.Message == "DENIED")
+            {
+                return StatusCode(403, new
+                {
+                    code = "DENIED",
+                    message = "בקשת ההצטרפות שלך נדחתה. אנא פנה למנהל המערכת."
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [AllowAnonymous]
         [HttpPost("register")]
@@ -122,7 +140,6 @@ namespace WebApplication1.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
         [Authorize(Roles = "Admin,Representative")]
         [HttpPost("logout/{id}")]
         public async Task<IActionResult> Logout(int id)
@@ -165,6 +182,36 @@ namespace WebApplication1.Controllers
 
             await _representativeService.ReturnFromBreak(id);
             return Ok(new { message = "חזרת מהפסקה, הנך זמין לקבלת שיחות" });
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("waiting")]
+        public async Task<ActionResult<IEnumerable<RepresentativeChatDto>>> GetWaiting()
+        {
+            return Ok(await _representativeService.GetAllPending());
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPut("approve/{id}")]
+        public async Task<IActionResult> Approve(int id)
+        {
+            try
+            {
+                await _representativeService.ApproveRepresentative(id);
+                return Ok(new { message = "הנציג אושר בהצלחה" });
+            }
+            catch (Exception ex) { return BadRequest(new { message = ex.Message }); }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("deny/{id}")]
+        public async Task<IActionResult> Deny(int id)
+        {
+            try
+            {
+                await _representativeService.DenyRepresentative(id);
+                return Ok(new { message = "הנציג נדחה" });
+            }
+            catch (Exception ex) { return BadRequest(new { message = ex.Message }); }
         }
     }
 }

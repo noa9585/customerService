@@ -17,12 +17,12 @@ namespace Service1.Services
     public class RepresentativeService : IRepresentativeService
     {
 
-        private readonly IRepository<Representative> _repository;
+        private readonly IRepresentativeRepository _repository;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
 
         // הזרקת ה-Repository דרך הבנאי
-        public RepresentativeService(IRepository<Representative> repository, ITokenService tokenService, IMapper mapper)
+        public RepresentativeService(IRepresentativeRepository repository, ITokenService tokenService, IMapper mapper)
         {
             _repository = repository;
             _tokenService = tokenService;
@@ -36,7 +36,13 @@ namespace Service1.Services
             return _mapper.Map<List<RepresentativeDto>>(representatives);
 
         }
+        public async Task<List<RepresentativeDto>> GetAllPending()
+        {
+            var representatives = await _repository.GetAllPending();
+            // מיפוי מרשימת ישויות לרשימת DTO
+            return _mapper.Map<List<RepresentativeDto>>(representatives);
 
+        }
         public async Task<RepresentativeDto> GetById(int id)
         {
             var r = await _repository.GetById(id);
@@ -100,7 +106,12 @@ namespace Service1.Services
         {
             var representative = (await _repository.GetAll())
                 .FirstOrDefault(r => r.EmailRepr == loginDto.EmailRepr && r.PasswordRepr == loginDto.PasswordRepr);
-           if (representative == null) return null;
+            if (representative == null) return null;
+            if (representative.Role == "Waiting")
+                throw new InvalidOperationException("WAITING");
+
+            if (representative.Role == "Denied")
+                throw new InvalidOperationException("DENIED");
             var today = DateOnly.FromDateTime(DateTime.Now);
             var currentTime = TimeOnly.FromDateTime(DateTime.Now);
 
@@ -140,7 +151,7 @@ namespace Service1.Services
                 IsBusy = false,
                 ScoreForMonth = 0,
                 LHours = new List<WorkTime>(),
-                Role = "Representative",
+                Role = "Waiting",
                 // הגדרת שעות עבודה ראשוניות (ניתן לעדכון בהמשך ע"י מנהל)
                 entryHourRepr = new TimeOnly(8, 0),
                 exitHourRepr = new TimeOnly(16, 0)
@@ -151,7 +162,7 @@ namespace Service1.Services
 
             // 4. החזרת DTO נקי (ללא סיסמה)
             var dto = _mapper.Map<RepresentativeDto>(savedRep);
-            dto.Token = _tokenService.GenerateTokenForRepresentative(savedRep);
+            //dto.Token = _tokenService.GenerateTokenForRepresentative(savedRep);
             return dto;
         }
         public async Task Logout(int id)
@@ -199,5 +210,23 @@ namespace Service1.Services
         {
             return (await _repository.GetAll()).Any(r => r.IsOnline && r.StatusRepr);
         }
+        public async Task ApproveRepresentative(int id)
+        {
+            var representative = await _repository.GetById(id);
+            if (representative == null) throw new Exception("נציג לא נמצא");
+            if (representative.Role != "Waiting") throw new InvalidOperationException("הנציג אינו ממתין לאישור");
+            representative.Role = "Representative";
+            await _repository.UpdateItem(id, representative);
+        }
+        public async Task DenyRepresentative(int id)
+        {
+            var representative = await _repository.GetById(id);
+            if (representative == null) throw new Exception("נציג לא נמצא");
+            if (representative.Role != "Waiting") throw new InvalidOperationException("הנציג אינו ממתין לאישור");
+            representative.Role = "Denied";
+            representative.StatusRepr = false;
+            await _repository.UpdateItem(id, representative);
+        }
+
     }
 }

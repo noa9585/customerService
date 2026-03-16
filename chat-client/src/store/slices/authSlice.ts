@@ -4,7 +4,7 @@ import { Representative } from '../../types/representative.types';
 
 interface AuthState {
     user: CustomerChat | Representative | null;
-    userType: 'customer' | 'representative' | 'admin' | null;
+    userType: 'customer' | 'representative' | 'admin' |'Waiting' |null;
     isAuthenticated: boolean;
 }
 
@@ -21,7 +21,7 @@ const authSlice = createSlice({
         // פעולה לעדכון המשתמש המחובר (לוגין)
         setCredentials: (
             state,
-            action: PayloadAction<{ user: CustomerChat | Representative; userType: 'customer' | 'representative' | 'admin' }>
+            action: PayloadAction<{ user: CustomerChat | Representative; userType: 'customer' | 'representative' | 'admin' |'Waiting'}>
         ) => {
             const { user, userType } = action.payload;
             state.user = user;

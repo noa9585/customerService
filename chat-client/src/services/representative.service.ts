@@ -113,3 +113,33 @@ export const returnFromBreak = async (id: number): Promise<{ message: string }> 
         throw error;
     }
 };
+
+export const getWaitingRepresentatives = async (): Promise<RepresentativeChat[]> => {
+    try {
+        const response = await axios.get(`${url}/waiting`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching representatives waiting:", error);
+        throw error;
+    }
+};
+
+export const approveRepresentative  = async (id: number): Promise<{ message: string }> => {
+    try {
+        const response = await axios.put(`${url}/approve/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error approve representatives ", error);
+        throw error;
+    }
+};
+
+export const denyRepresentative   = async (id: number): Promise<{ message: string }> => {
+    try {
+        const response = await axios.put(`${url}/deny/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error deny representatives ", error);
+        throw error;
+    }
+};

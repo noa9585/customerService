@@ -5,7 +5,7 @@ import { AppDispatch } from '../store/index';
 import { setCredentials } from '../store/slices/authSlice';
 import { setToken, setTokenRep } from '../utils/auth';
 
-type UserType = 'customer' | 'representative';
+type UserType = 'customer' | 'representative'|'Waiting';
 
 interface UseAuthFormOptions<T> {
   initialValues: T;

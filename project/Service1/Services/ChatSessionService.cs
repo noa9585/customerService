@@ -16,7 +16,7 @@ namespace Service1.Services
         private readonly IChatSessionRepository _repository;
         private readonly IRepository<Topic> _topicRepository;
         private readonly IRepository<Customer> _customerRepository;
-        private readonly IRepository<Representative> _representativeRepository;
+        private readonly IRepresentativeRepository _representativeRepository;
         private readonly IChatQueueManager _queueManager;
         private readonly IMapper _mapper;
         private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
@@ -27,7 +27,7 @@ namespace Service1.Services
                IRepository<Topic> topicRepository,
                IChatQueueManager queueManager,
                IMapper mapper, // הוספה לבנאי
-               IRepository<Representative> representativeRepository)
+               IRepresentativeRepository representativeRepository)
         {
             _repository = repository;
             _customerRepository = customerRepository;

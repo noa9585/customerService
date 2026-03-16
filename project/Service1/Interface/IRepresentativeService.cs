@@ -9,6 +9,7 @@ namespace Service1.Interface
     public interface IRepresentativeService
     {
         Task<List<RepresentativeDto>> GetAll();
+        Task<List<RepresentativeDto>> GetAllPending();
         Task<RepresentativeDto> GetById(int id);
         Task<RepresentativeUpdateDto> GetByIdToUpdate(int id);
         Task<RepresentativeDto> AddRepresentative(string name, string email, string passward);
@@ -20,5 +21,7 @@ namespace Service1.Interface
         Task ToggleBreak(int id);
         Task ReturnFromBreak(int id);
         Task<bool> HasOnlineRepresentatives();
+        Task ApproveRepresentative(int id);
+        Task DenyRepresentative(int id);
     }
 }

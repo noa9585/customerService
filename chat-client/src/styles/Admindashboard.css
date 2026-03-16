@@ -1,4 +1,4 @@
-/* AdminDashboard.css — לוח ניהול מלא */
+/* AdminDashboard.css */
 
 .admin-page {
   display: flex;
@@ -18,9 +18,7 @@
   padding: 24px 0;
   flex-shrink: 0;
   position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; right: 0; bottom: 0;
   z-index: 50;
 }
 
@@ -57,10 +55,24 @@
   text-align: right;
   width: 100%;
   transition: background 0.15s, color 0.15s;
+  position: relative;
 }
-.sidebar-btn:hover { background: #1e293b; color: #e2e8f0; }
+.sidebar-btn:hover { background: #1e293b; color: #e2e8f0; transform: none; box-shadow: none; }
 .sidebar-btn.active { background: #1d4ed8; color: #ffffff; }
 .sidebar-btn-icon { font-size: 16px; }
+
+/* ── Badge על כפתור ה-sidebar ────────────────────────────────────────────── */
+.sidebar-badge {
+  margin-right: auto;
+  background: #ef4444;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 20px;
+  min-width: 20px;
+  text-align: center;
+}
 
 .sidebar-logout {
   margin: 0 12px 12px;
@@ -109,7 +121,6 @@
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
 .section-header {
   display: flex;
   align-items: center;
@@ -140,6 +151,94 @@
 .ov-value { font-size: 36px; font-weight: 800; color: #0f172a; }
 .ov-label { font-size: 13px; color: #64748b; margin-top: 4px; }
 
+/* ── Waiting Representatives Cards ──────────────────────────────────────── */
+.waiting-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.waiting-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-right: 4px solid #f59e0b;
+  transition: box-shadow 0.15s;
+}
+.waiting-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+
+.waiting-card-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.waiting-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.waiting-card-name { font-size: 16px; font-weight: 700; color: #0f172a; }
+.waiting-card-email { font-size: 13px; color: #64748b; }
+
+.waiting-card-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.btn-approve {
+  padding: 9px 20px;
+  background: #dcfce7;
+  color: #166534;
+  border: 1.5px solid #86efac;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+  width: auto;
+}
+.btn-approve:hover:not(:disabled) { background: #bbf7d0; transform: none; box-shadow: none; }
+.btn-approve:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-deny {
+  padding: 9px 20px;
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1.5px solid #fca5a5;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+  width: auto;
+}
+.btn-deny:hover:not(:disabled) { background: #fee2e2; transform: none; box-shadow: none; }
+.btn-deny:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #64748b;
+}
+.empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 16px; margin: 0; }
+
 /* ── Table ───────────────────────────────────────────────────────────────── */
 .admin-table {
   width: 100%; border-collapse: collapse;
@@ -164,7 +263,7 @@
 .td-empty { text-align: center !important; color: #94a3b8; padding: 40px !important; }
 .td-actions { display: flex; gap: 8px; align-items: center; }
 
-/* ── Buttons ─────────────────────────────────────────────────────────────── */
+/* ── Table buttons ───────────────────────────────────────────────────────── */
 .btn-add {
   padding: 10px 20px; background: #1d4ed8; color: #fff;
   border: none; border-radius: 10px; font-size: 14px; font-weight: 600;
@@ -264,7 +363,9 @@
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .admin-sidebar { width: 60px; }
-  .sidebar-logo-text, .sidebar-btn span:last-child { display: none; }
+  .sidebar-logo-text, .sidebar-btn span:not(.sidebar-btn-icon):not(.sidebar-badge) { display: none; }
   .admin-main { margin-right: 60px; padding: 20px; }
   .overview-grid { grid-template-columns: repeat(2, 1fr); }
+  .waiting-card { flex-wrap: wrap; }
+  .waiting-card-actions { width: 100%; justify-content: flex-end; }
 }
