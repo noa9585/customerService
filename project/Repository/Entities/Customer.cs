@@ -14,13 +14,13 @@ namespace Repository.Entities
         [Required]
         [MaxLength(100)]
         public string NameCust { get; set; }
-
         [Required]
         [MaxLength(100)]
+        [EmailAddress]
         public string EmailCust { get; set; }
-
         [Required]
         [MaxLength(50)]
+        [MinLength(6)]
         public string PasswordCust { get; set; }
         public bool IsOnline { get; set; }
         public bool StatusCust { get; set; }

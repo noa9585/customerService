@@ -14,9 +14,11 @@ namespace Service1.Dto.CustomerDto
         public string NameCust { get; set; }
         [Required]
         [MaxLength(100)]
+        [EmailAddress]
         public string EmailCust { get; set; }
         [Required]
         [MaxLength(50)]
+        [MinLength(6)]
         public string PasswordCust { get; set; }
        // public string? Role { get; set; }
 

@@ -57,18 +57,18 @@ namespace Repository.Repositories
 
         public async Task UpdateItem(int id, ChatSession item)
         {
-            var chses = await GetById(id);
-            chses.SessionID = item.SessionID;
-            chses.Messages = item.Messages;
-            chses.StartTimestamp = item.StartTimestamp;
-            chses.ServiceStartTimestamp = item.ServiceStartTimestamp;
-            chses.EndTimestamp = item.EndTimestamp;
-            chses.status = item.status;
-            chses.statusChat = item.statusChat;
-            chses.IDCustomer = item.IDCustomer;
-            chses.IDRepresentative = item.IDRepresentative;
-            chses.IDTopic = item.IDTopic;
-            chses.EstimatedWaitTime = item.EstimatedWaitTime;
+            var existingSession = await GetById(id);
+            existingSession.SessionID = item.SessionID;
+            existingSession.Messages = item.Messages;
+            existingSession.StartTimestamp = item.StartTimestamp;
+            existingSession.ServiceStartTimestamp = item.ServiceStartTimestamp;
+            existingSession.EndTimestamp = item.EndTimestamp;
+            existingSession.status = item.status;
+            existingSession.statusChat = item.statusChat;
+            existingSession.IDCustomer = item.IDCustomer;
+            existingSession.IDRepresentative = item.IDRepresentative;
+            existingSession.IDTopic = item.IDTopic;
+            existingSession.EstimatedWaitTime = item.EstimatedWaitTime;
             await _context.SaveAsync();
         }
 
