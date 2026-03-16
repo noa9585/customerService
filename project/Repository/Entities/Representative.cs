@@ -20,27 +20,30 @@ namespace Repository.Entities
             this.WorkDate = WorkDate;
             this.entryHourRepr = entryHourRepr;
         }
-        public void SetExitHourRepr(TimeOnly exitHourRepr) {  this.exitHourRepr = exitHourRepr; }
+        public void SetExitHourRepr(TimeOnly exitHourRepr) { this.exitHourRepr = exitHourRepr; }
     }
     public class Representative
     {
         [Key]
         public int IDRepresentative { get; set; }
+        [Required]
+        [MaxLength(100)]
         public string NameRepr { get; set; }
+        [Required]
+        [MaxLength(100)]
         public string EmailRepr { get; set; }
+        [Required]
+        [MaxLength(50)]
         public string PasswordRepr { get; set; }
         public List<WorkTime> LHours { get; set; }
         public int ScoreForMonth { get; set; }
         public TimeOnly entryHourRepr { get; set; }
         public TimeOnly exitHourRepr { get; set; }
         public bool StatusRepr { get; set; }
-        // האם הנציג ביצע Login למערכת כרגע?
         public bool IsOnline { get; set; }
-
-        // האם הנציג נמצא בשיחה פעילה כרגע?
         public bool IsBusy { get; set; }
-        public string? Role { get; set; }
-
-
+        [Required]
+        [MaxLength(50)]
+        public string Role { get; set; }
     }
 }

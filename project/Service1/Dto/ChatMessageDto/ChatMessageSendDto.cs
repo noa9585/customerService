@@ -11,6 +11,8 @@ namespace Service1.Dto.ChatMessageDto
 {
     public class ChatMessageSendDto
     {
+        [Required]
+        [MaxLength(500)]
         public string Message { get; set; } // תוכן ההודעה
         public int IDSession { get; set; }//קישור לשיחה
         public DateTime Timestamp { get; set; } // תאריך ושעת שליחת ההודעה

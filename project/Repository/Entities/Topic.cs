@@ -11,6 +11,8 @@ namespace Repository.Entities
     {
         [Key]
         public int IDTopic { get; set; }
+        [Required]
+        [MaxLength(200)]
         public string NameTopic { get; set; }
         public double AverageTreatTime { get; set; }
         public double priorityTopics { get; set; }

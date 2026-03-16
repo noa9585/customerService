@@ -15,12 +15,14 @@ namespace WebApplication1.Controllers
             _representativeService = representativeService;
         }
         // שליפת כל הנציגים
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RepresentativeChatDto>>> GetAll()
         {
             return Ok(await _representativeService.GetAll());
         }
         // שליפת נציג לפי ID
+        [Authorize(Roles = "Admin,Representative,Customer")]
         [HttpGet("{id}")]
         public async Task<ActionResult<RepresentativeChatDto>> GetById(int id)
         {
@@ -32,7 +34,7 @@ namespace WebApplication1.Controllers
             return Ok(representative);
         }
 
-
+        [Authorize(Roles = "Representative")]
         [HttpGet("updateByID/{id}")]
         public async Task<ActionResult<RepresentativeChatDto>> GetByIdToUpdate(int id)
         {
@@ -44,21 +46,24 @@ namespace WebApplication1.Controllers
             return Ok(representative);
         }
         // הוספת נציג חדש
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<RepresentativeDto>> Add([FromBody] RepresentativeRegisterDto representativeDto)
         {
             if (representativeDto == null)
-            {
                 return BadRequest();
-            }
-
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             var newrepresentative = await _representativeService.AddRepresentative(representativeDto.NameRepr, representativeDto.EmailRepr, representativeDto.PasswordRepr);
             return CreatedAtAction(nameof(GetById), new { id = newrepresentative.IDRepresentative }, newrepresentative);
         }
         // עדכון נציג קיים
+        [Authorize(Roles = "Representative")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] RepresentativeRegisterDto representativeDto)
         {
+            if (representativeDto == null) return BadRequest();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var existing = await _representativeService.GetById(id);
             if (existing == null)
             {
@@ -70,6 +75,7 @@ namespace WebApplication1.Controllers
         }
 
         // מחיקת נציג
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -103,7 +109,8 @@ namespace WebApplication1.Controllers
         public async Task<ActionResult<RepresentativeDto>> Register([FromBody] RepresentativeRegisterDto regDto)
         {
             if (regDto == null) return BadRequest("נתונים חסרים");
-
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             try
             {
                 var result = await _representativeService.Register(regDto);
@@ -115,6 +122,8 @@ namespace WebApplication1.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize(Roles = "Admin,Representative")]
         [HttpPost("logout/{id}")]
         public async Task<IActionResult> Logout(int id)
         {
@@ -127,6 +136,10 @@ namespace WebApplication1.Controllers
             await _representativeService.Logout(id);
             return Ok(new { message = "התנתקת בהצלחה" });
         }
+
+
+        //  יציאה להפסקה
+        [Authorize(Roles = "Representative")]
         [HttpPut("ToggleBreak/{id}")]
         public async Task<IActionResult> ToggleBreak(int id)
         {
@@ -139,6 +152,8 @@ namespace WebApplication1.Controllers
             await _representativeService.ToggleBreak(id);
             return Ok(new { message = "יצאת להפסקה בהצלחה" });
         }
+        // חזרה מהפסקה
+        [Authorize(Roles = "Representative")]
         [HttpPut("return-from-break/{id}")]
         public async Task<IActionResult> ReturnFromBreak(int id)
         {

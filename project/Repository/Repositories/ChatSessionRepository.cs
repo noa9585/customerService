@@ -34,7 +34,7 @@ namespace Repository.Repositories
             {
                 _context.ChatSessions.Remove(item);
             }
-            _context.SaveAsync();
+            await _context.SaveAsync();
         }
 
         public async Task<List<ChatSession>> GetAll()
