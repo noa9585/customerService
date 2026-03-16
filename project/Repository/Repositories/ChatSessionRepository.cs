@@ -32,27 +32,28 @@ namespace Repository.Repositories
             var item = await GetById(id);
             if (item != null)
             {
-                _context.ChatSessions.Remove(item);
+                item.status = false;
+                //_context.ChatSessions.Remove(item);
             }
             await _context.SaveAsync();
         }
 
         public async Task<List<ChatSession>> GetAll()
         {
-            return await _context.ChatSessions.ToListAsync();
+            return await _context.ChatSessions.Where(s => s.status).ToListAsync();
         }
         public async Task<List<ChatSession>> GetAllWaiting()
         {
-            return await _context.ChatSessions.Where(x => x.statusChat == SessionStatus.Waiting).OrderBy(x => x.EstimatedWaitTime).ToListAsync();
+            return await _context.ChatSessions.Where(x => x.statusChat == SessionStatus.Waiting && x.status).OrderBy(x => x.EstimatedWaitTime).ToListAsync();
         }
         public async Task<List<ChatSession>> GetAllActive()
         {
-            return await _context.ChatSessions.Where(x => x.statusChat == SessionStatus.Active).OrderBy(x => x.SessionID).ToListAsync();
+            return await _context.ChatSessions.Where(x => x.statusChat == SessionStatus.Active && x.status).OrderBy(x => x.SessionID).ToListAsync();
         }
 
         public async Task<ChatSession> GetById(int id)
         {
-            return await _context.ChatSessions.FirstOrDefaultAsync(x => x.SessionID == id);
+            return await _context.ChatSessions.FirstOrDefaultAsync(x => x.SessionID == id && x.status);
         }
 
         public async Task UpdateItem(int id, ChatSession item)
@@ -75,7 +76,7 @@ namespace Repository.Repositories
         public async Task<ChatSession> GetNextWaitingSession()
         {
             return await _context.ChatSessions
-                .Where(cs => cs.statusChat == SessionStatus.Waiting)
+                .Where(cs => cs.statusChat == SessionStatus.Waiting && cs.status)
                 .OrderBy(cs => cs.EstimatedWaitTime)
                 .FirstOrDefaultAsync();
         }

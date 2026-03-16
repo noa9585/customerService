@@ -29,10 +29,10 @@ namespace Repository.Repositories
             var item = await GetById(id);
             if (item != null)
             {
-                _context.Customers.Remove(item);
+                item.StatusCust = false;
+                // _context.Customers.Remove(item);
                 await _context.SaveAsync();
             }
-
         }
         public async Task<List<Customer>> GetAll()
         {
@@ -40,7 +40,7 @@ namespace Repository.Repositories
         }
         public async Task<Customer> GetById(int id)
         {
-            return await _context.Customers.FirstOrDefaultAsync(x => x.IDCustomer == id);
+            return await _context.Customers.FirstOrDefaultAsync(x => x.IDCustomer == id && x.StatusCust);
         }
         public async Task UpdateItem(int id, Customer item)
         {

@@ -16,11 +16,11 @@ namespace Repository.Repositories
         {
             this._context = context;
         }
+
         public async Task<ChatMessage> AddItem(ChatMessage item)
 
         {
             await _context.ChatMessages.AddAsync(item);
-
             await _context.SaveAsync();
             return item;
         }
@@ -30,20 +30,20 @@ namespace Repository.Repositories
             var item = await GetById(id);
             if (item != null)
             {
-                _context.ChatMessages.Remove(item);
+                item.StatusMessage = false;
+                //_context.ChatMessages.Remove(item);
             }
             await _context.SaveAsync();
         }
 
-
         public async Task<List<ChatMessage>> GetAll()
         {
-            return await _context.ChatMessages.ToListAsync();
+            return await _context.ChatMessages.Where(x => x.StatusMessage == true).ToListAsync();
         }
 
         public async Task<ChatMessage> GetById(int id)
         {
-            return await _context.ChatMessages.FirstOrDefaultAsync(x => x.MessageID == id);
+            return await _context.ChatMessages.FirstOrDefaultAsync(x => x.MessageID == id && x.StatusMessage == true);
         }
 
         public async Task UpdateItem(int id, ChatMessage item)
@@ -56,13 +56,12 @@ namespace Repository.Repositories
             existingMessage.IDSend = item.IDSend;
             existingMessage.MessageType = item.MessageType;
             existingMessage.StatusMessage = item.StatusMessage;
-
-           await _context.SaveAsync();
+            await _context.SaveAsync();
         }
         public async Task<List<ChatMessage>> GetMessagesBySessionId(int sessionId)
         {
             return await _context.ChatMessages
-                .Where(m => m.IDSession == sessionId)
+                .Where(m => m.IDSession == sessionId && m.StatusMessage == true)
                 .OrderBy(m => m.Timestamp)
                 .ToListAsync();
         }
