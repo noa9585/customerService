@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useWaitingRoom } from '../hooks/useWaitingRoom.hook';
-import WaitingRoomSection from '../sections/WaitingRoom/WaitingRoom.Section';
+import WaitingRoomStyled from '../component/WaitingRoomStyled';
 import { RootState } from '../store/index';
 import { CustomerChat } from '../types/customer.types';
 
@@ -12,14 +12,13 @@ const WaitingRoomPage: React.FC = () => {
 
   const { session, elapsed, waitTime, onCancel } = useWaitingRoom(sessionId, initialWait);
 
-  // שם לקוח מה-Store
   const { user } = useSelector((state: RootState) => state.auth);
   const currentUser = user as CustomerChat | null;
   const customerName = currentUser?.nameCust || 'לקוח יקר';
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc' }}>
-      <WaitingRoomSection
+      <WaitingRoomStyled
         session={session}
         customerName={customerName}
         elapsed={elapsed}
@@ -31,6 +30,9 @@ const WaitingRoomPage: React.FC = () => {
 };
 
 export default WaitingRoomPage;
+
+
+
 
 // import React, { useEffect, useState } from 'react';
 // import { useLocation, useNavigate } from 'react-router-dom';

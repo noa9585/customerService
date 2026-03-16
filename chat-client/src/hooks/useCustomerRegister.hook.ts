@@ -1,54 +1,15 @@
-// useCustomerRegister.hook.ts — קצר, משתמש ב-Redux
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { AppDispatch } from '../store/index';
-import { setCredentials } from '../store/slices/authSlice';
+import { useAuthForm } from './useAuthForm.hook';
 import { registerCustomer } from '../services/customer.service';
 import { CustomerRegister as CustomerRegisterType } from '../types/customer.types';
-import { setToken } from '../utils/auth';
 
 export const useCustomerRegister = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
-
-  const [formData, setFormData] = useState<CustomerRegisterType>({
-    nameCust: '',
-    emailCust: '',
-    passwordCust: '',
+  return useAuthForm<CustomerRegisterType>({
+    initialValues: { nameCust: '', emailCust: '', passwordCust: '' },
+    userType: 'customer',
+    navigateTo: '/contact-us',
+    onSubmit: registerCustomer,
   });
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    try {
-      const newUser = await registerCustomer(formData);
-
-      if (newUser.token) {
-        setToken(newUser.token);
-        localStorage.setItem('user', JSON.stringify(newUser));
-        localStorage.removeItem('representativeToken');
-        localStorage.removeItem('representativeUser');
-      }
-
-      // שמירה ב-Redux Store
-      dispatch(setCredentials({ user: newUser, userType: 'customer' }));
-
-      navigate('/contact-us');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'אירעה שגיאה בהרשמה.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return { formData, setFormData, error, loading, handleSubmit };
 };
-
-
 
 
 

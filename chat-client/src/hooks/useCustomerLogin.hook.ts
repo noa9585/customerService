@@ -1,54 +1,15 @@
-// useCustomerLogin.hook.ts — קצר, משתמש ב-Redux
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { AppDispatch } from '../store/index';
-import { setCredentials } from '../store/slices/authSlice';
+import { useAuthForm } from './useAuthForm.hook';
 import { loginCustomer } from '../services/customer.service';
 import { CustomerLogin as CustomerLoginType } from '../types/customer.types';
-import { setToken } from '../utils/auth';
 
 export const useCustomerAuth = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
-
-  const [formData, setFormData] = useState<CustomerLoginType>({
-    emailCust: '',
-    passwordCust: '',
+  return useAuthForm<CustomerLoginType>({
+    initialValues: { emailCust: '', passwordCust: '' },
+    userType: 'customer',
+    navigateTo: '/contact-us',
+    onSubmit: loginCustomer,
   });
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    try {
-      const response = await loginCustomer(formData);
-
-      if (response.token) {
-        setToken(response.token);
-        localStorage.setItem('user', JSON.stringify(response));
-        // ניקוי טוקן נציג קודם אם קיים
-        localStorage.removeItem('representativeToken');
-        localStorage.removeItem('representativeUser');
-      }
-
-      // שמירה ב-Redux Store
-      dispatch(setCredentials({ user: response, userType: 'customer' }));
-
-      navigate('/contact-us');
-    } catch {
-      setError('אימייל או סיסמה שגויים. נסה שוב.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return { formData, setFormData, error, loading, handleSubmit };
 };
-
-
 
 // import { useState } from 'react';
 // import { loginCustomer } from '../services/customer.service';

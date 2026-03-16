@@ -1,28 +1,28 @@
-import React from 'react';
-import WaitingRoomStyled from '../../component/WaitingRoomStyled';
-import { ChatSession } from '../../types/chatSession.types';
+// import React from 'react';
+// import WaitingRoomStyled from '../../component/WaitingRoomStyled';
+// import { ChatSession } from '../../types/chatSession.types';
 
-interface Props {
-  session: ChatSession | null;
-  customerName: string;
-  elapsed: number;
-  waitTime: number | string;
-  onCancel: () => void;
-}
+// interface Props {
+//   session: ChatSession | null;
+//   customerName: string;
+//   elapsed: number;
+//   waitTime: number | string;
+//   onCancel: () => void;
+// }
 
-const WaitingRoomSection: React.FC<Props> = ({ session, customerName, elapsed, waitTime, onCancel }) => {
-  return (
-    <WaitingRoomStyled 
-      session={session} 
-      customerName={customerName}
-      elapsed={elapsed} 
-      waitTime={waitTime} 
-      onCancel={onCancel}
-    />
-  );
-};
+// const WaitingRoomSection: React.FC<Props> = ({ session, customerName, elapsed, waitTime, onCancel }) => {
+//   return (
+//     <WaitingRoomStyled 
+//       session={session} 
+//       customerName={customerName}
+//       elapsed={elapsed} 
+//       waitTime={waitTime} 
+//       onCancel={onCancel}
+//     />
+//   );
+// };
 
-export default WaitingRoomSection;
+// export default WaitingRoomSection;
 // import React from 'react';
 // import '../../styles/WaitingRoomStyled.css';
 

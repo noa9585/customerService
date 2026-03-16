@@ -16,7 +16,6 @@ import ContactUs from '../pages/ContactUs';
 
 // Customer
 import NewChat from '../pages/NewChat';
-import ChatView from '../pages/ChatView';
 import WaitingRoomPage from '../pages/WaitingRoomPage';
 import CustomerChatPage from '../pages/CustomerChatPage';
 import UpdateCustomer from '../pages/UpdateCustomer';
@@ -52,9 +51,7 @@ export const AppRouter = () => {
       <Route path="/waiting-room" element={
         <AuthGuard userType="customer"><WaitingRoomPage /></AuthGuard>
       } />
-      <Route path="/chat" element={
-        <AuthGuard userType="customer"><ChatView /></AuthGuard>
-      } />
+      
       <Route path="/customer-chat" element={
         <AuthGuard userType="customer"><CustomerChatPage /></AuthGuard>
       } />

@@ -1,56 +1,15 @@
-// useRepresentativeRegister.hook.ts — קצר, משתמש ב-Redux
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { AppDispatch } from '../store/index';
-import { setCredentials } from '../store/slices/authSlice';
+import { useAuthForm } from './useAuthForm.hook';
 import { registerRepresentative } from '../services/representative.service';
 import { RepresentativeRegister as RepresentativeRegisterType } from '../types/representative.types';
-import { setTokenRep } from '../utils/auth';
 
 export const useRepresentativeRegister = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
-
-  const [formData, setFormData] = useState<RepresentativeRegisterType>({
-    nameRepr: '',
-    emailRepr: '',
-    passwordRepr: '',
+  return useAuthForm<RepresentativeRegisterType>({
+    initialValues: { nameRepr: '', emailRepr: '', passwordRepr: '' },
+    userType: 'representative',
+    navigateTo: '/representative-dashboard',
+    onSubmit: registerRepresentative,
   });
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    try {
-      const newUser = await registerRepresentative(formData);
-
-      if (newUser.token) {
-        setTokenRep(newUser.token);
-        localStorage.setItem('representativeUser', JSON.stringify(newUser));
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-      }
-
-      // שמירה ב-Redux Store
-      dispatch(setCredentials({ user: newUser, userType: 'representative' }));
-
-      navigate('/representative-dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'אירעה שגיאה בהרשמה.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return { formData, setFormData, error, loading, handleSubmit };
 };
-
-
-
-
 
 
 

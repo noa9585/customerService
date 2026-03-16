@@ -1,54 +1,15 @@
-// useRepresentativeLogin.hook.ts — קצר, משתמש ב-Redux
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { AppDispatch } from '../store/index';
-import { setCredentials } from '../store/slices/authSlice';
+import { useAuthForm } from './useAuthForm.hook';
 import { loginRepresentative } from '../services/representative.service';
 import { RepresentativeLogin } from '../types/representative.types';
-import { setTokenRep } from '../utils/auth';
 
 export const useRepresentativeAuth = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
-
-  const [formData, setFormData] = useState<RepresentativeLogin>({
-    emailRepr: '',
-    passwordRepr: '',
+  return useAuthForm<RepresentativeLogin>({
+    initialValues: { emailRepr: '', passwordRepr: '' },
+    userType: 'representative',
+    navigateTo: '/representative-dashboard',
+    onSubmit: loginRepresentative,
   });
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    try {
-      const user = await loginRepresentative(formData);
-
-      if (user.token) {
-        setTokenRep(user.token);
-        localStorage.setItem('representativeUser', JSON.stringify(user));
-        // ניקוי טוקן לקוח קודם אם קיים
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-      }
-
-      // שמירה ב-Redux Store
-      dispatch(setCredentials({ user, userType: 'representative' }));
-
-      navigate('/representative-dashboard');
-    } catch {
-      setError('אימייל או סיסמה שגויים. נסה שוב.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return { formData, setFormData, error, loading, handleSubmit };
 };
-
-
 
 // import { useState } from 'react';
 // import { loginRepresentative } from '../services/representative.service';
