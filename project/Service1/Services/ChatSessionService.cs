@@ -17,7 +17,8 @@ namespace Service1.Services
         private readonly IRepository<Topic> _topicRepository;
         private readonly IRepository<Customer> _customerRepository;
         private readonly IRepresentativeRepository _representativeRepository;
-        private readonly IChatQueueManager _queueManager;
+        private readonly IChatMessageRepository _messageRepository;
+        private readonly IAIScoreService _aiScoreService;
         private readonly IMapper _mapper;
         private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
@@ -25,16 +26,18 @@ namespace Service1.Services
                IChatSessionRepository repository,
                IRepository<Customer> customerRepository,
                IRepository<Topic> topicRepository,
-               IChatQueueManager queueManager,
-               IMapper mapper, // הוספה לבנאי
-               IRepresentativeRepository representativeRepository)
+               IMapper mapper, 
+               IRepresentativeRepository representativeRepository,
+               IAIScoreService aIScoreService,
+               IChatMessageRepository chatMessage)
         {
             _repository = repository;
             _customerRepository = customerRepository;
             _representativeRepository = representativeRepository;
             _topicRepository = topicRepository;
-            _queueManager = queueManager;
-            _mapper = mapper; // אתחול
+            _mapper = mapper;
+            _aiScoreService= aIScoreService;
+            _messageRepository = chatMessage;
         }
 
         public async Task<List<ChatSessionDto>> GetAllSessions()
@@ -183,27 +186,37 @@ namespace Service1.Services
         }
         public async Task EndChatSession(int sessionId)
         {
-            var session =await _repository.GetById(sessionId);
+            var session = await _repository.GetById(sessionId);
             if (session == null)
                 throw new Exception("שיחת הצ'אט לא נמצאה.");
+
             session.EndTimestamp = DateTime.Now;
             session.statusChat = SessionStatus.Close;
             await _repository.UpdateItem(sessionId, session);
+
             if (session.IDRepresentative.HasValue)
             {
                 var rep = await _representativeRepository.GetById(session.IDRepresentative.Value);
                 if (rep != null)
                 {
                     rep.IsBusy = false;
-                    rep.ScoreForMonth += 7;
+
+                    var messages = await _messageRepository.GetMessagesBySessionId(sessionId);
+                    var aiScore = await _aiScoreService.AnalyzeAndScoreAsync(messages);
+                    rep.ScoreForMonth += aiScore;
+
+                    Console.WriteLine($"[AI Score] Session {sessionId} → Representative {rep.IDRepresentative} scored {aiScore}/10");
+
                     await _representativeRepository.UpdateItem(rep.IDRepresentative, rep);
                 }
             }
+
+            // עדכון זמן טיפול ממוצע לנושא
             var totalMinutes = (session.EndTimestamp - session.ServiceStartTimestamp)?.TotalMinutes ?? 0;
-            var topic =await _topicRepository.GetById(session.IDTopic);
+            var topic = await _topicRepository.GetById(session.IDTopic);
             var newAvg = (topic.AverageTreatTime * (topic.totalSessionsCount - 1) + totalMinutes) / topic.totalSessionsCount;
             topic.AverageTreatTime = newAvg;
-           await _topicRepository.UpdateItem(topic.IDTopic, topic);
+            await _topicRepository.UpdateItem(topic.IDTopic, topic);
         }
         public async Task CansleChatSession(int sessionId)
         {

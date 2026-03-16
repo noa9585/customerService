@@ -2,7 +2,7 @@
 import React from 'react';
 import { useAdminDashboard, AdminTab } from '../hooks/Useadmindashboard.hook';
 import { Topic } from '../types/topic.types';
-import { Representative } from '../types/representative.types';
+import { Representative, RepresentativeChat } from '../types/representative.types';
 import { CustomerChat } from '../types/customer.types';
 import { ChatSession } from '../types/chatSession.types';
 import '../styles/AdminDashboard.css';
@@ -165,25 +165,17 @@ const AdminDashboard: React.FC = () => {
                             <table className="admin-table">
                                 <thead>
                                     <tr>
-                                        <th>#</th><th>שם</th><th>אימייל</th>
-                                        <th>ניקוד חודשי</th><th>סטטוס</th><th>עסוק</th><th>פעולות</th>
+                                        <th>#</th><th>שם</th><th>תפקיד</th><th>פעולות</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {representatives.length === 0
-                                        ? <tr><td colSpan={7} className="td-empty">אין נציגים במערכת</td></tr>
-                                        : representatives.map((r: Representative) => (
+                                        ? <tr><td colSpan={4} className="td-empty">אין נציגים במערכת</td></tr>
+                                        : representatives.map((r: RepresentativeChat) => (
                                             <tr key={r.idRepresentative}>
                                                 <td className="td-id">{r.idRepresentative}</td>
                                                 <td className="td-name">{r.nameRepr}</td>
-                                                <td className="td-email">{r.emailRepr}</td>
-                                                <td>⭐ {r.scoreForMonth}</td>
-                                                <td>
-                                                    <span className={`status-dot ${r.isOnline ? 'online' : 'offline'}`}>
-                                                        {r.isOnline ? '🟢 מחובר' : '⭕ מנותק'}
-                                                    </span>
-                                                </td>
-                                                <td>{r.isBusy ? '🔴 בשיחה' : '🟡 פנוי'}</td>
+                                                <td>{r.role}</td>
                                                 <td className="td-actions">
                                                     <button className="btn-delete" onClick={() => setConfirmDelete({ type: 'representative', id: r.idRepresentative })}>
                                                         🗑️ מחיקה
@@ -216,14 +208,13 @@ const AdminDashboard: React.FC = () => {
                         {waitingLoading ? <Spinner /> : (
                             waitingReps.length > 0 && (
                                 <div className="waiting-cards">
-                                    {waitingReps.map((r: Representative) => (
+                                    {waitingReps.map((r: RepresentativeChat) => (
                                         <div key={r.idRepresentative} className="waiting-card">
                                             <div className="waiting-card-avatar">
                                                 {r.nameRepr.charAt(0).toUpperCase()}
                                             </div>
                                             <div className="waiting-card-info">
                                                 <div className="waiting-card-name">{r.nameRepr}</div>
-                                                <div className="waiting-card-email">{r.emailRepr}</div>
                                                 <span className="badge badge-waiting">ממתין לאישור</span>
                                             </div>
                                             <div className="waiting-card-actions">

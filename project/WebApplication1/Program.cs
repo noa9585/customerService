@@ -23,6 +23,7 @@ var jwtAudience = jwtSection["Audience"];
 // --- Services ---
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddHttpClient<IAIScoreService, AIScoreService>();
 
 // DbContext and context interface
 builder.Services.AddDbContext<Database>();

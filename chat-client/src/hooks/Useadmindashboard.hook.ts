@@ -1,5 +1,5 @@
 // useAdminDashboard_hook.ts
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '../store/index';
@@ -14,7 +14,7 @@ import {
     approveRepresentative,
     denyRepresentative,
 } from '../services/representative.service';
-import { Representative } from '../types/representative.types';
+import { Representative, RepresentativeChat } from '../types/representative.types';
 
 import { fetchCustomers, deleteCustomerThunk } from '../store/slices/Customerslice';
 import { fetchSessions } from '../store/slices/Chatsession.slice';
@@ -40,28 +40,49 @@ export const useAdminDashboard = () => {
     const { sessions, loading: sessionsLoading } = useSelector((s: RootState) => s.chatSession);
     const { customers, loading: customersLoading } = useSelector((s: RootState) => s.customer);
 
-    // נציגים — local state
-    const [representatives, setRepresentatives] = useState<Representative[]>([]);
+    const [representatives, setRepresentatives] = useState<RepresentativeChat[]>([]);
     const [repsLoading, setRepsLoading] = useState(false);
 
-    // נציגים ממתינים לאישור
-    const [waitingReps, setWaitingReps] = useState<Representative[]>([]);
+    const [waitingReps, setWaitingReps] = useState<RepresentativeChat[]>([]);
     const [waitingLoading, setWaitingLoading] = useState(false);
 
-    // Topic form
     const [topicForm, setTopicForm] = useState<TopicFormData>({
         nameTopic: '', averageTreatTime: 10, priorityTopics: 1,
     });
     const [editingTopicId, setEditingTopicId] = useState<number | null>(null);
     const [topicDialogOpen, setTopicDialogOpen] = useState(false);
 
-    // UI
     const [error, setError] = useState<string | null>(null);
     const [successMsg, setSuccessMsg] = useState<string | null>(null);
     const [confirmDelete, setConfirmDelete] = useState<{ type: string; id: number } | null>(null);
     const [actionLoadingId, setActionLoadingId] = useState<number | null>(null);
 
-    // ── Load data on tab change ────────────────────────────────────────────
+    // ── ✅ useCallback — הפונקציות יציבות וניתן לשים ב-dependencies ────────
+    const loadRepresentatives = useCallback(async () => {
+        setRepsLoading(true);
+        try {
+            const data = await getAllRepresentatives();
+            setRepresentatives(data);
+        } catch {
+            setError('שגיאה בטעינת נציגים');
+        } finally {
+            setRepsLoading(false);
+        }
+    }, []);
+
+    const loadWaitingRepresentatives = useCallback(async () => {
+        setWaitingLoading(true);
+        try {
+            const data = await getWaitingRepresentatives();
+            setWaitingReps(data);
+        } catch {
+            setError('שגיאה בטעינת נציגים ממתינים');
+        } finally {
+            setWaitingLoading(false);
+        }
+    }, []);
+
+    // ── ✅ dependencies מלאות ─────────────────────────────────────────────
     useEffect(() => {
         if (activeTab === 'overview') {
             dispatch(fetchTopics());
@@ -75,31 +96,7 @@ export const useAdminDashboard = () => {
         if (activeTab === 'sessions') dispatch(fetchSessions());
         if (activeTab === 'representatives') loadRepresentatives();
         if (activeTab === 'waiting') loadWaitingRepresentatives();
-    }, [activeTab, dispatch]);
-
-    const loadRepresentatives = async () => {
-        setRepsLoading(true);
-        try {
-            const data = await getAllRepresentatives();
-            setRepresentatives(data as unknown as Representative[]);
-        } catch {
-            setError('שגיאה בטעינת נציגים');
-        } finally {
-            setRepsLoading(false);
-        }
-    };
-
-    const loadWaitingRepresentatives = async () => {
-        setWaitingLoading(true);
-        try {
-            const data = await getWaitingRepresentatives();
-            setWaitingReps(data);
-        } catch {
-            setError('שגיאה בטעינת נציגים ממתינים');
-        } finally {
-            setWaitingLoading(false);
-        }
-    };
+    }, [activeTab, dispatch, loadRepresentatives, loadWaitingRepresentatives]);
 
     // ── Flash helper ──────────────────────────────────────────────────────
     const showSuccess = (msg: string) => {
@@ -170,7 +167,6 @@ export const useAdminDashboard = () => {
         try {
             await approveRepresentative(id);
             showSuccess('הנציג אושר בהצלחה והוא יכול כעת להתחבר למערכת');
-            // מסיר מרשימת הממתינים ומרענן את הנציגים הפעילים
             setWaitingReps(prev => prev.filter(r => r.idRepresentative !== id));
             await loadRepresentatives();
         } catch {
@@ -231,7 +227,7 @@ export const useAdminDashboard = () => {
         totalSessions: sessions.length,
         activeSessions: sessions.filter((s: ChatSession) => s.statusChat === 1).length,
         waitingSessions: sessions.filter((s: ChatSession) => s.statusChat === 0).length,
-        onlineReps: representatives.filter((r: Representative) => r.isOnline).length,
+        onlineReps: 0,   // RepresentativeChat לא מכיל isOnline — נשאר 0
         pendingApproval: waitingReps.length,
     };
 

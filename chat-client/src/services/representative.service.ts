@@ -10,7 +10,7 @@ import type {
 const url = 'representative';
 
 // שליפת כל הנציגים
-export const getAllRepresentatives = async (): Promise<RepresentativeChat[]> => {
+export const getAllRepresentatives = async (): Promise<Representative[]> => {
     try {
         const response = await axios.get(url);
         return response.data;
@@ -21,7 +21,7 @@ export const getAllRepresentatives = async (): Promise<RepresentativeChat[]> => 
 };
 
 // שליפת נציג לפי ID
-export const getRepresentativeById = async (id: number): Promise<Representative> => {
+export const getRepresentativeById = async (id: number): Promise<RepresentativeChat> => {
     try {
         const response = await axios.get(`${url}/${id}`);
         return response.data;
@@ -114,7 +114,7 @@ export const returnFromBreak = async (id: number): Promise<{ message: string }> 
     }
 };
 
-export const getWaitingRepresentatives = async (): Promise<RepresentativeChat[]> => {
+export const getWaitingRepresentatives = async (): Promise<Representative[]> => {
     try {
         const response = await axios.get(`${url}/waiting`);
         return response.data;
