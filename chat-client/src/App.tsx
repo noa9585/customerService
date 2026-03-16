@@ -6,30 +6,33 @@ import { setCredentials } from './store/slices/authSlice';
 import Header from './component/Header';
 import Footer from './component/Footer';
 
-
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const savedCustomer = localStorage.getItem('user');
+    // ── שחזור לקוח / מנהל (שניהם נשמרים תחת 'user') ─────────────────────
+    const savedUser = localStorage.getItem('user');
     const custToken = localStorage.getItem('token');
-    if (savedCustomer && custToken) {
+    if (savedUser && custToken) {
       try {
-        const user = JSON.parse(savedCustomer);
-        dispatch(setCredentials({ user, userType: 'customer' }));
-      } catch (e) {
+        const user = JSON.parse(savedUser);
+        // ✅ מנהל ולקוח נכנסים דרך אותו login — role קובע את userType
+        const userType = user.role?.toLowerCase() === 'admin' ? 'admin' : 'customer';
+        dispatch(setCredentials({ user, userType }));
+      } catch {
         localStorage.removeItem('user');
         localStorage.removeItem('token');
       }
     }
 
+    // ── שחזור נציג ────────────────────────────────────────────────────────
     const savedRep = localStorage.getItem('representativeUser');
     const repToken = localStorage.getItem('representativeToken');
     if (savedRep && repToken) {
       try {
         const rep = JSON.parse(savedRep);
         dispatch(setCredentials({ user: rep, userType: 'representative' }));
-      } catch (e) {
+      } catch {
         localStorage.removeItem('representativeUser');
         localStorage.removeItem('representativeToken');
       }
@@ -37,19 +40,73 @@ function App() {
   }, [dispatch]);
 
   return (
-  <Router>
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%' }}>
-      <Header />
-      <div style={{ paddingTop: '64px', flex: 1, width: '100%' }}>
-        <AppRouter />
+    <Router>
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%' }}>
+        <Header />
+        <div style={{ paddingTop: '64px', flex: 1, width: '100%' }}>
+          <AppRouter />
+        </div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
-  </Router>
-);
+    </Router>
+  );
 }
 
 export default App;
+
+
+// import { BrowserRouter as Router } from 'react-router-dom';
+// import { AppRouter } from './routes/AppRouter';
+// import { useEffect } from 'react';
+// import { useDispatch } from 'react-redux';
+// import { setCredentials } from './store/slices/authSlice';
+// import Header from './component/Header';
+// import Footer from './component/Footer';
+
+
+// function App() {
+//   const dispatch = useDispatch();
+
+//   useEffect(() => {
+//     const savedCustomer = localStorage.getItem('user');
+//     const custToken = localStorage.getItem('token');
+//     if (savedCustomer && custToken) {
+//       try {
+//         const user = JSON.parse(savedCustomer);
+//         dispatch(setCredentials({ user, userType: 'customer' }));
+//       } catch (e) {
+//         localStorage.removeItem('user');
+//         localStorage.removeItem('token');
+//       }
+//     }
+
+//     const savedRep = localStorage.getItem('representativeUser');
+//     const repToken = localStorage.getItem('representativeToken');
+//     if (savedRep && repToken) {
+//       try {
+//         const rep = JSON.parse(savedRep);
+//         dispatch(setCredentials({ user: rep, userType: 'representative' }));
+//       } catch (e) {
+//         localStorage.removeItem('representativeUser');
+//         localStorage.removeItem('representativeToken');
+//       }
+//     }
+//   }, [dispatch]);
+
+//   return (
+//   <Router>
+//     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%' }}>
+//       <Header />
+//       <div style={{ paddingTop: '64px', flex: 1, width: '100%' }}>
+//         <AppRouter />
+//       </div>
+//       <Footer />
+//     </div>
+//   </Router>
+// );
+// }
+
+// export default App;
 
 
 

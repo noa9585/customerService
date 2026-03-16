@@ -1,7 +1,5 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// AppRouter.tsx  (מעודכן — 3 כניסות + ניתוב חכם)
-// שינוי: עטיפת כל הדפים המוגנים ב-AuthGuard עם userType מתאים
-// ─────────────────────────────────────────────────────────────────────────────
+
+// AppRouter.tsx — ללא דף AdminLogin (מנהל נכנס דרך /login רגיל)
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthGuard } from '../auth/AuthGuard';
 import HomeRedirect from '../component/HomeRedirect';
@@ -11,7 +9,6 @@ import CustomerLogin from '../pages/CustomerLogin';
 import CustomerRegister from '../pages/CustomerRegister';
 import RepresentativeLogin from '../pages/representativeLogin';
 import RepresentativeRegister from '../pages/RepresentativeRegister';
-import AdminLogin from '../pages/AdminLogin';
 import ContactUs from '../pages/ContactUs';
 
 // Customer
@@ -34,12 +31,11 @@ export const AppRouter = () => {
       {/* ── ניתוב חכם לפי תפקיד ─────────────────────────────────────────── */}
       <Route path="/" element={<HomeRedirect />} />
 
-      {/* ── 3 כניסות נפרדות ──────────────────────────────────────────────── */}
+      {/* ── כניסות — מנהל נכנס דרך /login ───────────────────────────────── */}
       <Route path="/login"                  element={<CustomerLogin />} />
       <Route path="/register"               element={<CustomerRegister />} />
       <Route path="/RepresentativeLogin"    element={<RepresentativeLogin />} />
       <Route path="/RepresentativeRegister" element={<RepresentativeRegister />} />
-      <Route path="/admin-login"            element={<AdminLogin />} />
 
       {/* ── דף ציבורי ────────────────────────────────────────────────────── */}
       <Route path="/contact-us" element={<ContactUs />} />
@@ -51,7 +47,6 @@ export const AppRouter = () => {
       <Route path="/waiting-room" element={
         <AuthGuard userType="customer"><WaitingRoomPage /></AuthGuard>
       } />
-      
       <Route path="/customer-chat" element={
         <AuthGuard userType="customer"><CustomerChatPage /></AuthGuard>
       } />
@@ -80,6 +75,89 @@ export const AppRouter = () => {
     </Routes>
   );
 };
+
+// // ─────────────────────────────────────────────────────────────────────────────
+// // AppRouter.tsx  (מעודכן — 3 כניסות + ניתוב חכם)
+// // שינוי: עטיפת כל הדפים המוגנים ב-AuthGuard עם userType מתאים
+// // ─────────────────────────────────────────────────────────────────────────────
+// import { Routes, Route, Navigate } from 'react-router-dom';
+// import { AuthGuard } from '../auth/AuthGuard';
+// import HomeRedirect from '../component/HomeRedirect';
+
+// // Public
+// import CustomerLogin from '../pages/CustomerLogin';
+// import CustomerRegister from '../pages/CustomerRegister';
+// import RepresentativeLogin from '../pages/representativeLogin';
+// import RepresentativeRegister from '../pages/RepresentativeRegister';
+// import AdminLogin from '../pages/AdminLogin';
+// import ContactUs from '../pages/ContactUs';
+
+// // Customer
+// import NewChat from '../pages/NewChat';
+// import WaitingRoomPage from '../pages/WaitingRoomPage';
+// import CustomerChatPage from '../pages/CustomerChatPage';
+// import UpdateCustomer from '../pages/UpdateCustomer';
+
+// // Representative
+// import RepresentativeDashboard from '../pages/RepresentativeDashboard';
+// import RepresentativeChatPage from '../pages/RepresentativeChatPage';
+// import UpdateRepresentative from '../pages/UpdateRepresentative';
+
+// // Admin
+// import AdminDashboard from '../pages/AdminDashboard';
+
+// export const AppRouter = () => {
+//   return (
+//     <Routes>
+//       {/* ── ניתוב חכם לפי תפקיד ─────────────────────────────────────────── */}
+//       <Route path="/" element={<HomeRedirect />} />
+
+//       {/* ── 3 כניסות נפרדות ──────────────────────────────────────────────── */}
+//       <Route path="/login"                  element={<CustomerLogin />} />
+//       <Route path="/register"               element={<CustomerRegister />} />
+//       <Route path="/RepresentativeLogin"    element={<RepresentativeLogin />} />
+//       <Route path="/RepresentativeRegister" element={<RepresentativeRegister />} />
+//       <Route path="/admin-login"            element={<AdminLogin />} />
+
+//       {/* ── דף ציבורי ────────────────────────────────────────────────────── */}
+//       <Route path="/contact-us" element={<ContactUs />} />
+
+//       {/* ── דפי לקוח מוגנים ─────────────────────────────────────────────── */}
+//       <Route path="/new-chat" element={
+//         <AuthGuard userType="customer"><NewChat /></AuthGuard>
+//       } />
+//       <Route path="/waiting-room" element={
+//         <AuthGuard userType="customer"><WaitingRoomPage /></AuthGuard>
+//       } />
+      
+//       <Route path="/customer-chat" element={
+//         <AuthGuard userType="customer"><CustomerChatPage /></AuthGuard>
+//       } />
+//       <Route path="/update-customer" element={
+//         <AuthGuard userType="customer"><UpdateCustomer /></AuthGuard>
+//       } />
+
+//       {/* ── דפי נציג מוגנים ─────────────────────────────────────────────── */}
+//       <Route path="/representative-dashboard" element={
+//         <AuthGuard userType="representative"><RepresentativeDashboard /></AuthGuard>
+//       } />
+//       <Route path="/representative-chat" element={
+//         <AuthGuard userType="representative"><RepresentativeChatPage /></AuthGuard>
+//       } />
+//       <Route path="/update-representative" element={
+//         <AuthGuard userType="representative"><UpdateRepresentative /></AuthGuard>
+//       } />
+
+//       {/* ── דפי מנהל מוגנים ─────────────────────────────────────────────── */}
+//       <Route path="/admin" element={
+//         <AuthGuard userType="admin"><AdminDashboard /></AuthGuard>
+//       } />
+
+//       {/* ── Fallback ─────────────────────────────────────────────────────── */}
+//       <Route path="*" element={<Navigate to="/" replace />} />
+//     </Routes>
+//   );
+// };
 
 
 

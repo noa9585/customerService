@@ -1,15 +1,74 @@
+// useCustomerLogin_hook.ts — בדיקת role אחרי login: Admin → /admin, Customer → /contact-us
 import { useAuthForm } from './useAuthForm.hook';
 import { loginCustomer } from '../services/customer.service';
 import { CustomerLogin as CustomerLoginType } from '../types/customer.types';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { AppDispatch } from '../store/index';
+import { setCredentials } from '../store/slices/authSlice';
+import { setToken } from '../utils/auth';
 
 export const useCustomerAuth = () => {
-  return useAuthForm<CustomerLoginType>({
-    initialValues: { emailCust: '', passwordCust: '' },
-    userType: 'customer',
-    navigateTo: '/contact-us',
-    onSubmit: loginCustomer,
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState<CustomerLoginType>({
+    emailCust: '',
+    passwordCust: '',
   });
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const response = await loginCustomer(formData);
+
+      if (response.token) {
+        setToken(response.token);
+        localStorage.setItem('user', JSON.stringify(response));
+        localStorage.removeItem('representativeToken');
+        localStorage.removeItem('representativeUser');
+      }
+
+      // ✅ בדיקת role — Admin או Customer רגיל
+      const isAdmin = response.role?.toLowerCase() === 'admin';
+
+      dispatch(setCredentials({
+        user: response,
+        userType: isAdmin ? 'admin' : 'customer',
+      }));
+
+      navigate(isAdmin ? '/admin' : '/contact-us');
+
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'אימייל או סיסמה שגויים. נסה שוב.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { formData, setFormData, error, loading, handleSubmit };
 };
+
+
+
+// import { useAuthForm } from './useAuthForm.hook';
+// import { loginCustomer } from '../services/customer.service';
+// import { CustomerLogin as CustomerLoginType } from '../types/customer.types';
+
+// export const useCustomerAuth = () => {
+//   return useAuthForm<CustomerLoginType>({
+//     initialValues: { emailCust: '', passwordCust: '' },
+//     userType: 'customer',
+//     navigateTo: '/contact-us',
+//     onSubmit: loginCustomer,
+//   });
+// };
 
 // import { useState } from 'react';
 // import { loginCustomer } from '../services/customer.service';

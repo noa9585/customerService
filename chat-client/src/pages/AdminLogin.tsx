@@ -1,13 +1,14 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// AdminLogin.tsx
-// דף כניסת מנהל — עיצוב כהה ורשמי בהתאם לתפקיד
-// ─────────────────────────────────────────────────────────────────────────────
+// AdminLogin.tsx — כניסת מנהל עם אימות אמיתי
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../store/slices/authSlice';
+import { loginRepresentative } from '../services/representative.service';
 import '../styles/AdminLogin.css';
 
 const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -18,16 +19,23 @@ const AdminLogin: React.FC = () => {
     setLoading(true);
 
     try {
-      // TODO: להחליף בקריאת API אמיתית לנקודת קצה של מנהל
-      // const response = await loginAdmin(formData);
-      // localStorage.setItem('representativeToken', response.token);
-      // localStorage.setItem('representativeUser', JSON.stringify(response));
-      // navigate('/admin');
+      const response = await loginRepresentative({
+        emailRepr: formData.email,
+        passwordRepr: formData.password,
+      });
 
-      // כרגע — placeholder בלבד
-      setError('כניסת מנהל עדיין לא מחוברת לשרת. בקרוב!');
+      if (!response || response.role?.toLowerCase() !== 'admin') {
+        setError('אין לך הרשאות מנהל. אנא פנה לאחראי המערכת.');
+        return;
+      }
+
+      localStorage.setItem('representativeToken', response.token || '');
+      localStorage.setItem('representativeUser', JSON.stringify(response));
+
+      dispatch(setCredentials({ user: response, userType: 'admin' }));
+      navigate('/admin');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'שגיאה בהתחברות');
+      setError(err.response?.data?.message || 'אימייל או סיסמה שגויים');
     } finally {
       setLoading(false);
     }
@@ -51,7 +59,6 @@ const AdminLogin: React.FC = () => {
               onChange={e => setFormData({ ...formData, email: e.target.value })}
             />
           </div>
-
           <div className="admin-field">
             <label>סיסמה</label>
             <input
@@ -71,13 +78,9 @@ const AdminLogin: React.FC = () => {
         </form>
 
         <div className="admin-links">
-          <button className="admin-link-btn" onClick={() => navigate('/login')}>
-            כניסת לקוח
-          </button>
+          <button className="admin-link-btn" onClick={() => navigate('/login')}>כניסת לקוח</button>
           <span className="admin-divider">|</span>
-          <button className="admin-link-btn" onClick={() => navigate('/RepresentativeLogin')}>
-            כניסת נציג
-          </button>
+          <button className="admin-link-btn" onClick={() => navigate('/RepresentativeLogin')}>כניסת נציג</button>
         </div>
       </div>
     </div>
