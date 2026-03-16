@@ -296,17 +296,17 @@ const AdminDashboard: React.FC = () => {
             <div className="modal-field">
               <label>עדיפות (0-1)</label>
               <input
-                type="range" min={0} max={1} step={0.2}
+                type="range" min={0.1} max={1} step={0.1}
                 value={topicForm.priorityTopics}
                 onChange={e => setTopicForm({ ...topicForm, priorityTopics: Number(e.target.value) })}
               />
               <div className="range-labels" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                <span>0 (נמוכה)</span>
+                <span>0(גבוהה)</span>
                 <span>0.2</span>
                 <span>0.4</span>
                 <span>0.6</span>
                 <span>0.8</span>
-                <span>1 (גבוהה)</span>
+                <span>1 (נמוכה)</span>
               </div>
             </div>
 
@@ -344,11 +344,15 @@ const Spinner: React.FC = () => (
   <div className="loading-spinner"><div className="spinner" /></div>
 );
 
-const PriorityStars: React.FC<{ value: number }> = ({ value }) => (
-  <span className="priority-badge">
-    {'⭐'.repeat(Math.min(Math.round(value), 5))}
-    <span className="priority-num">({value})</span>
-  </span>
-);
+const PriorityStars: React.FC<{ value: number }> = ({ value }) => {
+  const starsCount = Math.round(5.5 - (5 * value));
+  const finalStars = Math.max(1, Math.min(starsCount, 5));
+  return (
+    <span className="priority-badge">
+      {'⭐'.repeat(finalStars)}
+      <span className="priority-num">({value})</span>
+    </span>
+  );
+};
 
 export default AdminDashboard;
