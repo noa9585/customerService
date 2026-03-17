@@ -3,7 +3,7 @@ using Repository.Entities;
 using Repository.interfaces;
 using Service1.Dto.ChatSessionDto;
 using Service1.Interface;
-using Service1.Logic;
+//using Service1.Logic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,7 +71,8 @@ namespace Service1.Services
             {
                 throw new Exception("לא ניתן לפתוח שיחה: הלקוח אינו קיים במערכת.");
             }
-            var EstimatedWaitTime =await CalculateWaitTime(topic.IDTopic);
+            var waitingSessions = await _repository.GetAllWaiting();
+            var EstimatedWaitTime =await CalculateWaitTime(topic.IDTopic, waitingSessions);
             var session = _mapper.Map<ChatSession>(sessionDto);
             session.StartTimestamp = DateTime.Now;
             session.statusChat = SessionStatus.Waiting;
@@ -108,13 +109,12 @@ namespace Service1.Services
         }
 
      
-        public async Task<double> CalculateWaitTime(int topicId)
+        public async Task<double> CalculateWaitTime(int topicId,List<ChatSession> waitingSessions)
         {
             var OnlineReps = (await _representativeRepository.GetAll()).Where(r => r.IsOnline).ToList();
             if (!OnlineReps.Any())
                 throw new InvalidOperationException("אין נציגים מחוברים למערכת כרגע. אנא נסה שוב מאוחר יותר.");
             var cntRep = OnlineReps.Count;
-            var waitingSessions = await _repository.GetAllWaiting();
             if (waitingSessions.Count != 0)
             {
                 var lastSession = waitingSessions.Last();
@@ -156,6 +156,20 @@ namespace Service1.Services
             }
 
         }
+        public async Task RecalculateAllWaitingTimes()
+        {
+            var waitingSessions = await _repository.GetAllWaiting();
+            List<ChatSession> sessions = new List<ChatSession>();
+            foreach (var session in waitingSessions)
+            {
+                var newWaitTime = await CalculateWaitTime(session.IDTopic,sessions);
+                session.EstimatedWaitTime = newWaitTime;
+                await _repository.UpdateItem(session.SessionID, session);
+                sessions.Add(session);
+            }
+        }
+
+
 
 
         public async Task<ChatSessionDto> PullNextClientForRepresentative(int idRepresentative)
@@ -177,12 +191,15 @@ namespace Service1.Services
                     rep.IsBusy = true;
                     await _representativeRepository.UpdateItem(idRepresentative, rep);
                 }
+                await RecalculateAllWaitingTimes();
+
                 return _mapper.Map<ChatSessionDto>(nextSession);
             }
             finally
             {
                 _semaphore.Release(); // שחרור הנעילה תמיד!
             }
+
         }
         public async Task EndChatSession(int sessionId)
         {
@@ -208,6 +225,7 @@ namespace Service1.Services
                     Console.WriteLine($"[AI Score] Session {sessionId} → Representative {rep.IDRepresentative} scored {aiScore}/10");
 
                     await _representativeRepository.UpdateItem(rep.IDRepresentative, rep);
+
                 }
             }
 
@@ -217,6 +235,8 @@ namespace Service1.Services
             var newAvg = (topic.AverageTreatTime * (topic.totalSessionsCount - 1) + totalMinutes) / topic.totalSessionsCount;
             topic.AverageTreatTime = newAvg;
             await _topicRepository.UpdateItem(topic.IDTopic, topic);
+            // עדכון כל הממתינים אחרי סיום שיחה
+            await RecalculateAllWaitingTimes();
         }
         public async Task CansleChatSession(int sessionId)
         {
@@ -229,6 +249,8 @@ namespace Service1.Services
             var topic =await _topicRepository.GetById(session.IDTopic);
             topic.totalSessionsCount--;
             await _topicRepository.UpdateItem(topic.IDTopic, topic);
+            // עדכון כל הממתינים אחרי ביטול שיחה
+            await RecalculateAllWaitingTimes();
         }
     }
 }

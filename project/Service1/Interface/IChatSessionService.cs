@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Repository.Entities;
 using Service1.Dto.ChatSessionDto;
 
 namespace Service1.Interface
@@ -16,7 +17,8 @@ namespace Service1.Interface
         Task<ChatSessionDto> AddSession(ChatSessionCreateDto sessionDto);
         Task UpdateSession(int id, ChatSessionUpdateDto sessionDto);
         Task DeleteSession(int id);
-        Task<double> CalculateWaitTime(int sessionId);
+        Task<double> CalculateWaitTime(int sessionId,List<ChatSession> waitingSessions);
+        Task RecalculateAllWaitingTimes();
         Task<ChatSessionDto> PullNextClientForRepresentative(int idRepresentative);
         Task EndChatSession(int sessionId);
         Task CansleChatSession(int sessionId);

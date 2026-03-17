@@ -6,11 +6,10 @@ using Repository.Entities;
 using Repository.interfaces;
 using Repository.Repositories;
 using Service1.Interface;
-using Service1.Logic;
 using Service1.Services;
 using System.Text;
 using Service1.Mapping;
-//using WebApplication1.BackgroundServices;
+using WebApplication1.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,8 +40,9 @@ builder.Services.AddScoped<IRepresentativeService, RepresentativeService>();
 builder.Services.AddScoped<IChatSessionRepository, ChatSessionRepository>();
 builder.Services.AddScoped<IChatSessionService, ChatSessionService>();
 
+builder.Services.AddHostedService<WaitTimeUpdateWorker>();
+
 // Queue manager and background worker
-builder.Services.AddSingleton<IChatQueueManager, ChatQueueManager>();
 //builder.Services.AddHostedService<QueueUpdateWorker>();
 
 // Token service

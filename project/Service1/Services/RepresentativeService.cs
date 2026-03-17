@@ -11,7 +11,6 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Service1.Dto.CustomerDto;
-
 namespace Service1.Services
 {
     public class RepresentativeService : IRepresentativeService
@@ -20,13 +19,16 @@ namespace Service1.Services
         private readonly IRepresentativeRepository _repository;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
+        private readonly IChatSessionService _chatSessionService;
+
 
         // הזרקת ה-Repository דרך הבנאי
-        public RepresentativeService(IRepresentativeRepository repository, ITokenService tokenService, IMapper mapper)
+        public RepresentativeService(IRepresentativeRepository repository, ITokenService tokenService, IMapper mapper, IChatSessionService chatSessionService)
         {
             _repository = repository;
             _tokenService = tokenService;
             _mapper = mapper;
+            _chatSessionService = chatSessionService;  
         }
 
         public async Task<List<RepresentativeDto>> GetAll()
@@ -122,6 +124,7 @@ namespace Service1.Services
 
             // שמירת השינויים בבסיס הנתונים
             await _repository.UpdateItem(representative.IDRepresentative, representative);
+            await _chatSessionService.RecalculateAllWaitingTimes();
 
             // החזרת הנתונים המעודכנים
             var dto = _mapper.Map<RepresentativeDto>(representative);
@@ -183,6 +186,8 @@ namespace Service1.Services
             }
 
             await _repository.UpdateItem(id, representative);
+            await _chatSessionService.RecalculateAllWaitingTimes();
+
         }
         public async Task ToggleBreak(int id)
         {
@@ -193,6 +198,8 @@ namespace Service1.Services
                 representative.IsBusy = false;
 
                 await _repository.UpdateItem(id, representative);
+                await _chatSessionService.RecalculateAllWaitingTimes();
+
             }
         }
         public async Task ReturnFromBreak(int id)
@@ -204,6 +211,8 @@ namespace Service1.Services
                 representative.IsBusy = false;
 
                 await _repository.UpdateItem(id, representative);
+                await _chatSessionService.RecalculateAllWaitingTimes();
+
             }
         }
         public async Task<bool> HasOnlineRepresentatives()

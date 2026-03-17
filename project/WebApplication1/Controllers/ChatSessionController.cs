@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Repository.interfaces;
 using Service1.Dto.ChatSessionDto;
 using Service1.Interface;
-using Service1.Logic;
 using WebApplication1.Hubs;
 
 namespace WebApplication1.Controllers
@@ -13,14 +13,12 @@ namespace WebApplication1.Controllers
     public class ChatSessionController : ControllerBase
     {
         private readonly IChatSessionService _chatSessionService;
-        private readonly IChatQueueManager _queueManager;
         private readonly IRepresentativeService _representativeService;
         private readonly IHubContext<ChatHub> _hubContext;
 
-        public ChatSessionController(IChatSessionService chatSessionService, IChatQueueManager queueManager, IRepresentativeService representativeService, IHubContext<ChatHub> hubContext)
+        public ChatSessionController(IChatSessionService chatSessionService, IRepresentativeService representativeService, IHubContext<ChatHub> hubContext)
         {
             _chatSessionService = chatSessionService;
-            _queueManager = queueManager;
             _representativeService = representativeService;
             _hubContext = hubContext;
         }
@@ -89,28 +87,36 @@ namespace WebApplication1.Controllers
             }
         }
 
-        [Authorize(Roles = "Customer")]
-        [HttpGet("estimate/{id}")]
-        public async Task<ActionResult<double>> GetWaitTimeEstimate(int id)
+        //[Authorize(Roles = "Customer")]
+        //[HttpGet("estimate/{id}")]
+        //public async Task<ActionResult<double>> GetWaitTimeEstimate(int id)
+        //{
+        //    try
+        //    {
+        //        var waiting=await _chatSessionService.GetAllWaiting();
+        //        double estimatedMinutes = await _chatSessionService.CalculateWaitTime(id,waiting);
+        //        return Ok(estimatedMinutes);
+        //    }
+        //    catch (InvalidOperationException ex)
+        //    {
+        //        // כאן נתפסת השגיאה של "אין נציגים מחוברים"
+        //        // מחזירים BadRequest (400) או ServiceUnavailable (503) עם הודעת השגיאה
+        //        return BadRequest(new { message = ex.Message });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // שגיאות כלליות אחרות
+        //        return StatusCode(500, new { message = "אירעה שגיאה פנימית בחישוב הזמן", details = ex.Message });
+        //    }
+        //}
+        [Authorize(Roles = "Admin,Representative,Customer")]
+        [HttpPut("Recalculate")]
+        private async Task RecalculateAndNotify()
         {
-            try
-            {
-                double estimatedMinutes = await _chatSessionService.CalculateWaitTime(id);
-                return Ok(estimatedMinutes);
-            }
-            catch (InvalidOperationException ex)
-            {
-                // כאן נתפסת השגיאה של "אין נציגים מחוברים"
-                // מחזירים BadRequest (400) או ServiceUnavailable (503) עם הודעת השגיאה
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                // שגיאות כלליות אחרות
-                return StatusCode(500, new { message = "אירעה שגיאה פנימית בחישוב הזמן", details = ex.Message });
-            }
+            await _chatSessionService.RecalculateAllWaitingTimes(); // מחשב ושומר
+            var sessions = await _chatSessionService.GetAllWaiting(); //שולף את הרשימה המעודכנת
+            await _hubContext.Clients.All.SendAsync("WaitingTimesUpdated", sessions);
         }
-
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
