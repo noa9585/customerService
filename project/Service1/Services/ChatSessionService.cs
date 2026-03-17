@@ -184,7 +184,7 @@ namespace Service1.Services
                 nextSession.statusChat = SessionStatus.Active;
                 nextSession.IDRepresentative = idRepresentative;
                 nextSession.ServiceStartTimestamp = DateTime.Now;
-                await _repository.UpdateItem(nextSession.SessionID, nextSession);
+                await _repository.UpdateItem(nextSession.SessionID, nextSession); 
                 var rep =await _representativeRepository.GetById(idRepresentative);
                 if (rep != null)
                 {

@@ -1,15 +1,17 @@
+/* הקונטיינר הראשי — ממלא את כל השטח שבין Header ל-Footer */
 .chat-page-container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    /* גובה מסך מלא */
-    width: 100vw;
+    height: 100%;        /* ממלא את ה-div האמצעי ב-App */
+    width: 100%;
     background-color: #f0f2f5;
     font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;    /* מונע גלילה על הקונטיינר עצמו */
 }
 
 /* כותרת עליונה */
 .chat-header {
+    flex-shrink: 0;      /* לא מתכווץ */
     height: 60px;
     background: #ffffff;
     padding: 0 20px;
@@ -18,17 +20,25 @@
     justify-content: space-between;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 10;
+    direction: rtl;
 }
 
-/* אזור ההודעות */
+/* אזור ההודעות — גולל בתוכו בלבד */
 .messages-area {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;  /* מבטל סקרולבר לרוחב */
     padding: 20px 10%;
-    /* ריווח מהצדדים למראה דסקטופ */
     display: flex;
     flex-direction: column;
     gap: 8px;
+
+    /* מסתיר את הסקרולבר — עדיין ניתן לגלול */
+    scrollbar-width: none;        /* Firefox */
+    -ms-overflow-style: none;     /* IE / Edge */
+}
+.messages-area::-webkit-scrollbar {
+    display: none;                /* Chrome / Safari */
 }
 
 .message-row {
@@ -38,13 +48,13 @@
     margin-bottom: 12px;
 }
 
-/* הודעות שלי (שנשלחו על ידי) - צד שמאל תכלת */
+/* הודעות שלי — צד שמאל תכלת */
 .message-row.sent {
     align-self: flex-start;
     align-items: flex-start;
 }
 
-/* הודעות שקיבלתי - צד ימין אפור */
+/* הודעות שקיבלתי — צד ימין אפור */
 .message-row.received {
     align-self: flex-end;
     align-items: flex-end;
@@ -65,70 +75,26 @@
     line-height: 1.4;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
     white-space: pre-wrap;
-    /* זה המפתח: הוא שומר על ירידות שורה ורווחים */
     word-break: break-word;
-    /* מונע מטקסט ארוך מאוד לחרוג מהבועה */
 }
 
-/* עיצוב בועת "שלחתי" (תכלת) */
 .sent .bubble {
     background-color: #dcf8ff;
     color: #000;
     border-top-left-radius: 2px;
-    /* הפינה החדה עוברת לשמאל */
     border-top-right-radius: 18px;
-    /* הפינה המעוגלת עוברת לימין */
 }
 
-/* עיצוב בועת "קיבלתי" (אפור) */
 .received .bubble {
     background-color: #ffffff;
     color: #000;
     border-top-right-radius: 2px;
-    /* הפינה החדה עוברת לימין */
     border-top-left-radius: 18px;
-    /* הפינה המעוגלת עוברת לשמאל */
 }
 
-/* אזור הקלדה בתחתית */
+/* אזור הקלדה תחתית */
 .chat-footer {
-    padding: 15px 10%;
-    background: #f0f2f5;
-    display: flex;
-    gap: 10px;
-}
-
-.chat-input {
-    flex: 1;
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-    resize: none;
-    /* חשוב: מונע מהמשתמש למשוך את הפינה */
-    min-height: 40px;
-    /* הגובה המקורי שרצית */
-    max-height: 150px;
-    /* מונע מהתיבה להשתלט על כל המסך */
-    line-height: 1.4;
-    font-family: inherit;
-    transition: height 0.1s ease;
-    /* אנימציה עדינה לגדילה */
-}
-
-.send-btn {
-    background-color: #0084ff;
-    color: white;
-    border: none;
-    padding: 0 20px;
-    border-radius: 25px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-
-/* אזור התחתית - ה-Container הראשי */
-.chat-footer {
+    flex-shrink: 0;      /* לא מתכווץ */
     display: flex;
     align-items: center;
     gap: 12px;
@@ -136,9 +102,9 @@
     border-top: 1px solid #d1d7db;
     min-height: 62px;
     background-color: #f5f5f5;
+    overflow: hidden;    /* מבטל סקרולבר לרוחב */
 }
 
-/* תיבת הטקסט - תופסת את כל המקום הפנוי */
 .chat-input {
     flex: 1;
     padding: 12px 20px;
@@ -148,13 +114,25 @@
     background-color: #ffffff;
     outline: none;
     transition: border 0.2s;
+    resize: none;
+    min-height: 40px;
+    max-height: 150px;
+    line-height: 1.4;
+    font-family: inherit;
+    overflow-y: auto;
+
+    /* מסתיר סקרולבר בתיבת הטקסט */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.chat-input::-webkit-scrollbar {
+    display: none;
 }
 
 .chat-input:focus {
     border: 1px solid #5a67d8;
 }
 
-/* כפתור שליחה - בגודל קבוע ופרופורציונלי */
 .send-btn {
     padding: 10px 20px;
     background-color: #5a67d8;
@@ -166,9 +144,8 @@
     cursor: pointer;
     transition: background-color 0.2s;
     height: 42px;
-    /* גובה קבוע שמתאים לאינפוט */
     width: auto;
-    /* מונע מהכפתור להימתח */
+    flex-shrink: 0;
 }
 
 .send-btn:hover:not(:disabled) {
@@ -180,8 +157,6 @@
     cursor: not-allowed;
 }
 
-/* כפתור סגירת שיחה - קטן ודיסקרטי בכותרת */
-
 .close-chat-btn {
     padding: 10px 20px;
     background-color: #5a67d8;
@@ -192,6 +167,7 @@
     font-weight: 600;
     transition: background-color 0.2s;
     width: auto;
+    cursor: pointer;
 }
 
 .close-chat-btn:hover {

@@ -108,7 +108,7 @@ const ChatSection: React.FC<ChatSectionProps> = ({
                             handleSend();
                         }
                     }}
-                    style={{ overflowY: 'hidden' }}
+                    style={{ overflowY: 'auto' }}
                 />
                 <button className="send-btn" onClick={handleSend} disabled={!input.trim()}>
                     שלח
