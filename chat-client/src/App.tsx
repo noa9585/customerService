@@ -1,6 +1,6 @@
 import { BrowserRouter as Router } from 'react-router-dom';
 import { AppRouter } from './routes/AppRouter';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from './store/slices/authSlice';
 import Header from './component/Header';
@@ -8,6 +8,7 @@ import Footer from './component/Footer';
 
 function App() {
   const dispatch = useDispatch();
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     // ── שחזור לקוח / מנהל (שניהם נשמרים תחת 'user') ─────────────────────
@@ -37,13 +38,34 @@ function App() {
         localStorage.removeItem('representativeToken');
       }
     }
+        setIsInitialized(true);
   }, [dispatch]);
 
+  if (!isInitialized) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: '#0f172a',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <div style={{
+          width: 40, height: 40,
+          border: '3px solid rgba(255,255,255,0.1)',
+          borderTopColor: '#3b82f6',
+          borderRadius: '50%',
+          animation: 'spin 0.7s linear infinite',
+        }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
   return (
     <Router>
-      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100%', overflow: 'hidden' }}>
         <Header />
-        <div style={{ paddingTop: '64px', flex: 1, width: '100%' }}>
+        <div style={{ marginTop: '64px', flex: 1, width: '100%', overflowY: 'auto' }}>
           <AppRouter />
         </div>
         <Footer />
@@ -51,7 +73,6 @@ function App() {
     </Router>
   );
 }
-
 export default App;
 
 

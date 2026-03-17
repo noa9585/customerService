@@ -1,182 +1,546 @@
-/* Contact Us Page Styles */
+/* ContactUs.css — QuickChat About Page */
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&display=swap');
+
 :root {
-  --primary: #3b82f6;
-  --bg: #f8fafc;
-  --text: #1e293b;
+  --cu-primary: #2563eb;
+  --cu-primary-light: #3b82f6;
+  --cu-accent: #06b6d4;
+  --cu-dark: #0f172a;
+  --cu-dark-2: #1e293b;
+  --cu-text: #0f172a;
+  --cu-text-muted: #64748b;
+  --cu-border: #e2e8f0;
+  --cu-bg: #f8fafc;
+  --cu-white: #ffffff;
 }
 
-.contact-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background-color: var(--bg);
-  padding: 20px;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+.cu-page {
+  font-family: 'Heebo', sans-serif;
   direction: rtl;
+  background: var(--cu-bg);
+  overflow-x: hidden;
 }
 
-.contact-card {
-  background: white;
-  padding: 60px 40px;
-  border-radius: 24px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
-  width: 100%;
-  max-width: 600px;
-  text-align: center;
-  border-top: 4px solid var(--primary);
+/* ── Hero ──────────────────────────────────────────────────────────────── */
+.cu-hero {
+  min-height: 100vh;
+  background: var(--cu-dark);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 60px;
+  padding: 100px 80px 80px;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Badge */
-.badge {
-  display: inline-block;
-  background: #dbeafe;
-  color: #1e40af;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 30px;
+.cu-hero-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-/* Main Title */
-.main-title {
-  font-size: 32px;
-  font-weight: 800;
-  color: var(--text);
-  margin: 0 0 8px 0;
-  line-height: 1.3;
+.cu-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.15;
+}
+.cu-orb-1 {
+  width: 500px; height: 500px;
+  background: var(--cu-primary);
+  top: -100px; right: -100px;
+  animation: float 8s ease-in-out infinite;
+}
+.cu-orb-2 {
+  width: 300px; height: 300px;
+  background: var(--cu-accent);
+  bottom: 0; left: 20%;
+  animation: float 6s ease-in-out infinite reverse;
+}
+.cu-orb-3 {
+  width: 200px; height: 200px;
+  background: #8b5cf6;
+  top: 40%; left: 10%;
+  animation: float 10s ease-in-out infinite;
 }
 
-/* Sub Title */
-.sub-title {
-  font-size: 32px;
-  font-weight: 800;
-  color: var(--primary);
-  margin: 0 0 20px 0;
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-30px); }
 }
 
-/* Description */
-.description {
-  font-size: 14px;
-  color: #64748b;
-  line-height: 1.6;
-  margin: 0 0 30px 0;
+.cu-hero-content {
+  position: relative;
+  z-index: 1;
 }
 
-/* Button Group */
-.button-group {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  margin-bottom: 40px;
-}
-
-/* Buttons (works for <button> and <a class="btn">) */
-.btn {
+.cu-badge {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 14px 36px;
+  gap: 8px;
+  background: rgba(37, 99, 235, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
+  padding: 8px 16px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 28px;
+}
+
+.cu-badge-dot {
+  width: 7px; height: 7px;
+  background: #3b82f6;
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.cu-hero-title {
+  font-size: 64px;
+  font-weight: 900;
+  color: #f1f5f9;
+  line-height: 1.1;
+  margin: 0 0 24px;
+  letter-spacing: -1px;
+}
+
+.cu-gradient-text {
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cu-hero-sub {
+  font-size: 18px;
+  color: #94a3b8;
+  line-height: 1.7;
+  margin: 0 0 40px;
+  max-width: 480px;
+}
+
+.cu-hero-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+.cu-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
   border: none;
   border-radius: 12px;
-  font-weight: 600;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
-  text-decoration: none; /* remove underline for links */
-  min-width: 240px; /* ensure wider buttons and consistent size */
+  font-family: 'Heebo', sans-serif;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+  width: auto;
 }
 
-/* Ensure links with .btn don't change color when visited/active */
-.btn:link,
-.btn:visited,
-.btn:active {
+.cu-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.45);
+}
+
+.cu-btn-large {
+  padding: 18px 40px;
+  font-size: 18px;
+}
+
+.cu-btn-arrow {
+  font-size: 18px;
+  transition: transform 0.2s;
+}
+
+.cu-btn-primary:hover .cu-btn-arrow {
+  transform: translateX(-4px);
+}
+
+.cu-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 28px;
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
   text-decoration: none;
+  font-family: 'Heebo', sans-serif;
+  transition: all 0.2s;
 }
 
-.btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+.cu-btn-ghost:hover {
+  background: rgba(255,255,255,0.05);
+  color: #f1f5f9;
+  border-color: rgba(148, 163, 184, 0.4);
 }
 
-/* Ensure .btn-primary keeps white text for link/visited/active states */
-.btn-primary,
-.btn-primary:link,
-.btn-primary:visited,
-.btn-primary:active {
-  color: #fff;
+/* ── Hero Card ───────────────────────────────────────────────────────── */
+.cu-hero-card {
+  background: #1e293b;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+  position: relative;
+  z-index: 1;
+  animation: card-float 6s ease-in-out infinite;
 }
 
-.btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+@keyframes card-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(0.5deg); }
 }
 
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
-}
-
-.btn-outline {
-  background: white;
-  color: var(--primary);
-  border: 1.5px solid #e2e8f0;
-}
-
-.btn-outline:hover {
-  background: #f1f5f9;
-  border-color: var(--primary);
-  transform: translateY(-2px);
-}
-
-/* Stats Section */
-.stats-section {
+.cu-card-header {
   display: flex;
-  gap: 30px;
-  justify-content: center;
-  margin-top: 40px;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
-.stat {
+.cu-card-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.cu-card-dots span {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+}
+
+.cu-card-title {
   flex: 1;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 600;
 }
 
-.stat-value {
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--primary);
-  margin-bottom: 4px;
-}
-
-.stat-label {
+.cu-card-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #86efac;
   font-size: 12px;
-  color: #64748b;
+}
+
+.cu-online-dot {
+  width: 7px; height: 7px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+
+.cu-card-messages {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 220px;
+}
+
+.cu-msg {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.cu-msg-rep { flex-direction: row; }
+.cu-msg-user { flex-direction: row-reverse; }
+
+.cu-msg-avatar {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.cu-msg-bubble {
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 14px;
+  max-width: 200px;
+  line-height: 1.4;
+  animation: msg-in 0.3s ease;
+}
+
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cu-msg-rep .cu-msg-bubble {
+  background: rgba(37, 99, 235, 0.15);
+  color: #bfdbfe;
+  border-bottom-right-radius: 4px;
+}
+
+.cu-msg-user .cu-msg-bubble {
+  background: #2563eb;
+  color: white;
+  border-bottom-left-radius: 4px;
+}
+
+.cu-typing {
+  display: flex;
+  gap: 5px;
+  padding: 12px 14px;
+  background: rgba(37, 99, 235, 0.1);
+  border-radius: 16px;
+  width: fit-content;
+  border-bottom-right-radius: 4px;
+}
+
+.cu-typing span {
+  width: 7px; height: 7px;
+  background: #60a5fa;
+  border-radius: 50%;
+  animation: typing 1.2s infinite;
+}
+
+.cu-typing span:nth-child(2) { animation-delay: 0.2s; }
+.cu-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-6px); opacity: 1; }
+}
+
+/* ── Stats ───────────────────────────────────────────────────────────── */
+.cu-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--cu-white);
+  border-bottom: 1px solid var(--cu-border);
+}
+
+.cu-stat {
+  padding: 40px 24px;
+  text-align: center;
+  border-left: 1px solid var(--cu-border);
+  transition: background 0.2s;
+}
+
+.cu-stat:last-child { border-left: none; }
+.cu-stat:hover { background: #f8fafc; }
+
+.cu-stat-value {
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--cu-primary);
+  margin-bottom: 6px;
+  letter-spacing: -1px;
+}
+
+.cu-stat-label {
+  font-size: 14px;
+  color: var(--cu-text-muted);
   font-weight: 500;
 }
 
-/* Responsive */
+/* ── Section headers ─────────────────────────────────────────────────── */
+.cu-section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.cu-section-header h2 {
+  font-size: 40px;
+  font-weight: 900;
+  color: var(--cu-text);
+  margin: 0 0 12px;
+  letter-spacing: -0.5px;
+}
+
+.cu-section-header p {
+  font-size: 18px;
+  color: var(--cu-text-muted);
+  margin: 0;
+}
+
+/* ── Features ────────────────────────────────────────────────────────── */
+.cu-features {
+  padding: 100px 80px;
+  background: var(--cu-white);
+}
+
+.cu-features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.cu-feature-card {
+  padding: 32px 24px;
+  background: var(--cu-bg);
+  border-radius: 16px;
+  border: 1px solid var(--cu-border);
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.cu-feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  border-color: #bfdbfe;
+}
+
+.cu-feature-icon {
+  font-size: 40px;
+  margin-bottom: 16px;
+}
+
+.cu-feature-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--cu-text);
+  margin: 0 0 8px;
+}
+
+.cu-feature-card p {
+  font-size: 14px;
+  color: var(--cu-text-muted);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ── Steps ───────────────────────────────────────────────────────────── */
+.cu-steps {
+  padding: 100px 80px;
+  background: var(--cu-bg);
+}
+
+.cu-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  position: relative;
+}
+
+.cu-step {
+  text-align: center;
+  padding: 32px 20px;
+  position: relative;
+}
+
+.cu-step-num {
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  font-size: 18px;
+  font-weight: 900;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+}
+
+.cu-step h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--cu-text);
+  margin: 0 0 8px;
+}
+
+.cu-step p {
+  font-size: 14px;
+  color: var(--cu-text-muted);
+  margin: 0;
+}
+
+.cu-step-arrow {
+  position: absolute;
+  top: 44px;
+  left: -12px;
+  font-size: 24px;
+  color: #bfdbfe;
+}
+
+/* ── CTA ─────────────────────────────────────────────────────────────── */
+.cu-cta {
+  padding: 100px 80px;
+  background: var(--cu-dark);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cu-cta::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.cu-cta-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.cu-cta h2 {
+  font-size: 52px;
+  font-weight: 900;
+  color: #f1f5f9;
+  margin: 0 0 16px;
+  letter-spacing: -1px;
+}
+
+.cu-cta p {
+  font-size: 20px;
+  color: #64748b;
+  margin: 0 0 40px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .cu-hero {
+    grid-template-columns: 1fr;
+    padding: 80px 40px;
+  }
+  .cu-hero-card { max-width: 400px; margin: 0 auto; }
+  .cu-hero-title { font-size: 48px; }
+  .cu-features-grid,
+  .cu-steps-grid { grid-template-columns: repeat(2, 1fr); }
+  .cu-stats { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media (max-width: 640px) {
-  .contact-card {
-    padding: 40px 24px;
-  }
-
-  .main-title,
-  .sub-title {
-    font-size: 24px;
-  }
-
-  .button-group {
-    flex-direction: column;
-  }
-
-  .btn {
-    width: 100%;
-  }
-
-  .stats-section {
-    gap: 20px;
-  }
+  .cu-hero { padding: 60px 20px; }
+  .cu-hero-title { font-size: 36px; }
+  .cu-features { padding: 60px 20px; }
+  .cu-features-grid { grid-template-columns: 1fr; }
+  .cu-steps { padding: 60px 20px; }
+  .cu-steps-grid { grid-template-columns: 1fr 1fr; }
+  .cu-cta { padding: 60px 20px; }
+  .cu-cta h2 { font-size: 36px; }
+  .cu-step-arrow { display: none; }
 }
