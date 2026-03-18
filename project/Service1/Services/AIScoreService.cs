@@ -72,7 +72,6 @@ namespace Service1.Services
             var responseJson = await response.Content.ReadAsStringAsync();
             return ParseScore(responseJson);
         }
-
         // ── Helpers ───────────────────────────────────────────────────────────
 
         private static string BuildTranscript(List<ChatMessage> messages)
