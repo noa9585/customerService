@@ -32,7 +32,11 @@ const AdminDashboard: React.FC = () => {
         successMsg,
         stats,
         handleLogout,
-        actionLoadingId,waitingLoading,waitingReps,handleApprove,handleDeny
+        actionLoadingId,waitingLoading,waitingReps,handleApprove,handleDeny,
+        getTopicName,      
+        getCustomerName,   
+        getRepName,
+        getActualWaitTime,
     } = useAdminDashboard();
 
     const tabs: { id: AdminTab; label: string; icon: string; badge?: number }[] = [
@@ -247,7 +251,7 @@ const AdminDashboard: React.FC = () => {
                             <table className="admin-table">
                                 <thead>
                                     <tr>
-                                        <th>#</th><th>שם</th><th>אימייל</th>
+                                        <th>שם</th><th>אימייל</th>
                                         <th>סטטוס</th><th>מחובר?</th><th>פעולות</th>
                                     </tr>
                                 </thead>
@@ -256,7 +260,6 @@ const AdminDashboard: React.FC = () => {
                                         ? <tr><td colSpan={6} className="td-empty">אין לקוחות במערכת</td></tr>
                                         : customers.map((c: CustomerChat) => (
                                             <tr key={c.idCustomer}>
-                                                <td className="td-id">{c.idCustomer}</td>
                                                 <td className="td-name">{c.nameCust}</td>
                                                 <td className="td-email">{c.emailCust}</td>
                                                 <td>
@@ -290,7 +293,7 @@ const AdminDashboard: React.FC = () => {
                             <table className="admin-table">
                                 <thead>
                                     <tr>
-                                        <th>#</th><th>לקוח</th><th>נציג</th>
+                                        <th>לקוח</th><th>נציג</th>
                                         <th>נושא</th><th>סטטוס</th><th>המתנה (דק׳)</th><th>נפתח</th>
                                     </tr>
                                 </thead>
@@ -301,12 +304,11 @@ const AdminDashboard: React.FC = () => {
                                             const { label, cls } = sessionStatusLabel(s.statusChat);
                                             return (
                                                 <tr key={s.sessionID}>
-                                                    <td className="td-id">{s.sessionID}</td>
-                                                    <td>{s.idCustomer}</td>
-                                                    <td>{s.idRepresentative ?? '—'}</td>
-                                                    <td>{s.idTopic}</td>
+                                                    <td>{getCustomerName(s.idCustomer)}</td>
+                                                    <td>{getRepName(s.idRepresentative)}</td>
+                                                    <td>{getTopicName(s.idTopic)}</td>
                                                     <td><span className={`badge ${cls}`}>{label}</span></td>
-                                                    <td>{s.estimatedWaitTime.toFixed(1)}</td>
+                                                    <td>{getActualWaitTime(s)}</td>
                                                     <td className="td-date">
                                                         {new Date(s.startTimestamp).toLocaleString('he-IL')}
                                                     </td>

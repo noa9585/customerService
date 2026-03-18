@@ -4,7 +4,7 @@ import { useContactActions } from '../hooks/useContactUs.hook';
 import '../styles/ContactUs.css';
 
 const ContactUs: React.FC = () => {
-    const { handleStart } = useContactActions();
+    const { handleStart, isAuthenticated } = useContactActions();
 
     const features = [
         { icon: '⚡', title: 'מענה מיידי', desc: 'חיבור לנציג תוך דקות ספורות' },
@@ -55,8 +55,23 @@ const ContactUs: React.FC = () => {
                             התחל שיחה עכשיו
                             <span className="cu-btn-arrow">←</span>
                         </button>
-                        <Link to="/login" className="cu-btn-ghost">כניסה למערכת</Link>
-                    </div>
+                        {!isAuthenticated && (
+                            <Link to="/login" className="cu-btn-ghost
+">
+                                כניסה למערכת
+                            </Link>
+                        )}                    </div>
+
+
+
+
+
+
+
+
+
+
+
                 </div>
 
                 {/* Chat preview card */}

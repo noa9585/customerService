@@ -19,7 +19,7 @@ export type ChatSession= {
     sessionID: number;
     messages: ChatMessage[]; // רשימת ההודעות בשיחה
     startTimestamp: Date | string;
-    serviceStartTimestamp: Date | string;
+    serviceStartTimestamp: Date | string| null; 
     endTimestamp?: Date | string | null; // שדה אופציונלי (Nullable)
     estimatedWaitTime: number;
     statusChat: SessionStatus;

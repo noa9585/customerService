@@ -56,6 +56,7 @@ export const useAdminDashboard = () => {
     const [successMsg, setSuccessMsg] = useState<string | null>(null);
     const [confirmDelete, setConfirmDelete] = useState<{ type: string; id: number } | null>(null);
     const [actionLoadingId, setActionLoadingId] = useState<number | null>(null);
+
     const getTopicName = useCallback((id: number) => {
         const topic = topics.find(t => t.idTopic === id);
         return topic ? topic.nameTopic : `נושא #${id}`;
@@ -245,6 +246,26 @@ export const useAdminDashboard = () => {
         onlineReps: 0,   // RepresentativeChat לא מכיל isOnline — נשאר 0
         pendingApproval: waitingReps.length,
     };
+    const getActualWaitTime = useCallback((session: ChatSession) => {
+    // אם אין זמן תחילת שירות (ServiceStartTimestamp), סימן שהשיחה מעולם לא נענתה
+    if (!session.serviceStartTimestamp) {
+        return "—"; 
+    }
+
+    const start = new Date(session.startTimestamp).getTime();
+    const service = new Date(session.serviceStartTimestamp).getTime();
+    
+    const diffInMs = service - start;
+    
+    // אם מסיבה כלשהי הזמן שלילי (באג בנתונים), נחזיר 0
+    if (diffInMs < 0) return "0:00";
+
+    const minutes = Math.floor(diffInMs / 60000);
+    const seconds = Math.floor((diffInMs % 60000) / 1000);
+
+    // מחזיר פורמט של MM:SS
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+}, []);
 
     return {
         activeTab, setActiveTab,
@@ -263,5 +284,6 @@ export const useAdminDashboard = () => {
         getTopicName,
         getCustomerName,
         getRepName,
+        getActualWaitTime,
     };
 };

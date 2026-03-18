@@ -7,7 +7,7 @@ import { RootState } from '../store/index';
 const HomeRedirect: React.FC = () => {
   const { userType, isAuthenticated } = useSelector((state: RootState) => state.auth);
 
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
+if (!isAuthenticated) return <Navigate to="/contact-us" replace />;
   if (userType === 'admin') return <Navigate to="/admin" replace />;
   if (userType === 'representative') return <Navigate to="/representative-dashboard" replace />;
   return <Navigate to="/contact-us" replace />;

@@ -17,5 +17,5 @@ export const useContactActions = () => {
     }
   }, [navigate, isAuthenticated]);
 
-  return { handleStart };
+  return { handleStart, isAuthenticated };
 };
