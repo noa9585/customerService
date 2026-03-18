@@ -233,7 +233,7 @@ namespace Service1.Services
             if (representative == null) throw new Exception("נציג לא נמצא");
             if (representative.Role != "Waiting") throw new InvalidOperationException("הנציג אינו ממתין לאישור");
             representative.Role = "Denied";
-            representative.StatusRepr = false;
+            representative.StatusRepr = true;
             await _repository.UpdateItem(id, representative);
         }
 

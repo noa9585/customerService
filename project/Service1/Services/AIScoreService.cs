@@ -1,6 +1,6 @@
-﻿using Repository.Entities;
+﻿using Microsoft.Extensions.Configuration;
+using Repository.Entities;
 using Service1.Interface;
-using Microsoft.Extensions.Configuration;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -58,19 +58,23 @@ namespace Service1.Services
 
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", _apiKey);
-
-            var response = await _httpClient.PostAsync(
-                "https://api.groq.com/openai/v1/chat/completions", content);
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                var errorBody = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Groq API error: {response.StatusCode} — {errorBody}");
-                return 5;
+                var response = await _httpClient.PostAsync(
+               "https://api.groq.com/openai/v1/chat/completions", content);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorBody = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Groq API error: {response.StatusCode} — {errorBody}");
+                    return 5;
+                }
+                var responseJson = await response.Content.ReadAsStringAsync();
+                return ParseScore(responseJson);
             }
-
-            var responseJson = await response.Content.ReadAsStringAsync();
-            return ParseScore(responseJson);
+            catch (Exception ex)
+            {
+                return 7;
+            }
         }
 
         // ── Helpers ───────────────────────────────────────────────────────────

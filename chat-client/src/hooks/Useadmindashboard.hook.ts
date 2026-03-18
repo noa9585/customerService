@@ -56,6 +56,21 @@ export const useAdminDashboard = () => {
     const [successMsg, setSuccessMsg] = useState<string | null>(null);
     const [confirmDelete, setConfirmDelete] = useState<{ type: string; id: number } | null>(null);
     const [actionLoadingId, setActionLoadingId] = useState<number | null>(null);
+    const getTopicName = useCallback((id: number) => {
+        const topic = topics.find(t => t.idTopic === id);
+        return topic ? topic.nameTopic : `נושא #${id}`;
+    }, [topics]);
+
+    const getCustomerName = useCallback((id: number) => {
+        const customer = customers.find(c => c.idCustomer === id);
+        return customer ? customer.nameCust : `לקוח #${id}`;
+    }, [customers]);
+
+    const getRepName = useCallback((id: number | null) => {
+        if (!id) return '—';
+        const rep = representatives.find(r => r.idRepresentative === id);
+        return rep ? rep.nameRepr : `נציג #${id}`;
+    }, [representatives]);
 
     // ── ✅ useCallback — הפונקציות יציבות וניתן לשים ב-dependencies ────────
     const loadRepresentatives = useCallback(async () => {
@@ -245,5 +260,8 @@ export const useAdminDashboard = () => {
         successMsg,
         stats,
         handleLogout,
+        getTopicName,
+        getCustomerName,
+        getRepName,
     };
 };
