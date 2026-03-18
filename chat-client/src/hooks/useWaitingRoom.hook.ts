@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from '../store/index';
 import { cancelSessionThunk, fetchSessionById } from '../store/slices/Chatsession.slice';
 import { fetchCustomerById } from '../store/slices/Customerslice';
 
+
 export const useWaitingRoom = (sessionId: number, initialWait: number) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ export const useWaitingRoom = (sessionId: number, initialWait: number) => {
   
   const [elapsed, setElapsed] = useState(0);
   const [connection, setConnection] = useState<HubConnection | null>(null);
+  const [waitTime, setWaitTime] = useState<number>(initialWait);
+
 
   // פונקציית עזר לחישוב הפרש זמן בשניות
   const calculateElapsed = (startTime?: string | Date) => {
@@ -71,7 +74,12 @@ export const useWaitingRoom = (sessionId: number, initialWait: number) => {
       .withUrl('https://localhost:7260/chatHub') 
       .withAutomaticReconnect()
       .build();
-
+    newConnection.on('WaitingTimesUpdated', (updatedSessions: any[]) => {
+    const mySession = updatedSessions.find(s => s.sessionID === sessionId);
+    if (mySession) {
+        setWaitTime(mySession.estimatedWaitTime);
+    }
+});
     newConnection.start()
       .then(() => {
         newConnection.invoke('JoinChat', sessionId);
@@ -111,12 +119,12 @@ export const useWaitingRoom = (sessionId: number, initialWait: number) => {
     };
   }, [activeSession, selectedCustomer, sessionId]);
 
-  return { 
+ return { 
     session: sessionForUI, 
     elapsed, 
-    waitTime: initialWait, 
+    waitTime,  
     onCancel 
-  };
+};
 };
 
 // import { useEffect, useState, useCallback, useRef } from 'react';
