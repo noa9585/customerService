@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Representative } from "../../types/representative.types";
+import type { Representative, RepresentativeChat } from "../../types/representative.types";
 import {
   getRepresentativeById,
   toggleBreak,
@@ -64,7 +64,7 @@ export const logoutRepresentativeThunk = createAsyncThunk(
 // ── State ─────────────────────────────────────────────────────────────────────
 
 type RepresentativeState = {
-  representative: Representative | null;       // הנציג המחובר
+  representative: RepresentativeChat | null;       // הנציג המחובר
   selectedRepresentative: Representative | null; // ✅ נציג אחר (לצ'אט לקוח)
   loading: boolean;
   error: string | null;
@@ -101,7 +101,7 @@ const representativeSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchRepresentativeById.fulfilled, (state, action: PayloadAction<Representative>) => {
+      .addCase(fetchRepresentativeById.fulfilled, (state, action: PayloadAction<RepresentativeChat>) => {
         state.loading = false;
         state.representative = action.payload; // ← שומר בנציג המחובר
       })
@@ -113,8 +113,8 @@ const representativeSlice = createSlice({
 
     // fetchRepresentativeByIdForChat — נציג בצ'אט לקוח
     builder
-      .addCase(fetchRepresentativeByIdForChat.fulfilled, (state, action: PayloadAction<Representative>) => {
-        state.selectedRepresentative = action.payload; // ← שומר בנפרד
+      .addCase(fetchRepresentativeByIdForChat.fulfilled, (state, action: PayloadAction<RepresentativeChat>) => {
+        state.representative = action.payload; // ← שומר בנפרד
       })
       .addCase(fetchRepresentativeByIdForChat.rejected, (state, action) => {
         state.error = action.error.message || "שגיאה בטעינת נציג";

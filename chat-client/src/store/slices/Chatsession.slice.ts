@@ -29,11 +29,24 @@ export const fetchSessionById = createAsyncThunk(
   }
 );
 
+// export const createSessionThunk = createAsyncThunk(
+//   "chatSession/create",
+//   async (dto: ChatSessionCreate) => {
+//     const newSession = await createSession(dto);
+//     return newSession;
+//   }
+// );
+
 export const createSessionThunk = createAsyncThunk(
-  "chatSession/create",
-  async (dto: ChatSessionCreate) => {
-    const newSession = await createSession(dto);
-    return newSession;
+  'chatSession/create',
+  async (sessionData: ChatSessionCreate, { rejectWithValue }) => {
+    try {
+      const response = await createSession(sessionData);
+      return response;
+    } catch (err: any) {
+      // כאן הקסם קורה - אנחנו מחזירים את האובייקט שבו נמצא ה-message מהשרת
+      return rejectWithValue(err.response?.data); 
+    }
   }
 );
 

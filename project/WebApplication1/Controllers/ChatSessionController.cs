@@ -65,10 +65,10 @@ namespace WebApplication1.Controllers
             try
             {
                 // 1. בדיקה מוקדמת - האם יש נציגים?
-                if (!await _representativeService.HasOnlineRepresentatives())
-                {
-                    return BadRequest(new { message = "אין נציגים מחוברים למערכת כרגע. אנא נסה שוב מאוחר יותר." });
-                }
+                //if (!await _representativeService.HasOnlineRepresentatives())
+                //{
+                //    return BadRequest(new { message = "אין נציגים מחוברים למערכת כרגע. אנא נסה שוב מאוחר יותר." });
+                //}
 
                 // 2. יצירת הסשן (רק אם יש נציגים)
                 var created = await _chatSessionService.AddSession(createDto);

@@ -8,9 +8,14 @@ export const useCustomerRegister = () => {
     userType: 'customer',
     navigateTo: '/contact-us',
     onSubmit: registerCustomer,
+    validate: (data) => {
+      if (data.passwordCust.length < 6) {
+        return 'הסיסמה חייבת להכיל לפחות 6 תווים';
+      }
+      return null;
+    },
   });
 };
-
 
 
 

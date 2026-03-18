@@ -10,7 +10,7 @@ import { getCustomerByIdToUpdate } from '../services/customer.service';
 export const useUpdateCustomer = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-
+  const [localError, setLocalError] = useState<string | null>(null);
   const { user } = useSelector((state: RootState) => state.auth);
   const currentUser = user as CustomerChat | null;
   const { selectedCustomer, loading, error } = useSelector((state: RootState) => state.customer);
@@ -42,8 +42,12 @@ export const useUpdateCustomer = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLocalError(null);
     if (!currentUser?.idCustomer) return;
-
+    if (formData.passwordCust.length > 0 && formData.passwordCust.length < 6) {
+      setLocalError('הסיסמה חייבת להכיל לפחות 6 תווים');
+      return;
+    }
     const dataToUpdate = { ...formData };
     if (!dataToUpdate.passwordCust?.trim()) {
       dataToUpdate.passwordCust = (await getCustomerByIdToUpdate(currentUser.idCustomer)).passwordCust;
@@ -63,7 +67,7 @@ export const useUpdateCustomer = () => {
   return {
     formData, handleChange, handleSubmit,
     handleCancel: () => navigate('/contact-us'),
-    loading, error,
+    loading, error: localError || error,
   };
 };
 

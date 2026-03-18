@@ -7,7 +7,7 @@ const NewChat: React.FC = () => {
     message, setMessage,
     loading, error,
     topics, selectedTopic, setSelectedTopic,
-    topicsError, currentUser, openSession,
+    topicsError, currentUser, openSession,error1
   } = useNewChatPage();
 
   return (
@@ -139,12 +139,13 @@ const NewChat: React.FC = () => {
               </div>
             </div>
 
-            {/* שגיאות */}
-            {(topicsError || error) && (
-              <div className="nc-error">
-                ⚠️ {topicsError || error}
-              </div>
-            )}
+          {/* שגיאות */}
+{(error1||topicsError || error  ) && (
+  <div className="nc-error">
+    ⚠️ {error1||topicsError || error  }
+  </div>
+)}
+
 
             {/* כפתור */}
             <button className="nc-submit-btn" type="submit" disabled={loading || !selectedTopic}>

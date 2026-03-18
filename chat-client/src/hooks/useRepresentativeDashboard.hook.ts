@@ -55,7 +55,6 @@ export const useRepresentativeDashboard = () => {
         state: { sessionId: result.payload.sessionID, SenderType: 1 },
       });
     }
-    // אם rejected — sessionError יתעדכן אוטומטית ויוצג
   };
 
   const handleToggleBreak = () => {

@@ -12,6 +12,7 @@ interface UseAuthFormOptions<T> {
   userType: UserType;
   navigateTo: string;
   onSubmit: (data: T) => Promise<any>;
+  validate?: (data: T) => string | null;
 }
 
 export const useAuthForm = <T>({
@@ -19,6 +20,7 @@ export const useAuthForm = <T>({
   userType,
   navigateTo,
   onSubmit,
+  validate,
 }: UseAuthFormOptions<T>) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -30,6 +32,13 @@ export const useAuthForm = <T>({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (validate) {
+      const validationError = validate(formData);
+      if (validationError) {
+        setError(validationError);
+        return; // עוצר את השליחה לשרת
+      }
+    }
     setLoading(true);
     try {
       const response = await onSubmit(formData);

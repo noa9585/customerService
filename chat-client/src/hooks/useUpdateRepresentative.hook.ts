@@ -14,7 +14,7 @@ export const useUpdateRepresentative = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const currentRep = user as Representative | null;
   const { representative, loading, error } = useSelector((state: RootState) => state.representative);
-
+const [localError, setLocalError] = useState<string | null>(null);
   const [formData, setFormData] = useState<RepresentativeUpdate>({
     nameRepr: '', emailRepr: '', passwordRepr: '',
   });
@@ -42,8 +42,12 @@ export const useUpdateRepresentative = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLocalError(null); 
     if (!currentRep?.idRepresentative) return;
-
+if (formData.passwordRepr.length > 0 && formData.passwordRepr.length < 6) {
+    setLocalError('הסיסמה חייבת להכיל לפחות 6 תווים');
+    return;
+  }
     const dataToUpdate = { ...formData };
     if (!dataToUpdate.passwordRepr?.trim()) {
       dataToUpdate.passwordRepr = (await getRepresentativeByIdToUpdate(currentRep.idRepresentative)).passwordRepr;
@@ -63,7 +67,7 @@ export const useUpdateRepresentative = () => {
   return {
     formData, handleChange, handleSubmit,
     handleCancel: () => navigate('/representative-dashboard'),
-    loading, error,
+    loading, error: localError || error,
   };
 };
 

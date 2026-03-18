@@ -12,6 +12,8 @@ import { SenderType } from '../types/chatMessage.types';
 export const useNewChatPage = (onSuccess?: (data: any) => void) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const [error1, setError1] = useState<string | null>(null);
+
 
   const { user } = useSelector((state: RootState) => state.auth);
   const currentUser = user as CustomerChat | null;
@@ -30,28 +32,34 @@ export const useNewChatPage = (onSuccess?: (data: any) => void) => {
 
   const openSession = useCallback(async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    setError1(null);
     if (!message || !selectedTopic) return;
     if (!currentUser?.idCustomer) return;
 
-    const sessionResult = await dispatch(createSessionThunk({
-      idCustomer: currentUser.idCustomer,
-      idTopic: Number(selectedTopic),
-    }));
-
-    if (createSessionThunk.fulfilled.match(sessionResult)) {
-      const newSession = sessionResult.payload;
-      dispatch(sendMessageThunk({
-        message,
-        idSession: newSession.sessionID,
-        timestamp: new Date().toISOString(),
-        messageType: SenderType.Customer,
+    try {
+      const sessionResult = await dispatch(createSessionThunk({
+        idCustomer: currentUser.idCustomer,
+        idTopic: Number(selectedTopic),
       }));
-      navigate('/waiting-room', {
-        state: { sessionId: newSession.sessionID, initialWait: newSession.estimatedWaitTime },
-      });
-      if (onSuccess) onSuccess(newSession);
-      setMessage('');
-      setSelectedTopic('');
+
+      if (createSessionThunk.fulfilled.match(sessionResult)) {
+        const newSession = sessionResult.payload;
+        dispatch(sendMessageThunk({
+          message,
+          idSession: newSession.sessionID,
+          timestamp: new Date().toISOString(),
+          messageType: SenderType.Customer,
+        }));
+        navigate('/waiting-room', {
+          state: { sessionId: newSession.sessionID, initialWait: newSession.estimatedWaitTime },
+        });
+        if (onSuccess) onSuccess(newSession);
+        setMessage('');
+        setSelectedTopic('');
+      }
+    } catch (err: any) {
+      const msg = err?.message || err?.Message || "אירעה שגיאה בפתיחת השיחה";
+      setError1(msg);
     }
   }, [message, selectedTopic, currentUser, dispatch, navigate, onSuccess]);
 
@@ -60,7 +68,7 @@ export const useNewChatPage = (onSuccess?: (data: any) => void) => {
     topics, selectedTopic, setSelectedTopic,
     topicsLoading, topicsError,
     loading, error,
-    currentUser, openSession,
+    currentUser, openSession, error1
   };
 };
 
@@ -153,11 +161,11 @@ export const useNewChatPage = (onSuccess?: (data: any) => void) => {
 //         timestamp: new Date().toISOString(),
 //         messageType: 0
 //       })
-//       navigate('/waiting-room', { 
-//                 state: { 
+//       navigate('/waiting-room', {
+//                 state: {
 //                     sessionId: newSession.sessionID,
-//                     initialWait: newSession.estimatedWaitTime 
-//                 } 
+//                     initialWait: newSession.estimatedWaitTime
+//                 }
 //             });
 //       if (onSuccess) onSuccess(newSession)
 //       setForm(prev => ({ ...prev, message: '' }))

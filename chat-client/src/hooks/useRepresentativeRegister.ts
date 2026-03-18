@@ -3,24 +3,28 @@
 import { useState } from 'react';
 import { registerRepresentative } from '../services/representative.service';
 import { RepresentativeRegister as RepresentativeRegisterType } from '../types/representative.types';
- 
+
 export const useRepresentativeRegister = () => {
   const [formData, setFormData] = useState<RepresentativeRegisterType>({
     nameRepr: '',
     emailRepr: '',
     passwordRepr: '',
   });
- 
+
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   // ✅ מוצג אחרי הרשמה מוצלחת — לא מנווטים
   const [registered, setRegistered] = useState(false);
- 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (formData.passwordRepr.length < 6) {
+      setError('הסיסמה חייבת להכיל לפחות 6 תווים');
+      return;
+    }
     setLoading(true);
- 
+
     try {
       await registerRepresentative(formData);
       setRegistered(true);
@@ -31,7 +35,7 @@ export const useRepresentativeRegister = () => {
       setLoading(false);
     }
   };
- 
+
   return { formData, setFormData, error, loading, handleSubmit, registered };
 };
 
@@ -62,7 +66,7 @@ export const useRepresentativeRegister = () => {
 //                 // localStorage.setItem('representativeToken', newUser.token);
 //                 // console.log("Token stored in localStorage:", newUser.token);
 //                 setTokenRep(newUser.token)
-//             }   
+//             }
 //             console.log("הרשמה הצליחה:", newUser);
 //             alert(`ברוך הבא, ${newUser.nameRepr}!`);
 //         } catch (err: any) {
