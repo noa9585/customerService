@@ -11,7 +11,6 @@ export const useWaitingRoom = (sessionId: number, initialWait: number) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  // 1. שליפת מידע מה-Store (לפי המבנה ששלחת ב-index.ts)
   const { activeSession } = useSelector((state: RootState) => state.chatSession);
   const { selectedCustomer } = useSelector((state: RootState) => state.customer);
   
@@ -19,8 +18,6 @@ export const useWaitingRoom = (sessionId: number, initialWait: number) => {
   const [connection, setConnection] = useState<HubConnection | null>(null);
   const [waitTime, setWaitTime] = useState<number>(initialWait);
 
-
-  // פונקציית עזר לחישוב הפרש זמן בשניות
   const calculateElapsed = (startTime?: string | Date) => {
     if (!startTime) return 0;
     const start = new Date(startTime).getTime();
@@ -29,7 +26,7 @@ export const useWaitingRoom = (sessionId: number, initialWait: number) => {
     return diff > 0 ? diff : 0;
   };
 
-  // 2. טעינת נתונים ראשונית - Session
+  // טעינת נתונים ראשונית - Session
   useEffect(() => {
     if (!sessionId) {
       navigate('/new-chat');
@@ -38,35 +35,43 @@ export const useWaitingRoom = (sessionId: number, initialWait: number) => {
     dispatch(fetchSessionById(sessionId));
   }, [sessionId, dispatch, navigate]);
 
-  // 3. טעינת פרטי הלקוח - ברגע שיש לנו SessionID ו-ID לקוח
+  // טעינת פרטי הלקוח
   useEffect(() => {
-    // כאן אני מניח שלשדה קוראים idCustomer או customerID לפי ה-Slice ששלחת
     const customerId = activeSession?.idCustomer; 
-    
     if (customerId && (!selectedCustomer || selectedCustomer.idCustomer !== customerId)) {
       dispatch(fetchCustomerById(customerId));
     }
   }, [activeSession?.idCustomer, selectedCustomer, dispatch]);
 
-  // 4. טיימר "חסין רענון" - מתעדכן כל שנייה על בסיס זמן אמת
+  // ✅ שינוי 1: useEffect חדש שטוען את waitTime מה-DB
+  // פותר את בעיית הרענון - כשהדף מתרענן location.state אובד
+  // אז אנחנו לוקחים את הזמן ישירות מה-session שנטען מהשרת
   useEffect(() => {
-    // עדכון מיידי
-    if (activeSession?.startTimestamp || activeSession?.startTimestamp) {
-      setElapsed(calculateElapsed(activeSession.startTimestamp || activeSession.startTimestamp));
+    if (activeSession?.estimatedWaitTime != null) {
+      setWaitTime(activeSession.estimatedWaitTime);
+    }
+  }, [activeSession?.estimatedWaitTime]);
+
+  // טיימר - מתעדכן כל שנייה
+  useEffect(() => {
+    if (activeSession?.startTimestamp) {
+      setElapsed(calculateElapsed(activeSession.startTimestamp));
     }
 
     const timer = setInterval(() => {
-      // בדיקה מול השדה הקיים ב-Session (וודא אם זה startTimestamp או startTime)
-      const timeField = activeSession?.startTimestamp || activeSession?.startTimestamp;
+      const timeField = activeSession?.startTimestamp;
       if (timeField) {
         setElapsed(calculateElapsed(timeField));
       }
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [activeSession?.startTimestamp, activeSession?.startTimestamp]);
+  }, [activeSession?.startTimestamp]);
 
-  // 5. ניהול SignalR
+  // ✅ שינוי 2: כל ה-listeners נרשמים לפני ה-start()
+  // לפני: SessionStarted ו-ChatEnded היו בתוך ה-.then()
+  //        ו-WaitingTimesUpdated היה בחוץ - חוסר עקביות
+  // עכשיו: כולם במקום אחד, לפני ה-start - מובטח שלא יפספסו הודעות
   useEffect(() => {
     if (!sessionId) return;
 
@@ -74,26 +79,37 @@ export const useWaitingRoom = (sessionId: number, initialWait: number) => {
       .withUrl('https://localhost:7260/chatHub') 
       .withAutomaticReconnect()
       .build();
+
+    // ✅ שינוי 3: WaitingTimesUpdated - נשאר אותו מקום (לפני start) - זה היה נכון
+    // רק וידאנו שכל השאר עברו לכאן גם
     newConnection.on('WaitingTimesUpdated', (updatedSessions: any[]) => {
-    const mySession = updatedSessions.find(s => s.sessionID === sessionId);
-    if (mySession) {
+      const mySession = updatedSessions.find(s => s.sessionID === sessionId);
+      if (mySession) {
         setWaitTime(mySession.estimatedWaitTime);
-    }
-});
+      }
+    });
+
+    // ✅ שינוי 4: SessionStarted הועבר מתוך ה-.then() לכאן
+    // לפני: newConnection.start().then(() => { newConnection.on('SessionStarted', ...) })
+    // עכשיו: נרשם לפני start - בטוח יותר
+    newConnection.on('SessionStarted', () => {
+      navigate('/customer-chat', {
+        state: { sessionId, SenderType: 0 },
+      });
+    });
+
+    // ✅ שינוי 5: ChatEnded הועבר מתוך ה-.then() לכאן - אותה סיבה
+    newConnection.on('ChatEnded', () => {
+      alert('הפנייה הסתיימה.');
+      navigate('/new-chat');
+    });
+
+    // ✅ שינוי 6: ה-start נקי עכשיו - רק מתחיל ומצטרף לחדר
+    // לפני: גם רשם listeners בתוך ה-.then()
+    // עכשיו: רק invoke של JoinChat
     newConnection.start()
       .then(() => {
         newConnection.invoke('JoinChat', sessionId);
-
-        newConnection.on('SessionStarted', () => {
-          navigate('/customer-chat', {
-            state: { sessionId, SenderType: 0 },
-          });
-        });
-
-        newConnection.on('ChatEnded', () => {
-          alert('הפנייה הסתיימה.');
-          navigate('/new-chat');
-        });
       })
       .catch((e) => console.error('SignalR Error:', e));
 
@@ -101,7 +117,7 @@ export const useWaitingRoom = (sessionId: number, initialWait: number) => {
     return () => { newConnection.stop(); };
   }, [sessionId, navigate]);
 
-  // 6. ביטול פנייה
+  // ביטול פנייה
   const onCancel = async () => {
     if (window.confirm('האם אתה בטוח שברצונך לבטל את הפנייה?')) {
       await dispatch(cancelSessionThunk(sessionId));
@@ -109,23 +125,153 @@ export const useWaitingRoom = (sessionId: number, initialWait: number) => {
     }
   };
 
-  // 7. יצירת אובייקט סשן משולב עבור ה-UI (מוסיף את שם הלקוח לסשן)
+  // אובייקט סשן משולב עבור ה-UI
   const sessionForUI = useMemo(() => {
     if (!activeSession) return null;
     return {
       ...activeSession,
       customerName: selectedCustomer?.nameCust || 'לקוח יקר',
-      sessionID: activeSession.sessionID || sessionId // התאמה לשם השדה ב-UI
+      sessionID: activeSession.sessionID || sessionId
     };
   }, [activeSession, selectedCustomer, sessionId]);
 
- return { 
+  return { 
     session: sessionForUI, 
     elapsed, 
     waitTime,  
     onCancel 
+  };
 };
-};
+
+
+// import { useEffect, useState, useMemo } from 'react';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { useNavigate } from 'react-router-dom';
+// import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
+// import { AppDispatch, RootState } from '../store/index';
+// import { cancelSessionThunk, fetchSessionById } from '../store/slices/Chatsession.slice';
+// import { fetchCustomerById } from '../store/slices/Customerslice';
+
+
+// export const useWaitingRoom = (sessionId: number, initialWait: number) => {
+//   const dispatch = useDispatch<AppDispatch>();
+//   const navigate = useNavigate();
+
+//   // 1. שליפת מידע מה-Store (לפי המבנה ששלחת ב-index.ts)
+//   const { activeSession } = useSelector((state: RootState) => state.chatSession);
+//   const { selectedCustomer } = useSelector((state: RootState) => state.customer);
+  
+//   const [elapsed, setElapsed] = useState(0);
+//   const [connection, setConnection] = useState<HubConnection | null>(null);
+//   const [waitTime, setWaitTime] = useState<number>(initialWait);
+
+
+//   // פונקציית עזר לחישוב הפרש זמן בשניות
+//   const calculateElapsed = (startTime?: string | Date) => {
+//     if (!startTime) return 0;
+//     const start = new Date(startTime).getTime();
+//     const now = new Date().getTime();
+//     const diff = Math.floor((now - start) / 1000);
+//     return diff > 0 ? diff : 0;
+//   };
+
+//   // 2. טעינת נתונים ראשונית - Session
+//   useEffect(() => {
+//     if (!sessionId) {
+//       navigate('/new-chat');
+//       return;
+//     }
+//     dispatch(fetchSessionById(sessionId));
+//   }, [sessionId, dispatch, navigate]);
+
+//   // 3. טעינת פרטי הלקוח - ברגע שיש לנו SessionID ו-ID לקוח
+//   useEffect(() => {
+//     // כאן אני מניח שלשדה קוראים idCustomer או customerID לפי ה-Slice ששלחת
+//     const customerId = activeSession?.idCustomer; 
+    
+//     if (customerId && (!selectedCustomer || selectedCustomer.idCustomer !== customerId)) {
+//       dispatch(fetchCustomerById(customerId));
+//     }
+//   }, [activeSession?.idCustomer, selectedCustomer, dispatch]);
+
+//   // 4. טיימר "חסין רענון" - מתעדכן כל שנייה על בסיס זמן אמת
+//   useEffect(() => {
+//     // עדכון מיידי
+//     if (activeSession?.startTimestamp || activeSession?.startTimestamp) {
+//       setElapsed(calculateElapsed(activeSession.startTimestamp || activeSession.startTimestamp));
+//     }
+
+//     const timer = setInterval(() => {
+//       // בדיקה מול השדה הקיים ב-Session (וודא אם זה startTimestamp או startTime)
+//       const timeField = activeSession?.startTimestamp || activeSession?.startTimestamp;
+//       if (timeField) {
+//         setElapsed(calculateElapsed(timeField));
+//       }
+//     }, 1000);
+
+//     return () => clearInterval(timer);
+//   }, [activeSession?.startTimestamp, activeSession?.startTimestamp]);
+
+//   // 5. ניהול SignalR
+//   useEffect(() => {
+//     if (!sessionId) return;
+
+//     const newConnection = new HubConnectionBuilder()
+//       .withUrl('https://localhost:7260/chatHub') 
+//       .withAutomaticReconnect()
+//       .build();
+//     newConnection.on('WaitingTimesUpdated', (updatedSessions: any[]) => {
+//     const mySession = updatedSessions.find(s => s.sessionID === sessionId);
+//     if (mySession) {
+//         setWaitTime(mySession.estimatedWaitTime);
+//     }
+// });
+//     newConnection.start()
+//       .then(() => {
+//         newConnection.invoke('JoinChat', sessionId);
+
+//         newConnection.on('SessionStarted', () => {
+//           navigate('/customer-chat', {
+//             state: { sessionId, SenderType: 0 },
+//           });
+//         });
+
+//         newConnection.on('ChatEnded', () => {
+//           alert('הפנייה הסתיימה.');
+//           navigate('/new-chat');
+//         });
+//       })
+//       .catch((e) => console.error('SignalR Error:', e));
+
+//     setConnection(newConnection);
+//     return () => { newConnection.stop(); };
+//   }, [sessionId, navigate]);
+
+//   // 6. ביטול פנייה
+//   const onCancel = async () => {
+//     if (window.confirm('האם אתה בטוח שברצונך לבטל את הפנייה?')) {
+//       await dispatch(cancelSessionThunk(sessionId));
+//       navigate('/new-chat');
+//     }
+//   };
+
+//   // 7. יצירת אובייקט סשן משולב עבור ה-UI (מוסיף את שם הלקוח לסשן)
+//   const sessionForUI = useMemo(() => {
+//     if (!activeSession) return null;
+//     return {
+//       ...activeSession,
+//       customerName: selectedCustomer?.nameCust || 'לקוח יקר',
+//       sessionID: activeSession.sessionID || sessionId // התאמה לשם השדה ב-UI
+//     };
+//   }, [activeSession, selectedCustomer, sessionId]);
+
+//  return { 
+//     session: sessionForUI, 
+//     elapsed, 
+//     waitTime,  
+//     onCancel 
+// };
+// };
 
 // import { useEffect, useState, useCallback, useRef } from 'react';
 // import { getSessionById,cancelSession } from '../services/chatSession.service';

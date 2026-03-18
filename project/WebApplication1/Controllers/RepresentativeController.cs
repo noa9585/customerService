@@ -2,6 +2,9 @@
 using Service1.Interface;
 using Service1.Dto.RepresentativeDto;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
+using WebApplication1.Hubs;
+
 namespace WebApplication1.Controllers
 {
     [Route("api/[controller]")]
@@ -9,10 +12,14 @@ namespace WebApplication1.Controllers
     public class RepresentativeController : ControllerBase
     {
         private readonly IRepresentativeService _representativeService;
+        private readonly IHubContext<ChatHub> _hubContext;
+        private readonly IChatSessionService _chatSessionService;
 
-        public RepresentativeController(IRepresentativeService representativeService)
+        public RepresentativeController(IRepresentativeService representativeService, IHubContext<ChatHub> hubContext, IChatSessionService chatSessionService)
         {
             _representativeService = representativeService;
+            _hubContext = hubContext;
+            _chatSessionService = chatSessionService;
         }
         // שליפת כל הנציגים
         [Authorize(Roles = "Admin")]
@@ -99,6 +106,8 @@ namespace WebApplication1.Controllers
             {
                 var result = await _representativeService.Login(loginDto);
                 if (result == null) return Unauthorized("אימייל או סיסמה שגויים");
+                var updatedSessions = await _chatSessionService.GetAllWaiting();
+                await _hubContext.Clients.All.SendAsync("WaitingTimesUpdated", updatedSessions);
                 return Ok(result);
             }
             catch (InvalidOperationException ex) when (ex.Message == "WAITING")
@@ -151,6 +160,8 @@ namespace WebApplication1.Controllers
             }
 
             await _representativeService.Logout(id);
+            var updatedSessions = await _chatSessionService.GetAllWaiting();
+            await _hubContext.Clients.All.SendAsync("WaitingTimesUpdated", updatedSessions);
             return Ok(new { message = "התנתקת בהצלחה" });
         }
 
@@ -167,6 +178,8 @@ namespace WebApplication1.Controllers
             }
 
             await _representativeService.ToggleBreak(id);
+            var updatedSessions = await _chatSessionService.GetAllWaiting();
+            await _hubContext.Clients.All.SendAsync("WaitingTimesUpdated", updatedSessions);
             return Ok(new { message = "יצאת להפסקה בהצלחה" });
         }
         // חזרה מהפסקה
@@ -181,6 +194,8 @@ namespace WebApplication1.Controllers
             }
 
             await _representativeService.ReturnFromBreak(id);
+            var updatedSessions = await _chatSessionService.GetAllWaiting();
+            await _hubContext.Clients.All.SendAsync("WaitingTimesUpdated", updatedSessions);
             return Ok(new { message = "חזרת מהפסקה, הנך זמין לקבלת שיחות" });
         }
 
@@ -215,3 +230,4 @@ namespace WebApplication1.Controllers
         }
     }
 }
+

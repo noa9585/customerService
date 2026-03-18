@@ -87,31 +87,9 @@ namespace WebApplication1.Controllers
             }
         }
 
-        //[Authorize(Roles = "Customer")]
-        //[HttpGet("estimate/{id}")]
-        //public async Task<ActionResult<double>> GetWaitTimeEstimate(int id)
-        //{
-        //    try
-        //    {
-        //        var waiting=await _chatSessionService.GetAllWaiting();
-        //        double estimatedMinutes = await _chatSessionService.CalculateWaitTime(id,waiting);
-        //        return Ok(estimatedMinutes);
-        //    }
-        //    catch (InvalidOperationException ex)
-        //    {
-        //        // כאן נתפסת השגיאה של "אין נציגים מחוברים"
-        //        // מחזירים BadRequest (400) או ServiceUnavailable (503) עם הודעת השגיאה
-        //        return BadRequest(new { message = ex.Message });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // שגיאות כלליות אחרות
-        //        return StatusCode(500, new { message = "אירעה שגיאה פנימית בחישוב הזמן", details = ex.Message });
-        //    }
-        //}
         [Authorize(Roles = "Admin,Representative,Customer")]
         [HttpPut("Recalculate")]
-        private async Task RecalculateAndNotify()
+        public async Task RecalculateAndNotify()
         {
             await _chatSessionService.RecalculateAllWaitingTimes(); // מחשב ושומר
             var sessions = await _chatSessionService.GetAllWaiting(); //שולף את הרשימה המעודכנת
@@ -148,7 +126,6 @@ namespace WebApplication1.Controllers
         {
             try
             {
-                // וודאי שה-id עובר נכון ל-Service
                 var sessionDto = await _chatSessionService.PullNextClientForRepresentative(id);
 
                 if (sessionDto == null)
@@ -156,6 +133,8 @@ namespace WebApplication1.Controllers
                     return NotFound(new { message = "אין לקוחות ממתינים בתור כרגע." });
                 }
                 await _hubContext.Clients.Group(sessionDto.SessionID.ToString()).SendAsync("SessionStarted", sessionDto);
+                var updatedSessions = await _chatSessionService.GetAllWaiting();
+                await _hubContext.Clients.All.SendAsync("WaitingTimesUpdated", updatedSessions);
                 return Ok(sessionDto);
             }
             catch (Exception ex)
@@ -178,6 +157,8 @@ namespace WebApplication1.Controllers
             {
                 await _chatSessionService.EndChatSession(idSession);
                 await _hubContext.Clients.Group(idSession.ToString()).SendAsync("ChatEnded");
+                var updatedSessions = await _chatSessionService.GetAllWaiting();
+                await _hubContext.Clients.All.SendAsync("WaitingTimesUpdated", updatedSessions);
 
                 return Ok();
             }
@@ -194,6 +175,8 @@ namespace WebApplication1.Controllers
             try
             {
                 await _chatSessionService.CansleChatSession(idSession);
+                var updatedSessions = await _chatSessionService.GetAllWaiting();
+                await _hubContext.Clients.All.SendAsync("WaitingTimesUpdated", updatedSessions);
 
                 return Ok();
             }
