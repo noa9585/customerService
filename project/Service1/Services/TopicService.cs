@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Repository.Entities;
-using Repository.interfaces; // וודאי שזה השם המדויק של ה-Namespace
+using Repository.interfaces; 
 using Service1.Dto.TopicDto;
 using Service1.Interface;
 using AutoMapper;
@@ -13,8 +13,7 @@ namespace Service1.Services
     {
         private readonly IRepository<Topic> _repository;
         private readonly IMapper _mapper;
-        // הזרקת ה-Repository דרך הבנאי
-        public TopicService(IRepository<Topic> repository, IMapper mapper) // עדכון הבנאי
+        public TopicService(IRepository<Topic> repository, IMapper mapper) 
         {
             _repository = repository;
             _mapper = mapper;
@@ -25,14 +24,12 @@ namespace Service1.Services
             var topics = await _repository.GetAll();
             return _mapper.Map<List<TopicDto>>(topics);
         }
-
         public async Task<TopicDto> GetById(int id)
         {
             var t =await _repository.GetById(id);
             if (t == null) return null;
             return _mapper.Map<TopicDto>(t);
         }
-
         public async Task<TopicDto> AddTopic(string name, double average, double priority)
         {
             var newTopic = new Topic
@@ -40,7 +37,7 @@ namespace Service1.Services
                 NameTopic = name,
                 AverageTreatTime = average,
                 priorityTopics = priority,
-                StatusTopic = true ,// ברירת מחדל
+                StatusTopic = true ,
                 totalSessionsCount=0
             };
 
@@ -60,7 +57,6 @@ namespace Service1.Services
                await _repository.UpdateItem(id, existing);
             }
         }
-
         public async Task DeleteTopic(int id)
         {
            await _repository.DeleteItem(id);

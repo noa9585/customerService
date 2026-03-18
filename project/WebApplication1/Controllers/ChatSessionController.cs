@@ -61,18 +61,9 @@ namespace WebApplication1.Controllers
         public async Task<ActionResult> Post([FromBody] ChatSessionCreateDto createDto)
         {
             if (createDto == null) return BadRequest();
-
             try
             {
-                // 1. בדיקה מוקדמת - האם יש נציגים?
-                //if (!await _representativeService.HasOnlineRepresentatives())
-                //{
-                //    return BadRequest(new { message = "אין נציגים מחוברים למערכת כרגע. אנא נסה שוב מאוחר יותר." });
-                //}
-
-                // 2. יצירת הסשן (רק אם יש נציגים)
                 var created = await _chatSessionService.AddSession(createDto);
-
                 return CreatedAtAction(nameof(Get), new { id = created.SessionID }, created);
             }
             catch (InvalidOperationException ex)
@@ -86,7 +77,7 @@ namespace WebApplication1.Controllers
                 return StatusCode(500, new { message = "אירעה שגיאה פנימית בשרת", details = ex.Message });
             }
         }
-
+        //עדכון זמני ההמתנה של השיחות הממתינות
         [Authorize(Roles = "Admin,Representative,Customer")]
         [HttpPut("Recalculate")]
         public async Task RecalculateAndNotify()
@@ -119,7 +110,7 @@ namespace WebApplication1.Controllers
             await _chatSessionService.DeleteSession(id);
             return NoContent();
         }
-
+        //שליפת שיחה הבאה
         [Authorize(Roles = "Representative")]
         [HttpPost("get-next-client/{id}")]
         public async Task<IActionResult> GetNextClient(int id)
@@ -148,7 +139,7 @@ namespace WebApplication1.Controllers
                 });
             }
         }
-
+        //סגירת שיחה
         [Authorize(Roles = "Representative")]
         [HttpPost("close-session/{idSession}")]
         public async Task<IActionResult> CloseSession(int idSession)
@@ -167,7 +158,7 @@ namespace WebApplication1.Controllers
                 return StatusCode(500, new { message = "אירעה שגיאה בסיום השיחה.", details = ex.Message });
             }
         }
-
+        //ביטול שיחה
         [Authorize(Roles = "Admin,Customer")]
         [HttpPost("cancel-session/{idSession}")]
         public async Task<IActionResult> CancelSession(int idSession)

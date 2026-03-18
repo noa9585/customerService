@@ -39,7 +39,7 @@ namespace YourProject.Controllers
             }
             return Ok(customer);
         }
-
+        //שליפת לקוח מסוים לעדכון
         [Authorize(Roles = "Customer")]
         [HttpGet("updateByID/{id}")]
         public async Task<ActionResult<CustomerChatDto>> GetByIdToUpdeate(int id)
@@ -96,7 +96,7 @@ namespace YourProject.Controllers
             await _customerService.DeleteCustomer(id);
             return NoContent();
         }
-
+        //התחברת לאתר
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<CustomerChatDto>> Login([FromBody] CustomerLoginDto loginDto)
@@ -110,7 +110,7 @@ namespace YourProject.Controllers
 
             return Ok(customer);
         }
-
+        //הרשמה לאתר
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<CustomerChatDto>> Register([FromBody] CustomerRegisterDto registerDto)
@@ -128,7 +128,7 @@ namespace YourProject.Controllers
                 return BadRequest(ex.Message); // יחזיר שגיאה אם האימייל קיים
             }
         }
-
+        //התנתקות מהאתר
         [Authorize(Roles = "Admin,Customer")]
         [HttpPut("logout/{id}")]
         public async Task<IActionResult> Logout(int id)

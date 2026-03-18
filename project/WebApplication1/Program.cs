@@ -119,7 +119,6 @@ builder.Services.AddCors(options =>
 builder.Services.AddSignalR();
 var app = builder.Build();
 
-//app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseCors("AllowReact");
 
 if (app.Environment.IsDevelopment())
@@ -130,7 +129,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// IMPORTANT: Authentication before Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 

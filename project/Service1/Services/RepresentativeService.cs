@@ -1,28 +1,17 @@
 ﻿using Repository.Entities;
-using Repository.interfaces; // וודאי שזה השם המדויק של ה-Namespace
+using Repository.interfaces; 
 using Service1.Dto.RepresentativeDto;
-using Service1.Dto.TopicDto;
 using Service1.Interface;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using AutoMapper;
-using Service1.Dto.CustomerDto;
 namespace Service1.Services
 {
     public class RepresentativeService : IRepresentativeService
     {
-
         private readonly IRepresentativeRepository _repository;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
         private readonly IChatSessionService _chatSessionService;
 
-
-        // הזרקת ה-Repository דרך הבנאי
         public RepresentativeService(IRepresentativeRepository repository, ITokenService tokenService, IMapper mapper, IChatSessionService chatSessionService)
         {
             _repository = repository;
@@ -34,22 +23,19 @@ namespace Service1.Services
         public async Task<List<RepresentativeDto>> GetAll()
         {
             var representatives = await _repository.GetAll();
-            // מיפוי מרשימת ישויות לרשימת DTO
             return _mapper.Map<List<RepresentativeDto>>(representatives);
 
         }
+        // שליפת כל הנציגים במצב "ממתין" (Waiting)
         public async Task<List<RepresentativeDto>> GetAllPending()
         {
             var representatives = await _repository.GetAllPending();
-            // מיפוי מרשימת ישויות לרשימת DTO
             return _mapper.Map<List<RepresentativeDto>>(representatives);
-
         }
         public async Task<RepresentativeDto> GetById(int id)
         {
             var r = await _repository.GetById(id);
             if (r == null) return null;
-
             return _mapper.Map<RepresentativeDto>(r);
         }
         public async Task<RepresentativeUpdateDto> GetByIdToUpdate(int id)
@@ -68,7 +54,6 @@ namespace Service1.Services
         {
             var newRepresentative = new Representative
             {
-
                 NameRepr = name,
                 EmailRepr = email,
                 PasswordRepr = passward,
@@ -103,7 +88,7 @@ namespace Service1.Services
         {
             await _repository.DeleteItem(id);
         }
-
+        //התחברות לאתר
         public async Task<RepresentativeDto> Login(RepresentativeLoginDto loginDto)
         {
             var representative = (await _repository.GetAll())
@@ -119,7 +104,6 @@ namespace Service1.Services
 
             var newWorkSession = new WorkTime(today, currentTime);
             representative.LHours.Add(newWorkSession);
-            // עדכון סטטוס ל-Online
             representative.IsOnline = true;
 
             // שמירת השינויים בבסיס הנתונים
@@ -131,10 +115,10 @@ namespace Service1.Services
             dto.Token = _tokenService.GenerateTokenForRepresentative(representative);
             return dto;
         }
-        // בתוך IRepresentativeService.cs
+        //הרשמה לאתר
         public async Task<RepresentativeDto> Register(RepresentativeRegisterDto registerDto)
         {
-            // 1. בדיקה אם קיים נציג עם אותו אימייל
+            // בדיקה שלא קיים כזה אימייל בדאטה
             var existing = (await _repository.GetAll())
                 .FirstOrDefault(r => r.EmailRepr == registerDto.EmailRepr);
 
@@ -143,52 +127,46 @@ namespace Service1.Services
                 throw new Exception("נציג עם אימייל זה כבר קיים במערכת");
             }
 
-            // 2. יצירת ישות נציג חדשה עם ערכי ברירת מחדל
             var newRep = new Representative
             {
                 NameRepr = registerDto.NameRepr,
                 EmailRepr = registerDto.EmailRepr,
-                PasswordRepr = registerDto.PasswordRepr, // נשמר ב-DB אך לא יוחזר ב-DTO
+                PasswordRepr = registerDto.PasswordRepr,
                 StatusRepr = true,
                 IsOnline = false,
                 IsBusy = false,
                 ScoreForMonth = 0,
                 LHours = new List<WorkTime>(),
                 Role = "Waiting",
-                // הגדרת שעות עבודה ראשוניות (ניתן לעדכון בהמשך ע"י מנהל)
+                //הגדרת שעות עבודה ראשוניות (במקרה ויום אחד הפרויקט יתפתח...)
                 entryHourRepr = new TimeOnly(8, 0),
                 exitHourRepr = new TimeOnly(16, 0)
             };
 
-            // 3. שמירה ב-Repository
             var savedRep = await _repository.AddItem(newRep);
-
-            // 4. החזרת DTO נקי (ללא סיסמה)
             var dto = _mapper.Map<RepresentativeDto>(savedRep);
+            //מי שנרשם שיהיה בלי טוקן כדי שלא יכנס למערכת
             //dto.Token = _tokenService.GenerateTokenForRepresentative(savedRep);
             return dto;
         }
+        //יציאה מהאתר
         public async Task Logout(int id)
         {
             var representative = await _repository.GetById(id);
             if (representative == null) return;
-
-            // עדכון הסטטוסים
             representative.IsOnline = false;
             representative.IsBusy = false;
-
             var lastEntry = representative.LHours.LastOrDefault();
-
             if (lastEntry != null)
             {
                 //  עדכון שעת היציאה באובייקט שנמצא בתוך הרשימה
                 lastEntry.SetExitHourRepr(TimeOnly.FromDateTime(DateTime.Now));
             }
-
             await _repository.UpdateItem(id, representative);
             await _chatSessionService.RecalculateAllWaitingTimes();
 
         }
+        //פונקציית יציאה להפסקה, הנציג נמצא במערכת אבל לא פנוי לקבל שיחות
         public async Task ToggleBreak(int id)
         {
             var representative = await _repository.GetById(id);
@@ -202,6 +180,7 @@ namespace Service1.Services
 
             }
         }
+        //פונקציית חזרה מההפסקה, הנציג חוזר להיות פנוי לקבל שיחות
         public async Task ReturnFromBreak(int id)
         {
             var representative = await _repository.GetById(id);
@@ -215,10 +194,12 @@ namespace Service1.Services
 
             }
         }
+        //האם קיים נציג שעובד עכשיו
         public async Task<bool> HasOnlineRepresentatives()
         {
             return (await _repository.GetAll()).Any(r => r.IsOnline && r.StatusRepr);
         }
+        //אישור נציג ע"י מנהל
         public async Task ApproveRepresentative(int id)
         {
             var representative = await _repository.GetById(id);
@@ -227,6 +208,7 @@ namespace Service1.Services
             representative.Role = "Representative";
             await _repository.UpdateItem(id, representative);
         }
+        //דחיית נציג ע"י מנהל
         public async Task DenyRepresentative(int id)
         {
             var representative = await _repository.GetById(id);

@@ -23,7 +23,7 @@ namespace YourProject.Controllers
             _hubContext = hubContext;
         }
 
-        // 1. שליפת כל ההודעות
+        //שליפת כל ההודעות
         [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ChatMessageDto>>> GetAll()
@@ -31,7 +31,7 @@ namespace YourProject.Controllers
             return Ok(await _chatMessageService.GetAll());
         }
 
-        // 2. שליפת הודעה לפי ID
+        //שליפת הודעה לפי ID
         [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<ChatMessageChatDto>> GetById(int id)
@@ -64,7 +64,7 @@ namespace YourProject.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdMessage.MessageID }, createdMessage);
         }
 
-
+        //שליחת הודעה
         [Authorize(Roles = "Representative,Customer")]
         [HttpPost("send")]
         public async Task<IActionResult> SendMessage([FromBody] ChatMessageSendDto dto)
@@ -82,7 +82,7 @@ namespace YourProject.Controllers
             return Ok(savedMessage);
         }
 
-        // 4. עדכון הודעה קיימת
+        // עדכון הודעה קיימת
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] ChatMessageChatDto messageDto, [FromQuery] bool statusMessage)
@@ -104,7 +104,7 @@ namespace YourProject.Controllers
             return NoContent();
         }
 
-        // 5. מחיקת הודעה
+        // מחיקת הודעה
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

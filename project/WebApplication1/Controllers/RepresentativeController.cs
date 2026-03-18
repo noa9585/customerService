@@ -198,13 +198,14 @@ namespace WebApplication1.Controllers
             await _hubContext.Clients.All.SendAsync("WaitingTimesUpdated", updatedSessions);
             return Ok(new { message = "חזרת מהפסקה, הנך זמין לקבלת שיחות" });
         }
-
+        //קבלת כל הממתינים לשיחה
         [Authorize(Roles = "Admin")]
         [HttpGet("waiting")]
         public async Task<ActionResult<IEnumerable<RepresentativeChatDto>>> GetWaiting()
         {
             return Ok(await _representativeService.GetAllPending());
         }
+        //אישור קבלת נציג
         [Authorize(Roles = "Admin")]
         [HttpPut("approve/{id}")]
         public async Task<IActionResult> Approve(int id)
@@ -216,7 +217,7 @@ namespace WebApplication1.Controllers
             }
             catch (Exception ex) { return BadRequest(new { message = ex.Message }); }
         }
-
+        //דחיית קבלת נציג
         [Authorize(Roles = "Admin")]
         [HttpPut("deny/{id}")]
         public async Task<IActionResult> Deny(int id)

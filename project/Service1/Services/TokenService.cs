@@ -15,9 +15,7 @@ namespace Service1.Services
         {
             _config = config;
         }
-
-       
-
+        // שני המתודות הבאות משתמשות בשיטה משותפת ליצירת הטוקן, כדי למנוע חזרה על קוד
         public string GenerateTokenForCustomer(Customer customer)
         {
             return GenerateCommonToken(
@@ -27,7 +25,6 @@ namespace Service1.Services
                 customer.Role
             );
         }
-
         public string GenerateTokenForRepresentative(Representative representative)
         {
             return GenerateCommonToken(
@@ -37,7 +34,7 @@ namespace Service1.Services
                 representative.Role
             );
         }
-
+        // שיטה פרטית שמייצרת את הטוקן על בסיס פרטי המשתמש, משותפת לשני סוגי המשתמשים
         private string GenerateCommonToken(string id, string email, string name, string? role)
         {
             var jwt = _config.GetSection("Jwt");
