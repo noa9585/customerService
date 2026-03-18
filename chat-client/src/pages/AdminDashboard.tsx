@@ -32,9 +32,9 @@ const AdminDashboard: React.FC = () => {
         successMsg,
         stats,
         handleLogout,
-        actionLoadingId,waitingLoading,waitingReps,handleApprove,handleDeny,
-        getTopicName,      
-        getCustomerName,   
+        actionLoadingId, waitingLoading, waitingReps, handleApprove, handleDeny,
+        getTopicName,
+        getCustomerName,
         getRepName,
         getActualWaitTime,
     } = useAdminDashboard();
@@ -100,7 +100,7 @@ const AdminDashboard: React.FC = () => {
                                 { icon: '⏳', value: stats.waitingSessions, label: 'ממתינים לנציג' },
                                 { icon: '💬', value: stats.activeSessions, label: 'שיחות פעילות' },
                             ].map(({ icon, value, label, }) => (
-                                <div key={label} className={`ov-card  ? 'ov-card-highlight' : ''}`}>
+                                <div key={label} className="ov-card">
                                     <div className="ov-icon">{icon}</div>
                                     <div className="ov-value">{value}</div>
                                     <div className="ov-label">{label}</div>
@@ -305,7 +305,7 @@ const AdminDashboard: React.FC = () => {
                                             return (
                                                 <tr key={s.sessionID}>
                                                     <td>{getCustomerName(s.idCustomer)}</td>
-                                                    <td>{getRepName(s.idRepresentative)}</td>
+                                                    <td>{getRepName(s.idRepresentative ?? null)}</td>
                                                     <td>{getTopicName(s.idTopic)}</td>
                                                     <td><span className={`badge ${cls}`}>{label}</span></td>
                                                     <td>{getActualWaitTime(s)}</td>

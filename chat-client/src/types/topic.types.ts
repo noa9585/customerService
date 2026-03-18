@@ -4,6 +4,8 @@ export type Topic = {
     nameTopic: string;
     averageTreatTime: number;
     priorityTopics: number;
+    StatusTopic: boolean;
+    totalSessionsCount: number;
 }
 
 // ה-DTO ליצירת נושא חדש (ללא ה-ID, כי הוא נוצר ב-DB)

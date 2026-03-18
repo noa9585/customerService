@@ -40,10 +40,10 @@ export const useAdminDashboard = () => {
     const { sessions, loading: sessionsLoading } = useSelector((s: RootState) => s.chatSession);
     const { customers, loading: customersLoading } = useSelector((s: RootState) => s.customer);
 
-    const [representatives, setRepresentatives] = useState<RepresentativeChat[]>([]);
+    const [representatives, setRepresentatives] = useState<Representative[]>([]);
     const [repsLoading, setRepsLoading] = useState(false);
 
-    const [waitingReps, setWaitingReps] = useState<RepresentativeChat[]>([]);
+const [waitingReps, setWaitingReps] = useState<Representative[]>([]);
     const [waitingLoading, setWaitingLoading] = useState(false);
 
     const [topicForm, setTopicForm] = useState<TopicFormData>({
@@ -236,6 +236,7 @@ export const useAdminDashboard = () => {
     };
 
     // ── Stats ─────────────────────────────────────────────────────────────
+    
     const stats = {
         totalTopics: topics.length,
         totalRepresentatives: representatives.length,
@@ -243,7 +244,7 @@ export const useAdminDashboard = () => {
         totalSessions: sessions.length,
         activeSessions: sessions.filter((s: ChatSession) => s.statusChat === 1).length,
         waitingSessions: sessions.filter((s: ChatSession) => s.statusChat === 0).length,
-        onlineReps: 0,   // RepresentativeChat לא מכיל isOnline — נשאר 0
+        onlineReps: representatives.filter((r:Representative)=>r.isOnline).length,   // RepresentativeChat לא מכיל isOnline — נשאר 0
         pendingApproval: waitingReps.length,
     };
     const getActualWaitTime = useCallback((session: ChatSession) => {

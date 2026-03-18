@@ -2,6 +2,7 @@ export type RepresentativeChat = {
     idRepresentative: number;
     nameRepr: string;
     role: string;
+    isOnline: boolean;
 }
 
 export type Representative = {
