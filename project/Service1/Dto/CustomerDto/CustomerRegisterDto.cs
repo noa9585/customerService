@@ -20,7 +20,5 @@ namespace Service1.Dto.CustomerDto
         [MaxLength(50)]
         [MinLength(6)]
         public string PasswordCust { get; set; }
-       // public string? Role { get; set; }
-
     }
 }

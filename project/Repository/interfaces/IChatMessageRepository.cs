@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Repository.interfaces
 {
-    public interface IChatMessageRepository: IRepository<ChatMessage>
+    public interface IChatMessageRepository : IRepository<ChatMessage>
     {
         Task<List<ChatMessage>> GetMessagesBySessionId(int sessionId);
     }

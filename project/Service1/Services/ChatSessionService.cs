@@ -26,7 +26,7 @@ namespace Service1.Services
                IChatSessionRepository repository,
                IRepository<Customer> customerRepository,
                IRepository<Topic> topicRepository,
-               IMapper mapper, 
+               IMapper mapper,
                IRepresentativeRepository representativeRepository,
                IAIScoreService aIScoreService,
                IChatMessageRepository chatMessage)
@@ -36,28 +36,28 @@ namespace Service1.Services
             _representativeRepository = representativeRepository;
             _topicRepository = topicRepository;
             _mapper = mapper;
-            _aiScoreService= aIScoreService;
+            _aiScoreService = aIScoreService;
             _messageRepository = chatMessage;
         }
 
         public async Task<List<ChatSessionDto>> GetAllSessions()
         {
-            var sessions =await _repository.GetAll();
+            var sessions = await _repository.GetAll();
             return _mapper.Map<List<ChatSessionDto>>(sessions);
         }
         public async Task<List<ChatSessionDto>> GetAllWaiting()
         {
-            var waitingSessions =await _repository.GetAllWaiting();
+            var waitingSessions = await _repository.GetAllWaiting();
             return _mapper.Map<List<ChatSessionDto>>(waitingSessions);
         }
         public async Task<List<ChatSessionDto>> GetAllActive()
         {
-            var activeSessions =await _repository.GetAllActive();
+            var activeSessions = await _repository.GetAllActive();
             return _mapper.Map<List<ChatSessionDto>>(activeSessions);
         }
         public async Task<ChatSessionDto> GetSessionById(int id)
         {
-            var session =await _repository.GetById(id);
+            var session = await _repository.GetById(id);
             if (session == null) return null;
             return _mapper.Map<ChatSessionDto>(session);
         }
@@ -66,13 +66,13 @@ namespace Service1.Services
         {
             // בדיקה שהלקוח קיים
             var customerExists = await _customerRepository.GetById(sessionDto.IDCustomer);
-            var topic =await _topicRepository.GetById(sessionDto.IDTopic);
+            var topic = await _topicRepository.GetById(sessionDto.IDTopic);
             if (customerExists == null)
             {
                 throw new Exception("לא ניתן לפתוח שיחה: הלקוח אינו קיים במערכת.");
             }
             var waitingSessions = await _repository.GetAllWaiting();
-            var EstimatedWaitTime =await CalculateWaitTime(topic.IDTopic, waitingSessions);
+            var EstimatedWaitTime = await CalculateWaitTime(topic.IDTopic, waitingSessions);
             var session = _mapper.Map<ChatSession>(sessionDto);
             session.StartTimestamp = DateTime.Now;
             session.statusChat = SessionStatus.Waiting;
@@ -90,7 +90,7 @@ namespace Service1.Services
 
         public async Task UpdateSession(int id, ChatSessionUpdateDto dto)
         {
-            var existingSession =await _repository.GetById(id);
+            var existingSession = await _repository.GetById(id);
             if (existingSession != null)
             {
                 existingSession.EndTimestamp = dto.EndTimestamp;
@@ -108,8 +108,8 @@ namespace Service1.Services
             await _repository.DeleteItem(id);
         }
 
-     
-        public async Task<double> CalculateWaitTime(int topicId,List<ChatSession> waitingSessions)
+
+        public async Task<double> CalculateWaitTime(int topicId, List<ChatSession> waitingSessions)
         {
             var OnlineReps = (await _representativeRepository.GetAll()).Where(r => r.IsOnline).ToList();
             if (!OnlineReps.Any())
@@ -118,21 +118,21 @@ namespace Service1.Services
             if (waitingSessions.Count != 0)
             {
                 var lastSession = waitingSessions.Last();
-                var avgTopic =(await _topicRepository.GetById(lastSession.IDTopic)).AverageTreatTime;
+                var avgTopic = (await _topicRepository.GetById(lastSession.IDTopic)).AverageTreatTime;
                 var EstimatedWaitTime = lastSession.EstimatedWaitTime;
-                var myTopicPriorit =(await _topicRepository.GetById(topicId)).priorityTopics;
+                var myTopicPriorit = (await _topicRepository.GetById(topicId)).priorityTopics;
                 var timewait = (EstimatedWaitTime + (avgTopic / cntRep)) * myTopicPriorit;
                 return Math.Round(timewait, 1);
             }
             else
             {
-                var acvivSessions =await _repository.GetAllActive();
+                var acvivSessions = await _repository.GetAllActive();
                 if (acvivSessions.Count == 0)
                     return 0.5;
                 else
                 {
                     var allTopics = await _topicRepository.GetAll();
-                    double min= double.MaxValue;
+                    double min = double.MaxValue;
                     DateTime now = DateTime.Now;
                     foreach (var session in acvivSessions)
                     {
@@ -162,7 +162,7 @@ namespace Service1.Services
             List<ChatSession> sessions = new List<ChatSession>();
             foreach (var session in waitingSessions)
             {
-                var newWaitTime = await CalculateWaitTime(session.IDTopic,sessions);
+                var newWaitTime = await CalculateWaitTime(session.IDTopic, sessions);
                 session.EstimatedWaitTime = newWaitTime;
                 await _repository.UpdateItem(session.SessionID, session);
                 sessions.Add(session);
@@ -177,15 +177,15 @@ namespace Service1.Services
             await _semaphore.WaitAsync();
             try
             {
-                var nextSession =  await _repository.GetNextWaitingSession();
+                var nextSession = await _repository.GetNextWaitingSession();
 
                 if (nextSession == null)
                     return null;
                 nextSession.statusChat = SessionStatus.Active;
                 nextSession.IDRepresentative = idRepresentative;
                 nextSession.ServiceStartTimestamp = DateTime.Now;
-                await _repository.UpdateItem(nextSession.SessionID, nextSession); 
-                var rep =await _representativeRepository.GetById(idRepresentative);
+                await _repository.UpdateItem(nextSession.SessionID, nextSession);
+                var rep = await _representativeRepository.GetById(idRepresentative);
                 if (rep != null)
                 {
                     rep.IsBusy = true;
@@ -241,13 +241,13 @@ namespace Service1.Services
         }
         public async Task CansleChatSession(int sessionId)
         {
-            var session =await _repository.GetById(sessionId);
+            var session = await _repository.GetById(sessionId);
             if (session == null)
                 throw new Exception("שיחת הצ'אט לא נמצאה.");
             session.statusChat = SessionStatus.Cancel;
             session.EndTimestamp = DateTime.Now;
             await _repository.UpdateItem(sessionId, session);
-            var topic =await _topicRepository.GetById(session.IDTopic);
+            var topic = await _topicRepository.GetById(session.IDTopic);
             topic.totalSessionsCount--;
             await _topicRepository.UpdateItem(topic.IDTopic, topic);
             // עדכון כל הממתינים אחרי ביטול שיחה
@@ -255,11 +255,3 @@ namespace Service1.Services
         }
     }
 }
-
-
-
-
-
-
-
-

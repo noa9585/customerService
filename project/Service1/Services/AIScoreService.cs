@@ -24,7 +24,6 @@ namespace Service1.Services
         {
             if (messages == null || messages.Count == 0)
                 return 5;
-
             var transcript = BuildTranscript(messages);
 
             // ── Gemini API Configuration ─────────────────────────────────────

@@ -13,7 +13,5 @@ namespace Repository.interfaces
         Task<List<ChatSession>> GetAllWaiting();
         Task<List<ChatSession>> GetAllActive();
         Task<ChatSession> GetNextWaitingSession();
-
-
     }
 }

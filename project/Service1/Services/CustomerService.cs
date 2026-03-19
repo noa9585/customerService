@@ -1,7 +1,6 @@
 ﻿using Repository.Entities;
 using Repository.interfaces;
 using Service1.Dto.CustomerDto;
-using Service1.Dto.RepresentativeDto;
 using Service1.Interface;
 using AutoMapper;
 namespace Service1.Services
@@ -12,7 +11,6 @@ namespace Service1.Services
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
 
-        // הזרקת ה-Repository ו-TokenService דרך הבנאי
         public CustomerService(IRepository<Customer> repository, ITokenService tokenService, IMapper mapper)
         {
             _repository = repository;
@@ -23,23 +21,23 @@ namespace Service1.Services
         public async Task<List<CustomerChatDto>> GetAll()
         {
             var customers = await _repository.GetAll();
-            // מיפוי מרשימת ישויות לרשימת DTO
             return _mapper.Map<List<CustomerChatDto>>(customers);
         }
+
         public async Task<CustomerChatDto> GetById(int id)
         {
             var t = await _repository.GetById(id);
             if (t == null) return null;
-
             return _mapper.Map<CustomerChatDto>(t);
         }
+
         public async Task<CustomerRegisterDto> GetByIdToUpdate(int id)
         {
             var r = await _repository.GetById(id);
             if (r == null) return null;
-
             return _mapper.Map<CustomerRegisterDto>(r);
         }
+
         public async Task<CustomerChatDto> AddCustomer(string name, string email, string password)
         {
             var newCustomer = _mapper.Map<Customer>(new CustomerRegisterDto
@@ -48,8 +46,8 @@ namespace Service1.Services
                 EmailCust = email,
                 PasswordCust = password,
             });
-            newCustomer.StatusCust = true; // ברירת מחדל
-            newCustomer.IsOnline = false; // ברירת מחדל
+            newCustomer.StatusCust = true;
+            newCustomer.IsOnline = false;
             newCustomer.Role = "Customer";
             var saveCustomer = await _repository.AddItem(newCustomer);
             return _mapper.Map<CustomerChatDto>(saveCustomer);
@@ -66,7 +64,6 @@ namespace Service1.Services
                 await _repository.UpdateItem(id, existing);
             }
         }
-
         public async Task DeleteCustomer(int id)
         {
             var customer = await _repository.GetById(id);
@@ -75,19 +72,20 @@ namespace Service1.Services
                 customer.StatusCust = false;
                 await _repository.UpdateItem(id, customer);
             }
-            // _repository.DeleteItem(id);
         }
+
         public async Task<CustomerChatDto> Login(CustomerLoginDto customerLoginDto)
         {
             var customer = (await _repository.GetAll())
                 .FirstOrDefault(c => c.EmailCust == customerLoginDto.EmailCust && c.PasswordCust == customerLoginDto.PasswordCust);
             if (customer == null) return null;
-            customer.IsOnline = true; // סימון הלקוח כפעיל כרגע במערכת
+            customer.IsOnline = true;
             await _repository.UpdateItem(customer.IDCustomer, customer);
             var customerDto = _mapper.Map<CustomerChatDto>(customer);
-            customerDto.Token =  _tokenService.GenerateTokenForCustomer(customer);
+            customerDto.Token = _tokenService.GenerateTokenForCustomer(customer);
             return customerDto;
         }
+
         public async Task<CustomerChatDto> Register(CustomerRegisterDto registerDto)
         {
             var existingCustomer = (await _repository.GetAll())
@@ -102,7 +100,7 @@ namespace Service1.Services
             newCustomer.Role = "Customer";
             var savedCustomer = await _repository.AddItem(newCustomer);
             var resultDto = _mapper.Map<CustomerChatDto>(savedCustomer);
-            resultDto.Token =  _tokenService.GenerateTokenForCustomer(savedCustomer);
+            resultDto.Token = _tokenService.GenerateTokenForCustomer(savedCustomer);
             return resultDto;
         }
         public async Task Logout(int id)
