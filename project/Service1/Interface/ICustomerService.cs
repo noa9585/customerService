@@ -19,6 +19,5 @@ namespace Service1.Interface
         Task<CustomerChatDto> Login(CustomerLoginDto customerLoginDto);
         Task<CustomerChatDto> Register(CustomerRegisterDto registerDto);
         Task Logout(int id);
-
     }
 }

@@ -10,13 +10,13 @@ namespace Repository.Entities
     public class Topic
     {
         [Key]
-        public int IDTopic { get; set; }
+        public int IDTopic { get; set; }//ID
         [Required]
         [MaxLength(200)]
-        public string NameTopic { get; set; }
-        public double AverageTreatTime { get; set; }
-        public double priorityTopics { get; set; }
-        public bool StatusTopic {  get; set; }
-        public int totalSessionsCount {  get; set; }
+        public string NameTopic { get; set; }//שם נושא
+        public double AverageTreatTime { get; set; }//זמן טיפול ממוצע
+        public double priorityTopics { get; set; }//עדיפות
+        public bool StatusTopic { get; set; }//סטטוס למחיקה
+        public int totalSessionsCount { get; set; }//כמות שיחות לנושא 
     }
 }

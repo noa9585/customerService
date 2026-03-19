@@ -16,10 +16,7 @@ namespace Service1.Dto.RepresentativeDto
         public TimeOnly entryHourRepr { get; set; }
         public TimeOnly exitHourRepr { get; set; }
         public bool StatusRepr { get; set; }
-        // האם הנציג ביצע Login למערכת כרגע?
         public bool IsOnline { get; set; }
-
-        // האם הנציג נמצא בשיחה פעילה כרגע?
         public bool IsBusy { get; set; }
         public string Role { get; set; }
         public string? Token { get; set; }

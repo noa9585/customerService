@@ -13,8 +13,8 @@ namespace Repository.Entities
     public class ChatMessage
     {
         [Key]
-        public int MessageID { get; set; }
-        public int IDSession { get; set; } // קישור לשיחה
+        public int MessageID { get; set; }//ID
+        public int IDSession { get; set; } // מזהה שיחה
         [ForeignKey("IDSession")]
         public virtual ChatSession ChatSession { get; set; }
         [Required]
@@ -23,9 +23,6 @@ namespace Repository.Entities
         public DateTime Timestamp { get; set; } // תאריך ושעת שליחת ההודעה
         public int IDSend { get; set; } // מזהה שולח
         public SenderType MessageType { get; set; } // סוג ההודעה (לקוח או נציג)
-        public bool StatusMessage { get; set; }
-
-
-
+        public bool StatusMessage { get; set; }//סטטוס
     }
 }

@@ -31,7 +31,6 @@ namespace Repository.Repositories
 
         public async Task<List<Representative>> GetAll()
         {
-            // שימוש ב-Include כדי לוודא שרשימת השעות נטענת מה-DB
             return await _context.Representatives.Where(r=>r.StatusRepr).Include(x => x.LHours).ToListAsync();
         }
 
@@ -43,7 +42,6 @@ namespace Repository.Repositories
         public async Task UpdateItem(int id, Representative item)
         {
             var representative = await GetById(id);
-            //representative.IDRepresentative = item.IDRepresentative;
             representative.ScoreForMonth = item.ScoreForMonth;
             representative.NameRepr = item.NameRepr;
             representative.EmailRepr = item.EmailRepr;
