@@ -20,7 +20,7 @@ namespace Service1.Interface
         Task<double> CalculateWaitTime(int sessionId,List<ChatSession> waitingSessions);
         Task RecalculateAllWaitingTimes();
         Task<ChatSessionDto> PullNextClientForRepresentative(int idRepresentative);
-        Task EndChatSession(int sessionId);
+        Task<int> EndChatSession(int sessionId);
         Task CansleChatSession(int sessionId);
     }
 }

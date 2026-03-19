@@ -201,7 +201,7 @@ namespace Service1.Services
             }
 
         }
-        public async Task EndChatSession(int sessionId)
+        public async Task<int> EndChatSession(int sessionId)
         {
             var session = await _repository.GetById(sessionId);
             if (session == null)
@@ -210,7 +210,7 @@ namespace Service1.Services
             session.EndTimestamp = DateTime.Now;
             session.statusChat = SessionStatus.Close;
             await _repository.UpdateItem(sessionId, session);
-
+            var aiScore = 5;
             if (session.IDRepresentative.HasValue)
             {
                 var rep = await _representativeRepository.GetById(session.IDRepresentative.Value);
@@ -219,7 +219,7 @@ namespace Service1.Services
                     rep.IsBusy = false;
 
                     var messages = await _messageRepository.GetMessagesBySessionId(sessionId);
-                    var aiScore = await _aiScoreService.AnalyzeAndScoreAsync(messages);
+                    aiScore = await _aiScoreService.AnalyzeAndScoreAsync(messages);
                     rep.ScoreForMonth += aiScore;
 
                     Console.WriteLine($"[AI Score] Session {sessionId} → Representative {rep.IDRepresentative} scored {aiScore}/10");
@@ -237,6 +237,7 @@ namespace Service1.Services
             await _topicRepository.UpdateItem(topic.IDTopic, topic);
             // עדכון כל הממתינים אחרי סיום שיחה
             await RecalculateAllWaitingTimes();
+            return aiScore;
         }
         public async Task CansleChatSession(int sessionId)
         {

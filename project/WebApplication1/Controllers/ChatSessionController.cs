@@ -146,12 +146,12 @@ namespace WebApplication1.Controllers
         {
             try
             {
-                await _chatSessionService.EndChatSession(idSession);
+               int score= await _chatSessionService.EndChatSession(idSession);
                 await _hubContext.Clients.Group(idSession.ToString()).SendAsync("ChatEnded");
                 var updatedSessions = await _chatSessionService.GetAllWaiting();
                 await _hubContext.Clients.All.SendAsync("WaitingTimesUpdated", updatedSessions);
 
-                return Ok();
+                return Ok(score);
             }
             catch (Exception ex)
             {

@@ -6,7 +6,7 @@
   --card-white: #ffffff;
   --text-main: #1e293b;
   --text-muted: #64748b;
-  --success: #10b981;
+  --success: #3b82f6; /* שינינו את ההגדרה של success לתכלת/כחול האתר */
 }
 
 .dashboard-page {
@@ -93,7 +93,7 @@
   gap: 10px;
 }
 
-.status-online { background: #dcfce7; color: #166534; }
+.status-online { background: #dbeafe; color: #1e40af; } /* תכלת עדין לסטטוס מחובר */
 .status-break { background: #fee2e2; color: #991b1b; }
 
 .action-buttons {
@@ -127,11 +127,126 @@
 .btn-logout { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
 .btn-logout:hover:not(:disabled) { background: #ffe4e6; }
 
-/* --- האפקט של כפתור כבוי (התבהרות וחסימת לחיצה) --- */
+/* --- האפקט של כפתור כבוי --- */
 .btn-dash:disabled {
-  opacity: 0.4; /* עושה את הכפתור שקוף ודהוי */
-  filter: grayscale(40%); /* מוריד קצת מהצבע שלו */
-  cursor: not-allowed; /* משנה את העכבר לסימן של חסימה */
-  transform: none; /* מבטל את אנימציית הקפיצה */
-  pointer-events: none; /* מוודא שאי אפשר ללחוץ */
+  opacity: 0.4;
+  filter: grayscale(40%);
+  cursor: not-allowed;
+  transform: none;
+  pointer-events: none;
+}
+
+/* עיצוב חלונית הציון (Score Modal) - מעודכן לתכלת */
+.score-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.65); /* רקע כהה יותר למיקוד */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+
+.score-modal-card {
+  background: var(--card-white);
+  padding: 36px 32px 32px;
+  border-radius: 20px;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  text-align: center;
+  max-width: 340px;
+  width: 90%;
+  animation: modalPop 0.25s ease-out both;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+@keyframes modalPop {
+  from { opacity: 0; transform: scale(0.94) translateY(8px); }
+  to   { opacity: 1; transform: scale(1)     translateY(0); }
+}
+
+.score-modal-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #eff6ff; /* כחול בהיר מאוד */
+  color: var(--primary); /* כחול האתר */
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+}
+
+.score-modal-title {
+  color: var(--text-main);
+  font-size: 22px;
+  margin: 0 0 6px;
+  font-weight: 700;
+}
+
+.score-modal-text {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.score-display {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.score-number {
+  font-size: 60px;
+  font-weight: 800;
+  color: var(--primary); /* שינוי לירוק לכחול האתר */
+  line-height: 1;
+}
+
+.score-out-of {
+  font-size: 20px;
+  color: var(--text-muted);
+  padding-bottom: 8px;
+}
+
+.score-dots {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  margin-bottom: 24px;
+}
+
+.score-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  transition: background 0.2s;
+}
+
+.score-dot.filled {
+  background: var(--primary); /* נקודות בכחול האתר */
+}
+
+.btn-score-confirm {
+  width: 100%;
+  background: #eff6ff; /* רקע תכלת עדין */
+  color: #1d4ed8; /* טקסט כחול כהה לקריאות */
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #bfdbfe; /* מסגרת תכלת */
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-score-confirm:hover {
+  background: #dbeafe; /* תכלת מעט כהה יותר בהובר */
+  transform: translateY(-1px);
+  border-color: var(--primary);
 }

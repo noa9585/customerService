@@ -85,9 +85,16 @@ export const getNextClient = async (repId: number): Promise<ChatSession> => {
         throw error;
     }
 };
-export const closeSession = async (idSession: number): Promise<void> => {
+export const closeSession = async (idSession: number): Promise<number> => {
     try {
-        await axios.post(`${url}/close-session/${idSession}/`);
+       const response = await axios.post(`${url}/close-session/${idSession}/`);
+       
+       // הדפסה ממוקדת כדי לראות מה באמת יש בתוך data
+       console.log("The data is:", response.data); 
+       
+       // אם השרת מחזיר רק מספר, זה התיקון:
+       return response.data; 
+       
     } catch (error) {
         console.error(`Error closing session ${idSession}:`, error);
         throw error;

@@ -4,12 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '../store/index';
 import {
-  fetchRepresentativeById ,
+  fetchRepresentativeById,
   toggleBreakThunk,
   returnFromBreakThunk,
   logoutRepresentativeThunk,
 } from '../store/slices/Representative.slice';
-import { fetchNextClientThunk, clearError } from '../store/slices/Chatsession.slice';
+import { fetchNextClientThunk, clearError, clearLastScore } from '../store/slices/Chatsession.slice';
 import { Representative } from '../types/representative.types';
 
 export const useRepresentativeDashboard = () => {
@@ -23,17 +23,23 @@ export const useRepresentativeDashboard = () => {
     (state: RootState) => state.representative
   );
 
-  // ✅ שגיאת "אין לקוחות" מגיעה מ-chatSession slice
-  const { error: sessionError } = useSelector(
+ 
+  // 2. משוך את lastScore מה-state
+  const { lastScore, error: sessionError } = useSelector(
     (state: RootState) => state.chatSession
   );
+
+  // 3. פונקציה לסגירת הודעת הציון
+  const handleCloseScoreModal = () => {
+    dispatch(clearLastScore());
+  };
 
   useEffect(() => {
     if (!rep?.idRepresentative) {
       navigate('/RepresentativeLogin');
       return;
     }
-    dispatch(fetchRepresentativeById (rep.idRepresentative));
+    dispatch(fetchRepresentativeById(rep.idRepresentative));
   }, [dispatch, rep, navigate]);
 
   // ניקוי שגיאה אחרי 5 שניות
@@ -70,7 +76,7 @@ export const useRepresentativeDashboard = () => {
     localStorage.removeItem('representativeUser');
     navigate('/RepresentativeLogin');
   };
-
+  
   return {
     repData: representative,
     loading,
@@ -79,6 +85,8 @@ export const useRepresentativeDashboard = () => {
     handleToggleBreak,
     handleLogout,
     navigate,
+    lastScore, // מחזיר את הציון (יהיה מספר או null)
+    handleCloseScoreModal, // מחזיר את פונקציית האיפוס
   };
 };
 

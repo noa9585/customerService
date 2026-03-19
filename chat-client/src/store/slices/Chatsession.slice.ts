@@ -45,7 +45,7 @@ export const createSessionThunk = createAsyncThunk(
       return response;
     } catch (err: any) {
       // כאן הקסם קורה - אנחנו מחזירים את האובייקט שבו נמצא ה-message מהשרת
-      return rejectWithValue(err.response?.data); 
+      return rejectWithValue(err.response?.data);
     }
   }
 );
@@ -85,8 +85,8 @@ export const fetchNextClientThunk = createAsyncThunk(
 export const closeSessionThunk = createAsyncThunk(
   "chatSession/close",
   async (id: number) => {
-    await closeSession(id);
-    return id;
+    const score = await closeSession(id);
+    return { id, score };
   }
 );
 
@@ -105,6 +105,7 @@ type ChatSessionState = {
   activeSession: ChatSession | null;
   loading: boolean;
   error: string | null;
+  lastScore: number | null;
 };
 
 const initialState: ChatSessionState = {
@@ -112,6 +113,7 @@ const initialState: ChatSessionState = {
   activeSession: null,
   loading: false,
   error: null,
+  lastScore: null,
 };
 
 // ── Slice ─────────────────────────────────────────────────────────────────────
@@ -129,6 +131,9 @@ const chatSessionSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    clearLastScore: (state) => {
+    state.lastScore = null;
+  },
   },
   extraReducers: (builder) => {
     // fetchAll
@@ -190,16 +195,21 @@ const chatSessionSlice = createSlice({
 
     // close
     builder
-      .addCase(closeSessionThunk.fulfilled, (state, action: PayloadAction<number>) => {
-        state.sessions = state.sessions.filter((s) => s.sessionID !== action.payload);
-        if (state.activeSession?.sessionID === action.payload) {
+      .addCase(closeSessionThunk.fulfilled, (state, action: PayloadAction<{ id: number; score: number }>) => {
+        // 1. חילוץ הנתונים מה-payload (האובייקט שה-Thunk החזיר)
+        const { id, score } = action.payload;
+
+        // 2. שמירת הציון ב-State (כדי שהחלונית תוכל להציג אותו)
+        state.lastScore = score;
+
+        // 3. הסרת השיחה מהרשימה הכללית
+        state.sessions = state.sessions.filter((s) => s.sessionID !== id);
+
+        // 4. אם זו השיחה הפעילה כרגע - ננקה אותה
+        if (state.activeSession?.sessionID === id) {
           state.activeSession = null;
         }
       })
-      .addCase(closeSessionThunk.rejected, (state, action) => {
-        state.error = action.error.message || "שגיאה בסגירת שיחה";
-      });
-
     // cancel
     builder
       .addCase(cancelSessionThunk.fulfilled, (state, action: PayloadAction<number>) => {
@@ -214,5 +224,5 @@ const chatSessionSlice = createSlice({
   },
 });
 
-export const { setActiveSession, clearActiveSession, clearError } = chatSessionSlice.actions;
+export const { setActiveSession, clearActiveSession, clearError,clearLastScore } = chatSessionSlice.actions;
 export default chatSessionSlice.reducer;
